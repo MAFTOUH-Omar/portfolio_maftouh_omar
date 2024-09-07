@@ -6,7 +6,7 @@ import Link from "next/link";
 import Markdown from "react-markdown";
 import BlurFade from "@/Components/magicui/blur-fade";
 import { Badge } from "@/Components/ui/badge";
-import { Avatar , AvatarFallback , AvatarImage } from "@/components/ui/avatar";
+import { Avatar , AvatarFallback , AvatarImage } from "@/Components/ui/avatar";
 
 const BLUR_FADE_DELAY = 0.04;
 
