@@ -189,6 +189,7 @@ export const DATA = {
         "apexcharts",
         "...",
       ],
+      links: [],
       image: "/rebornott.png",
     },
     {

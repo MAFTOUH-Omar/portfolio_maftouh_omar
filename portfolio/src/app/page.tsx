@@ -143,8 +143,7 @@ export default function Page() {
                   dates={project.dates}
                   tags={project.technologies}
                   image={project.image}
-                  // video={project.video ? project.video : null}
-                  // links={project.links ? project.li}
+                  links={project.links}
                 />
               </BlurFade>
             ))}
