@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import './Acceuil.css';
 import Pic from '../Icons/ort.JPG';
 import Carousel from './Carousel';
+import Image from 'next/image';
 
 function Acceuil() {
   return (
@@ -30,12 +31,12 @@ function Acceuil() {
             </div>
             <div className="row">
               <div className="col">
-                <button className='btn btn-success mx-md-4 my-3 px-5 py-3'>Let's get started</button>
+                <button className='btn btn-success mx-md-4 my-3 px-5 py-3'>Let s get started</button>
               </div>
             </div>
           </div>
           <div className="col-md-5 mt-3">
-            <img src={Pic} className='img-fluid border border-dark border-3' alt="Profile" />
+            <Image src={Pic} className='img-fluid border border-dark border-3' alt="Profile" />
           </div>
         </div>
         <div className="row mt-4">

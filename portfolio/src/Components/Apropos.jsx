@@ -13,7 +13,7 @@ function Apropos() {
             <div className="col">
               <h4 className="text-light">Bonjour</h4>
               <p className="fw-bold text-light">
-                Je suis MAFTOUH Omar, un développeur Web. Mon parcours m'a permis d'acquérir une solide expérience en conception, construction et personnalisation de sites Web. Je possède également une expertise reconnue dans l'utilisation de WordPress.
+                Je suis MAFTOUH Omar, un développeur Web. Mon parcours m a permis d acquérir une solide expérience en conception, construction et personnalisation de sites Web. Je possède également une expertise reconnue dans l utilisation de WordPress.
               </p>
             </div>
           </div>

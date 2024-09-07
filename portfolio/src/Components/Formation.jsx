@@ -12,7 +12,7 @@ function Formation(){
                     <div className="col border border-light border-2 rounded-2">
                         <Academy/>
                         <p className='text-light fw-bold'>
-                            * 2021-2023 Institut Spécialisé de Gestion et d'Informatique - OFPPT KHOURIBGA
+                            * 2021-2023 Institut Spécialisé de Gestion et d Informatique - OFPPT KHOURIBGA
                         </p>
                         <p className='badge bg-success text-light fw-bold'>
                             Diplome Technicien Spécialisé en Developpement Digiatl Option Full Stack

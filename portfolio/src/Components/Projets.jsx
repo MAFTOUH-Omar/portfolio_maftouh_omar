@@ -3,6 +3,8 @@ import DemoPdo from '../Icons/demoPdo.png';
 import ReactLaravel from '../Icons/reactLaravel.png';
 import Typ from '../Icons/Typ.png';
 import Enm from '../Icons/enm.png';
+import Image from 'next/image';
+
 function Projets(){
     return(
         <div className="container my-4">
@@ -14,7 +16,7 @@ function Projets(){
             <div className="row my-3">
                 <div className="col-sm-12 col-md-6 col-lg-3">
                     <div className="card" style={{height:"330px"}}>
-                        <img src={MernStack} style={{height:"100px"}} className='card-img-top img-fluid'/>
+                        <Image alt="" src={MernStack} style={{height:"100px"}} className='card-img-top img-fluid'/>
                         <div className="card-body">
                             <p>
                             Sample app: Express.js, MongoDB, JWT auth, Message model. Dockerfiles & Compose for deployment.</p>
@@ -26,10 +28,10 @@ function Projets(){
                 </div>
                 <div className="col-sm-12 col-md-6 col-lg-3">
                     <div className="card" style={{height:"330px"}}>
-                        <img src={DemoPdo} style={{height:"100px"}} className='card-img-top img-fluid'/>
+                        <Image alt="" src={DemoPdo} style={{height:"100px"}} className='card-img-top img-fluid'/>
                         <div className="card-body">
                             <p>
-                            App de gestion d'utilisateurs (CRUD), espace admin pour déclarations (CR), espace tech pour résoudre les problèmes admin.
+                            App de gestion d utilisateurs (CRUD), espace admin pour déclarations (CR), espace tech pour résoudre les problèmes admin.
                             </p>
                         </div>
                         <div className="card-footer">
@@ -39,10 +41,10 @@ function Projets(){
                 </div>
                 <div className="col-sm-12 col-md-6 col-lg-3">
                     <div className="card" style={{height:"330px"}}>
-                        <img src={ReactLaravel} style={{height:"100px"}} className='card-img-top img-fluid'/>
+                        <Image alt="" src={ReactLaravel} style={{height:"100px"}} className='card-img-top img-fluid'/>
                         <div className="card-body">
                             <p>
-                            Création d'une application web pour gérer des annonces avec ReactJS et Laravel
+                            Création d une application web pour gérer des annonces avec ReactJS et Laravel
                             </p>
                         </div>
                         <div className="card-footer">
@@ -60,7 +62,7 @@ function Projets(){
                 </div>
                 <div className="col-sm-12 col-md-6 col-lg-3">
                     <div className="card" style={{height:"330px"}}>
-                        <img src={Typ} style={{height:"100px"}} className='card-img-top img-fluid'/>
+                        <Image alt="" src={Typ} style={{height:"100px"}} className='card-img-top img-fluid'/>
                         <div className="card-body">
                             <p>
                             Boost task management using Vite-powered Kanban board. Streamline workflow, optimize goals with intuitive drag-and-drop features.</p>
@@ -81,7 +83,7 @@ function Projets(){
             <div className="row justify-content-center">
                 <div className="col-sm-12 col-md-6 col-lg-3">
                     <div className="card" style={{height:"330px"}}>
-                        <img src={Enm} style={{height:"100px"}} className='card-img-top img-fluid'/>
+                        <Image alt="" src={Enm} style={{height:"100px"}} className='card-img-top img-fluid'/>
                         <div className="card-body">
                             <p>
                             Express App with Database Deployments (Cloud MongoDB clusters)     

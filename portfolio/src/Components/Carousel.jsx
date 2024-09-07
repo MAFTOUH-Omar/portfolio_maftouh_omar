@@ -18,86 +18,87 @@ import TailwindCss from '../Icons/tailwindcss.png'; // Example icon
 import Woocomrce from '../Icons/woocommerce.png'; // Example icon
 import Wordpress from '../Icons/wordpress.png'; // Example icon
 import Autre from '../Icons/autre.png'; // Example icon
+import Image from 'next/image';
 function Carousel(){
   return(
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Azure} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Azure} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Azure</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Bootstrap} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Bootstrap} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Bootstrap</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Css} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Css} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Css</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Docker} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Docker} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Docker</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Express} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Express} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Express</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Figma} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Figma} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Figma</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Git} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Git} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Git</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Html} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Html} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Html</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={JavaScript} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={JavaScript} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>JavaScript</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Jira} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Jira} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Jira</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={MongoDb} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={MongoDb} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>MongoDb</span>
         </div>
       </div>
       <div className="row justify-content-center">
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={NodeJS} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={NodeJS} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>NodeJS</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Php} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Php} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>php</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={ReactJs} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={ReactJs} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>ReactJs</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Redux} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Redux} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Redux</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={TailwindCss} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={TailwindCss} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Tailwind</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Woocomrce} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Woocomrce} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>WooC</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Wordpress} style={{width:'100px',height:'100px'}} /><br/>
+          <Image className="img-fluid" src={Wordpress} style={{width:'100px',height:'100px'}} alt="" /><br/>
           <span className='badge bg-success form-control'>Wordpress</span>
         </div>
         <div className="col-md-1 col-3 mx-1 mb-3">
-          <img className="img-fluid" src={Autre} style={{width:'100px',height:'100px'}} />
+          <Image className="img-fluid" src={Autre} style={{width:'100px',height:'100px'}} alt="" />
         </div>
       </div>
     </div>
