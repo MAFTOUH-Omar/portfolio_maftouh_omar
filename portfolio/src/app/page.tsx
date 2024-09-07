@@ -5,7 +5,7 @@ import { DATA } from "@/data/resume";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import BlurFade from "@/Components/magicui/blur-fade";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/Components/ui/badge";
 import { Avatar , AvatarFallback , AvatarImage } from "@/components/ui/avatar";
 
 const BLUR_FADE_DELAY = 0.04;
@@ -30,7 +30,7 @@ export default function Page() {
               />
             </div>
             <BlurFade delay={BLUR_FADE_DELAY}>
-              <Avatar className="size-28 border">
+              <Avatar className="size-36 border">
                 <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
                 <AvatarFallback>{DATA.initials}</AvatarFallback>
               </Avatar>
