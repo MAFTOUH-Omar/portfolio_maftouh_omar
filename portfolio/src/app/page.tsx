@@ -169,7 +169,7 @@ export default function Page() {
                   with a direct question on mail
                 </Link>{" "}
                 and I&apos;ll respond whenever I can. I will ignore all
-                soliciting.
+                soliciting. <Link href="" className="text-blue-500 hover:underline">Feel free to download my CV for more details.</Link>
               </p>
             </div>
           </BlurFade>

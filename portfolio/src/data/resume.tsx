@@ -237,19 +237,62 @@ export const DATA = {
         "Context",
         "...",
       ],
+      links: [],
+      image: "/Nano.png",
+    },
+    {
+      title: "ORT FOOD",
+      href: "",
+      dates: "Aug 2022 - Sep 2022",
+      active: true,
+      description:
+        "ORT FOOD is a Next.js website crafted for a restaurant, offering seamless browsing of menus, online ordering, and real-time order updates, all through a fast and responsive interface.",
+      technologies: [
+        "Next js",
+        "TailwindCSS",
+        "Context",
+        "...",
+      ],
       links: [
         {
           type: "Website",
-          href: "https://panda-snack.vercel.app/",
+          href: "https://ort-food.vercel.app/",
           icon: <Icons.globe className="size-3" />,
         },
         {
           type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/panda_snack_front/",
+          href: "https://github.com/MAFTOUH-Omar/Ort_Food",
           icon: <Icons.github className="size-3" />,
         },
       ],
-      image: "/Nano.png",
+      image: "/Ort_food.png",
+    },
+    {
+      title: "Prayer",
+      href: "",
+      dates: "Sep 2022 - Nov 2022",
+      active: true,
+      description:
+        "PrayerTime is a full-stack Next.js application displaying daily prayer times with a sleek interface for tracking the next prayer. The project includes OAuth authentication for secure access, ensuring a personalized experience for users.",
+      technologies: [
+        "Next js",
+        "TailwindCSS",
+        "Context",
+        "...",
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://prayer-ort.vercel.app/",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/MAFTOUH-Omar/Prayer/tree/main/client",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      image: "/Prayer.png",
     },
   ],
 } as const;
