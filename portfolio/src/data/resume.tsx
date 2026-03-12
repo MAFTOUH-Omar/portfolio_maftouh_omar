@@ -13,23 +13,43 @@ export const DATA = {
     "Junior Full Stack Developer and Data Science student, passionate about building complete web solutions. With a keen interest in application security and a solid background in Digital Development. I also have experience with WordPress and a strong desire to learn and evolve in the field of Data Science.",
   avatarUrl: "/me.png",
   skills: [
-    "Js",
-    "React",
-    "Redux",
-    "Next.js",
-    "Vite.js",
-    "NodeJS",
-    "Express",
-    "Php",
-    "Laravel",
-    "Mongodb",
-    "Css",
-    "Bootstrap",
-    "Tailwind",
-    "Jira",
-    "Git",
-    "Figma",
-    "...",
+    { name: "JavaScript", icon: "js" },
+    { name: "TypeScript", icon: "typescript" },
+    { name: "PHP", icon: "php" },
+    { name: "HTML5", icon: "html5" },
+    { name: "CSS3", icon: "css3" },
+    { name: "React", icon: "react" },
+    { name: "Next.js", icon: "nextjs" },
+    { name: "TailwindCSS", icon: "tailwindcss" },
+    { name: "Redux", icon: "redux" },
+    { name: "Vite", icon: "vitejs" },
+    { name: "Bootstrap", icon: "bootstrap5" },
+    { name: "Shadcn/UI", icon: "shadcnui" },
+    { name: "Material UI", icon: "materialui" },
+    { name: "TanStack", icon: "tanstack" },
+    { name: "Node.js", icon: "nodejs" },
+    { name: "Express.js", icon: "expressjs" },
+    { name: "NestJS", icon: "nestjs" },
+    { name: "Laravel", icon: "laravel" },
+    { name: "MongoDB", icon: "mongodb" },
+    { name: "MySQL", icon: "mysql" },
+    { name: "PostgreSQL", icon: "postgresql" },
+    { name: "Redis", icon: "redis" },
+    { name: "Docker", icon: "docker" },
+    { name: "GitHub Actions", icon: "github" },
+    { name: "Nginx", icon: "nginx" },
+    { name: "Vercel", icon: "vercel" },
+    { name: "AWS", icon: "aws" },
+    { name: "PM2", icon: "pm2" },
+    { name: "Git", icon: "git" },
+    { name: "Figma", icon: "figma" },
+    { name: "Jira", icon: "jira" },
+    { name: "GraphQL", icon: "graphql" },
+    { name: "Postman", icon: "postman" },
+    { name: "Swagger", icon: "swagger" },
+    { name: "OpenAI", icon: "openai" },
+    { name: "Ollama", icon: "ollama" },
+    { name: "Claude", icon: "claude" },
   ],
   navbar: [
     { href: "/", icon: HomeIcon, label: "Home" },
@@ -62,7 +82,6 @@ export const DATA = {
       },
     },
   },
-
   work: [
     {
       company: "NovaCode",
@@ -74,7 +93,19 @@ export const DATA = {
       start: "Mai 2024",
       end: "Today",
       description:
-        "As a Full Stack Developer in a development company, I am in charge of back-end development using Laravel and front-end development with technologies such as React, Inertia, and Next.js. In addition to creating modern and performant user interfaces, I also take care of server configuration to ensure a solid and secure infrastructure. Furthermore, I have developed an artificial intelligence model capable of detecting spam, thus helping to improve the security and efficiency of the applications I build.",
+        "Built a streaming dashboard for reseller & subscription management with Telegram WebHook, 2FA via Twilio, roles & permissions, Redis jobs, and supervision via Telescope & Horizon. Developed a digital products store with multi-brand streaming, multi-payment checkout (PayPal, CMI, Google Pay, Crypto/Coinbase), and OAuth Google/JWT auth. Handled full server infrastructure: iDRAC, MariaDB Enterprise, MaxScale load balancing, Galera Cluster, Nginx, Certbot, Cloudflare API, and CI/CD via GitHub Actions.",
+    },
+    {
+      company: "Locamed Santé & Confort",
+      href: "",
+      badges: [],
+      location: "Freelance",
+      title: "Full-stack Developer",
+      logoUrl: "/locamed.jpg",
+      start: "Sept 2025",
+      end: "Today",
+      description:
+        "Developed the Locamed e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and monitoring via Lens.js — built with Next.js 15, Express.js, Sequelize, Elasticsearch, and GitHub Actions. Currently leading a full rebrand migrating the platform from WordPress to a modern stack with Next.js 16, NestJS backend, NextAuth, TanStack, Redux Toolkit, and ApiDog documentation.",
     },
     {
       company: "Freelance",
@@ -83,13 +114,21 @@ export const DATA = {
       location: "Remote",
       title: "Full-stack Developer",
       logoUrl: "/upwork.svg",
-      start: "Oct 2024",
+      start: "Mai 2023",
       end: "Today",
       description:
-        "Freelancer Full Stack Developer specialized in the development of custom web solutions. I offer complete services, including development, configuration, deployment, and server maintenance. My commitment: to create high-performance and reliable solutions, with continuous technical support to guarantee the stability and efficiency of your projects.",
+        "Delivered freelance web projects using Laravel, Node.js, React, and Next.js, including REST & GraphQL APIs, Laravel Inertia/Blade dashboards with TailwindCSS and Shadcn, SSL configuration, performance optimization, and full production environment setup and deployment.",
     },
   ],
   education: [
+    {
+      school: "ESTEM - Ecole Supérieure de Technologie et de Management",
+      href: "https://www.estem.ma/",
+      degree: "Cycle Ingenieur ,Genie Logiciel",
+      logoUrl: "/estem.png",
+      start: "2025",
+      end: "2027",
+    },
     {
       school: "UNIVERSITE SULTAN MOULAY SLIMANE FACULTE",
       href: "https://www.fpbm.ma/new/",
@@ -117,6 +156,102 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "REBRAND LOCAMED",
+      href: "https://locamed-client-side.vercel.app",
+      dates: "Jan 2026 - Today",
+      active: true,
+      description:
+        "Complete platform rebrand migrating from WordPress to a modern stack — client & admin sides, NestJS API backend, NextAuth authentication, ApiDog documentation, Redux state management, and TanStack data fetching.",
+      technologies: [
+        { name: "Next.js 16", icon: "nextjs" },
+        { name: "NestJS", icon: "nestjs" },
+        { name: "NextAuth" },
+        { name: "TypeScript", icon: "typescript" },
+        { name: "Shadcn/UI", icon: "shadcnui" },
+        { name: "TanStack", icon: "tanstack" },
+        { name: "Redux Toolkit", icon: "redux" },
+        { name: "GitHub Actions", icon: "github" },
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://locamed-client-side.vercel.app",
+          icon: <Icons.globe className="size-3" />,
+        },
+      ],
+      images: ["/locamed_rebrand.png"],
+    },
+    {
+      title: "LOCAMED PORTAIL",
+      href: "https://locamed-portal.vercel.app",
+      dates: "Sept 2025 - Jan 2026",
+      active: true,
+      description:
+        "Full-stack e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and real-time monitoring via Lens.js.",
+      technologies: [
+        { name: "Next.js 15", icon: "nextjs" },
+        { name: "TypeScript", icon: "typescript" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "Shadcn/UI", icon: "shadcnui" },
+        { name: "TanStack", icon: "tanstack" },
+        { name: "Redux Toolkit", icon: "redux" },
+        { name: "Express.js", icon: "expressjs" },
+        { name: "Sequelize" },
+        { name: "Elasticsearch" },
+        { name: "Swagger", icon: "swagger" },
+        { name: "Vercel", icon: "vercel" },
+        { name: "GitHub Actions", icon: "github" },
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://locamed-portal.vercel.app",
+          icon: <Icons.globe className="size-3" />,
+        },
+      ],
+      images: ["/locamed_preview.png", "/locamed_portail_commande.png"],
+    },
+    {
+      title: "NOVACODE DASHBOARD STREAMING",
+      href: "",
+      dates: "May 2024 - Today",
+      active: true,
+      description:
+        "Reseller & subscription management dashboard with Telegram WebHook notifications, 2FA authentication via Twilio, role-based permissions, Redis job queues, and supervision through Laravel Telescope & Horizon.",
+      technologies: [
+        { name: "Laravel 11", icon: "laravel" },
+        { name: "PHP 8.3", icon: "php" },
+        { name: "React", icon: "react" },
+        { name: "TypeScript", icon: "typescript" },
+        { name: "Shadcn/UI", icon: "shadcnui" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "Redis", icon: "redis" },
+        { name: "MySQL", icon: "mysql" },
+        { name: "Nginx", icon: "nginx" },
+        { name: "GitHub Actions", icon: "github" },
+      ],
+      links: [],
+      images: ["/goldenott.png"],
+    },
+    {
+      title: "TMDB STREAMING BOT",
+      href: "",
+      dates: "Jun 2024 - Today",
+      active: true,
+      description:
+        "Python automation pipeline that scrapes streaming sources, fetches movie & TV show metadata via TMDB API, encodes media with FFmpeg, and manages content delivery through a Telegram bot interface.",
+      technologies: [
+        { name: "Python", icon: "python" },
+        { name: "TMDB API" },
+        { name: "FFmpeg" },
+        { name: "Selenium" },
+        { name: "Telegram Bot" },
+        { name: "Docker", icon: "docker" },
+      ],
+      links: [],
+      images: ["/tmdb_bot.png"],
+    },
+    {
       title: "Store IPTV",
       href: "/Store.png",
       dates: "Oct 2023 - Oct 2024",
@@ -124,16 +259,15 @@ export const DATA = {
       description:
         "A full-stack MERN project designed to create a dynamic web application, integrating MongoDB, Express, React, and Node.js. The project features seamless front-end and back-end communication, user authentication, and real-time data processing for an enhanced user experience.",
       technologies: [
-        "React",
-        "Node",
-        "Express",
-        "Mongodb",
-        "TailwindCSS",
-        "Redux",
-        "Stripe",
-        "Paypal",
-        "Coinbase",
-        "...",
+        { name: "React", icon: "react" },
+        { name: "Node.js", icon: "nodejs" },
+        { name: "Express.js", icon: "expressjs" },
+        { name: "MongoDB", icon: "mongodb" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "Redux", icon: "redux" },
+        { name: "Stripe" },
+        { name: "PayPal" },
+        { name: "Coinbase" },
       ],
       links: [
         {
@@ -142,7 +276,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      image: "/Store.png",
+      images: ["/Store.png"],
     },
     {
       title: "MCIE",
@@ -152,13 +286,12 @@ export const DATA = {
       description:
         "An independent, non-profit center, founded in 2019, by researchers in economic and financial participatory transactions in Morocco.",
       technologies: [
-        "React",
-        "Node",
-        "Express",
-        "Mongodb",
-        "TailwindCSS",
-        "Context",
-        "aceternity ui",
+        { name: "React", icon: "react" },
+        { name: "Node.js", icon: "nodejs" },
+        { name: "Express.js", icon: "expressjs" },
+        { name: "MongoDB", icon: "mongodb" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "Aceternity UI" },
       ],
       links: [
         {
@@ -172,7 +305,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      image: "/Mcie.png",
+      images: ["/Mcie.png"],
     },
     {
       title: "RebornOTT",
@@ -182,15 +315,14 @@ export const DATA = {
       description:
         "A custom dashboard built using the Quickframe template, featuring seamless API integration for real-time data visualization and management. The project offers an intuitive interface for monitoring and analyzing key metrics efficiently.",
       technologies: [
-        "Vite.js",
-        "Axios",
-        "MUI",
-        "redux",
-        "apexcharts",
-        "...",
+        { name: "Vite.js", icon: "vitejs" },
+        { name: "Material UI", icon: "materialui" },
+        { name: "Redux", icon: "redux" },
+        { name: "Axios" },
+        { name: "ApexCharts" },
       ],
       links: [],
-      image: "/rebornott.png",
+      images: ["/rebornott.png"],
     },
     {
       title: "Panda snack",
@@ -200,13 +332,11 @@ export const DATA = {
       description:
         "Panda Snack is a MERN stack website designed for an online snack shop. The project offers a smooth user experience with dynamic product displays, secure checkout, and real-time order tracking, all managed through an intuitive and responsive interface.",
       technologies: [
-        "React",
-        "Node",
-        "Express",
-        "Mongodb",
-        "TailwindCSS",
-        "Context",
-        "...",
+        { name: "React", icon: "react" },
+        { name: "Node.js", icon: "nodejs" },
+        { name: "Express.js", icon: "expressjs" },
+        { name: "MongoDB", icon: "mongodb" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [
         {
@@ -220,7 +350,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      image: "/Panda.png",
+      images: ["/Panda.png"],
     },
     {
       title: "Nano 4K",
@@ -230,15 +360,13 @@ export const DATA = {
       description:
         "Panda Snack is a MERN stack website designed for an online snack shop. The project offers a smooth user experience with dynamic product displays, secure checkout, and real-time order tracking, all managed through an intuitive and responsive interface.",
       technologies: [
-        "Laravel",
-        "Inertia js",
-        "Mysql",
-        "TailwindCSS",
-        "Context",
-        "...",
+        { name: "Laravel", icon: "laravel" },
+        { name: "Inertia.js" },
+        { name: "MySQL", icon: "mysql" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [],
-      image: "/Nano.png",
+      images: ["/Nano.png"],
     },
     {
       title: "ORT FOOD",
@@ -248,10 +376,8 @@ export const DATA = {
       description:
         "ORT FOOD is a Next.js website crafted for a restaurant, offering seamless browsing of menus, online ordering, and real-time order updates, all through a fast and responsive interface.",
       technologies: [
-        "Next js",
-        "TailwindCSS",
-        "Context",
-        "...",
+        { name: "Next.js", icon: "nextjs" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [
         {
@@ -265,7 +391,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      image: "/Ort_food.png",
+      images: ["/Ort_food.png"],
     },
     {
       title: "Prayer",
@@ -275,10 +401,9 @@ export const DATA = {
       description:
         "PrayerTime is a full-stack Next.js application displaying daily prayer times with a sleek interface for tracking the next prayer. The project includes OAuth authentication for secure access, ensuring a personalized experience for users.",
       technologies: [
-        "Next js",
-        "TailwindCSS",
-        "Context",
-        "...",
+        { name: "Next.js", icon: "nextjs" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "OAuth" },
       ],
       links: [
         {
@@ -292,7 +417,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      image: "/Prayer.png",
+      images: ["/Prayer.png"],
     },
   ],
 } as const;
