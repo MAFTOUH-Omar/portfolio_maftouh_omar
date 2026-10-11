@@ -156,6 +156,44 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "FILEVAULT",
+      href: "https://filevault-client.vercel.app",
+      dates: "Sep 2026 - Today",
+      active: true,
+      description:
+        "Secure file vault built with Spring Boot & JDK 27 after moving from Laravel/Symfony. JWT auth with refresh rotation, role-based quotas, direct uploads to Cloudflare R2 with expiring signed links, Scalar API docs, and CI/CD via GitHub Actions to Docker Swarm on Oracle Cloud.",
+      technologies: [
+        { name: "Spring Boot" , icon: "spring" },
+        { name: "JDK 27" , icon: "java" },
+        { name: "Next.js", icon: "nextjs" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "Cloudflare R2", icon: "cloudflare" },
+        { name: "Scalar" , icon: "openapi" },
+        { name: "Docker", icon: "docker" },
+        { name: "Docker Swarm" , icon: "docker" },
+        { name: "Oracle Cloud" , icon: "oracle" },
+        { name: "GitHub Actions", icon: "github" },
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://filevault-client.vercel.app",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "API Docs",
+          href: "https://api.filevault-omar.duckdns.org/scalar",
+          icon: <Icons.globe className="size-3" />,
+        },
+        {
+          type: "Source",
+          href: "https://github.com/MAFTOUH-Omar/filevault-server",
+          icon: <Icons.github className="size-3" />,
+        },
+      ],
+      images: ["/filevault.png"],
+    },
+    {
       title: "REBRAND LOCAMED",
       href: "https://locamed-client-side.vercel.app",
       dates: "Jan 2026 - Today",
