@@ -1,17 +1,17 @@
-import { Icons } from "@/Components/icons";
+import { Icons } from "@/components/icons";
 import { HomeIcon, NotebookIcon } from "lucide-react";
 
 export const DATA = {
   name: "MAFTOUH OMAR",
-  initials: "DV",
-  url: "https://dillion.io",
+  initials: "MO",
+  url: "https://omarmaftouh.com",
   location: "San Francisco, CA",
   locationLink: "https://www.google.com/maps/place/sanfrancisco",
   description:
     "Full-stack Developer | Data Science Student Front/Back-End, UI/UX Enthusiast | Problem Solver Crafting Web Dreams!",
   summary:
     "Junior Full Stack Developer and Data Science student, passionate about building complete web solutions. With a keen interest in application security and a solid background in Digital Development. I also have experience with WordPress and a strong desire to learn and evolve in the field of Data Science.",
-  avatarUrl: "/me.png",
+  avatarUrl: "/me.webp",
   skills: [
     { name: "JavaScript", icon: "js" },
     { name: "TypeScript", icon: "typescript" },
@@ -125,7 +125,7 @@ export const DATA = {
       school: "ESTEM - Ecole Supérieure de Technologie et de Management",
       href: "https://www.estem.ma/",
       degree: "Cycle Ingenieur ,Genie Logiciel",
-      logoUrl: "/estem.png",
+      logoUrl: "/estem.webp",
       start: "2025",
       end: "2027",
     },

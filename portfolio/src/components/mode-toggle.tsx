@@ -4,51 +4,64 @@ import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { motion } from "framer-motion";
 import { flushSync } from "react-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useMounted } from "@/hooks/use-mounted";
 
 export function ModeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
 
-  useEffect(() => setMounted(true), []);
+  const toggleTheme = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
 
-  const toggleTheme = useCallback(() => {
-    const nextTheme = resolvedTheme === "dark" ? "light" : "dark";
+      const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
 
-    const doc = document as Document & { startViewTransition?: (cb: () => void) => { ready: Promise<void> } };
+      if (
+        !doc.startViewTransition ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        setTheme(nextTheme);
+        return;
+      }
 
-    if (
-      !doc.startViewTransition ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      setTheme(nextTheme);
-      return;
-    }
+      const { clientX: x, clientY: y } = event;
+      const radius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
 
-    const transition = doc.startViewTransition(() => {
-      flushSync(() => {
-        document.documentElement.classList.toggle(
-          "dark",
-          nextTheme === "dark"
-        );
-      });
-    });
-
-    transition.ready.then(() => {
-      document.documentElement
-        .animate(
-          { clipPath: ["inset(0 0 100% 0)", "inset(0 0 0 0)"] },
-          {
-            duration: 700,
-            easing: "ease-in-out",
-            pseudoElement: "::view-transition-new(root)",
-          }
-        )
-        .finished.finally(() => {
-          setTheme(nextTheme);
+      const transition = doc.startViewTransition(() => {
+        flushSync(() => {
+          document.documentElement.classList.toggle(
+            "dark",
+            nextTheme === "dark"
+          );
         });
-    });
-  }, [resolvedTheme, setTheme]);
+      });
+
+      transition.ready.then(() => {
+        document.documentElement
+          .animate(
+            {
+              clipPath: [
+                `circle(0px at ${x}px ${y}px)`,
+                `circle(${radius}px at ${x}px ${y}px)`,
+              ],
+            },
+            {
+              duration: 600,
+              easing: "cubic-bezier(0.65, 0, 0.35, 1)",
+              pseudoElement: "::view-transition-new(root)",
+            }
+          )
+          .finished.finally(() => {
+            setTheme(nextTheme);
+          });
+      });
+    },
+    [resolvedTheme, setTheme]
+  );
 
   const isDark = resolvedTheme === "dark";
 

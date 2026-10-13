@@ -5,10 +5,11 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import Markdown from "react-markdown";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import StackIcon from "tech-stack-icons";
+import { StackIcon } from "@/components/tech-icon";
 import { useTheme } from "next-themes";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface TechTag {
   readonly name: string;
@@ -34,11 +35,9 @@ interface Props {
 
 export function ProjectCard({
   title,
-  href,
   description,
   dates,
   tags,
-  link,
   images,
   video,
   links,
@@ -46,9 +45,7 @@ export function ProjectCard({
 }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   const allImages = images ?? [];
 
@@ -215,9 +212,9 @@ export function ProjectCard({
         </div>
 
         {/* Description */}
-        <Markdown className="prose max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground dark:prose-invert line-clamp-3">
-          {description}
-        </Markdown>
+        <div className="prose max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground dark:prose-invert line-clamp-3">
+          <Markdown>{description}</Markdown>
+        </div>
 
         {/* Tech tags */}
         {tags && tags.length > 0 && (
@@ -228,7 +225,7 @@ export function ProjectCard({
                 className="inline-flex items-center gap-1 bg-secondary/70 dark:bg-white/5 border border-border/50 dark:border-white/10 py-[3px] px-[7px] rounded-md"
               >
                 {tag.icon && mounted ? (
-                  <span className="size-[12px] flex-shrink-0">
+                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center overflow-hidden [&_svg]:size-full [&_img]:size-full">
                     <StackIcon
                       name={tag.icon}
                       variant={resolvedTheme === "dark" ? "dark" : "light"}

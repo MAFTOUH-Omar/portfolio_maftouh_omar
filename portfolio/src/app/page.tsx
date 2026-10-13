@@ -1,12 +1,12 @@
-import BlurFadeText from "@/Components/magicui/blur-fade-text";
-import { ProjectCard } from "@/Components/project-card";
-import { ResumeCard } from "@/Components/resume-card";
+import BlurFadeText from "@/components/magicui/blur-fade-text";
+import { ProjectCard } from "@/components/project-card";
+import { ResumeCard } from "@/components/resume-card";
 import { DATA } from "@/data/resume";
 import Link from "next/link";
 import Markdown from "react-markdown";
-import BlurFade from "@/Components/magicui/blur-fade";
-import { Avatar , AvatarFallback , AvatarImage } from "@/Components/ui/avatar";
-import { SkillBadge } from "@/Components/skill-badge";
+import BlurFade from "@/components/magicui/blur-fade";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SkillBadge } from "@/components/skill-badge";
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -31,7 +31,12 @@ export default function Page() {
             </div>
             <BlurFade delay={BLUR_FADE_DELAY}>
               <Avatar className="size-36 border">
-                <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
+                <AvatarImage
+                  alt={DATA.name}
+                  src={DATA.avatarUrl}
+                  loading="eager"
+                  fetchPriority="high"
+                />
                 <AvatarFallback>{DATA.initials}</AvatarFallback>
               </Avatar>
             </BlurFade>
@@ -43,9 +48,9 @@ export default function Page() {
           <h2 className="text-xl font-bold">About</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
-          <Markdown className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-            {DATA.summary}
-          </Markdown>
+          <div className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+            <Markdown>{DATA.summary}</Markdown>
+          </div>
         </BlurFade>
       </section>
       <section id="work">
@@ -169,7 +174,14 @@ export default function Page() {
                   with a direct question on mail
                 </Link>{" "}
                 and I&apos;ll respond whenever I can. I will ignore all
-                soliciting. <Link href="" className="text-blue-500 hover:underline">Feel free to download my CV for more details.</Link>
+                soliciting.{" "}
+                <Link
+                  href="/cv-maftouh-omar.pdf"
+                  download
+                  className="text-blue-500 hover:underline"
+                >
+                  Feel free to download my CV for more details.
+                </Link>
               </p>
             </div>
           </BlurFade>

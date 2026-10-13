@@ -1,7 +1,7 @@
 "use client";
-import StackIcon from "tech-stack-icons";
+import { StackIcon } from "@/components/tech-icon";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useMounted } from "@/hooks/use-mounted";
 
 interface SkillBadgeProps {
   name: string;
@@ -10,13 +10,11 @@ interface SkillBadgeProps {
 
 export function SkillBadge({ name, icon }: SkillBadgeProps) {
   const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useMounted();
 
   return (
     <div className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors cursor-default">
-      <span className="size-5 flex-shrink-0">
+      <span className="size-5 flex-shrink-0 flex items-center justify-center overflow-hidden [&_svg]:size-full [&_img]:size-full">
         {mounted && (
           <StackIcon
             name={icon}
