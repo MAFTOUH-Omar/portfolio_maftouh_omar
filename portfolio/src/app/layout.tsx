@@ -1,11 +1,13 @@
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import { Outfit as FontSans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ScrollProgress } from "@/components/scroll-progress";
+import { BackToTop } from "@/components/back-to-top";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -65,8 +67,9 @@ const personJsonLd = {
   image: `${DATA.url}${DATA.avatarUrl}`,
   jobTitle: "Full-stack Developer",
   description: DATA.description,
-  sameAs: Object.values(DATA.contact.social)
-    .map((social) => social.url)
+  sameAs: Object.entries(DATA.contact.social)
+    .filter(([key]) => key !== "email")
+    .map(([, social]) => social.url)
     .filter((url) => url.startsWith("http")),
 };
 
@@ -85,13 +88,16 @@ export default function RootLayout({
       </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased max-w-2xl mx-auto py-12 sm:py-24 px-6",
+          "min-h-screen bg-background font-sans antialiased max-w-2xl mx-auto pt-6 pb-12 sm:pt-10 sm:pb-24 px-6",
           fontSans.variable
         )}
+        suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light">
           <TooltipProvider delayDuration={0}>
+            <ScrollProgress />
             {children}
+            <BackToTop />
             <Navbar />
           </TooltipProvider>
         </ThemeProvider>

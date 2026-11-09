@@ -44,9 +44,9 @@ export const ResumeCard = ({
       className="block cursor-pointer"
       onClick={handleClick}
     >
-      <Card className="flex">
+      <Card className="flex p-3 sm:p-4">
         <div className="flex-none">
-          <Avatar className="border size-12 m-auto bg-muted-background dark:bg-foreground">
+          <Avatar className="border border-border size-12 m-auto bg-white">
             <AvatarImage
               src={logoUrl}
               alt={altText}
@@ -64,8 +64,8 @@ export const ResumeCard = ({
                   <span className="inline-flex gap-x-1">
                     {badges.map((badge, index) => (
                       <Badge
-                        variant="secondary"
-                        className="align-middle text-xs"
+                        variant="outline"
+                        className="align-middle text-xs border-forest/40 bg-forest/10 text-forest"
                         key={index}
                       >
                         {badge}
@@ -75,7 +75,7 @@ export const ResumeCard = ({
                 )}
                 <ChevronRightIcon
                   className={cn(
-                    "size-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100",
+                    "size-4 translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100 group-hover:text-forest",
                     isExpanded ? "rotate-90" : "rotate-0"
                   )}
                 />
@@ -84,7 +84,7 @@ export const ResumeCard = ({
                 {period}
               </div>
             </div>
-            {subtitle && <div className="font-sans text-xs">{subtitle}</div>}
+            {subtitle && <div className="font-sans text-xs text-muted-foreground">{subtitle}</div>}
           </CardHeader>
           {description && (
             <motion.div

@@ -75,7 +75,7 @@ export const DATA = {
       },
       email: {
         name: "Send Email",
-        url: "mailto:m.omarmaftouh@gmail.com",
+        url: "https://mail.google.com/mail/?view=cm&fs=1&to=m.omarmaftouh@gmail.com",
         icon: Icons.email,
 
         navbar: true,
@@ -156,6 +156,42 @@ export const DATA = {
   ],
   projects: [
     {
+      title: "PLAAYER PORTAIL",
+      href: "https://plaayer-portail.laravel.cloud/",
+      dates: "Oct 2026 - Today",
+      active: true,
+      description:
+        "Plaayer activates Samsung Smart TVs as playlist players in 30 seconds, with playlist management from a web portal. Built with Laravel 13, PHP 8.5, Inertia.js v3 & TypeScript, GSAP/Motion animations and a custom icon set. Stripe & Paddle subscription billing, PostgreSQL 15 with read replica, SonarQube Cloud quality gating, and SEO-optimized pages, deployed via Docker Compose, Kubernetes, and Terraform IaC.",
+      technologies: [
+        { name: "Laravel 13", icon: "laravel" },
+        { name: "PHP 8.5", icon: "php" },
+        { name: "Inertia.js" },
+        { name: "TypeScript", icon: "typescript" },
+        { name: "TailwindCSS", icon: "tailwindcss" },
+        { name: "GSAP", icon: "gsap" },
+        { name: "Motion", icon: "motion" },
+        { name: "Laravel Breeze" },
+        { name: "Laravel Fortify" },
+        { name: "PostgreSQL 15", icon: "postgresql" },
+        { name: "Stripe", icon: "stripe" },
+        { name: "Paddle" },
+        { name: "Docker", icon: "docker" },
+        { name: "Docker Compose", icon: "docker" },
+        { name: "Kubernetes", icon: "kubernetes" },
+        { name: "Terraform", icon: "terraform" },
+        { name: "SonarQube Cloud", icon: "sonarqube" },
+        { name: "ESLint", icon: "eslint" },
+      ],
+      links: [
+        {
+          type: "Website",
+          href: "https://plaayer-portail.laravel.cloud/",
+          icon: <Icons.globe className="size-3" />,
+        },
+      ],
+      images: ["/plaayer-browser.webp", "/plaayer-tv.webp"],
+    },
+    {
       title: "FILEVAULT",
       href: "https://filevault-client.vercel.app",
       dates: "Sep 2026 - Today",
@@ -191,7 +227,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      images: ["/filevault.png"],
+      images: ["/filevault.webp"],
     },
     {
       title: "REBRAND LOCAMED",
@@ -217,7 +253,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      images: ["/locamed_rebrand.png"],
+      images: ["/locamed_rebrand.webp"],
     },
     {
       title: "LOCAMED PORTAIL",
@@ -247,7 +283,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      images: ["/locamed_preview.png", "/locamed_portail_commande.png"],
+      images: ["/locamed_preview.webp", "/locamed_portail_commande.webp"],
     },
     {
       title: "NOVACODE DASHBOARD STREAMING",
@@ -269,7 +305,7 @@ export const DATA = {
         { name: "GitHub Actions", icon: "github" },
       ],
       links: [],
-      images: ["/goldenott.png"],
+      images: ["/goldenott.webp"],
     },
     {
       title: "TMDB STREAMING BOT",
@@ -291,7 +327,7 @@ export const DATA = {
     },
     {
       title: "Store IPTV",
-      href: "/Store.png",
+      href: "https://store.thesmartiptv.com/",
       dates: "Oct 2023 - Oct 2024",
       active: true,
       description:
@@ -314,7 +350,7 @@ export const DATA = {
           icon: <Icons.globe className="size-3" />,
         },
       ],
-      images: ["/Store.png"],
+      images: ["/Store.webp"],
     },
     {
       title: "MCIE",
@@ -343,11 +379,11 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      images: ["/Mcie.png"],
+      images: ["/Mcie.webp"],
     },
     {
       title: "RebornOTT",
-      href: "https://llm.report",
+      href: "",
       dates: "June 2024 - September 2024",
       active: true,
       description:
@@ -364,7 +400,7 @@ export const DATA = {
     },
     {
       title: "Panda snack",
-      href: "https://automatic.chat",
+      href: "https://panda-snack.vercel.app/",
       dates: "Oct 2023 - Oct 2023",
       active: true,
       description:
@@ -388,7 +424,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      images: ["/Panda.png"],
+      images: ["/Panda.webp"],
     },
     {
       title: "Nano 4K",
@@ -396,7 +432,7 @@ export const DATA = {
       dates: "Aug 2024 - Sep 2024",
       active: true,
       description:
-        "Panda Snack is a MERN stack website designed for an online snack shop. The project offers a smooth user experience with dynamic product displays, secure checkout, and real-time order tracking, all managed through an intuitive and responsive interface.",
+        "Nano 4K is a product showcase site for a 4K streaming device, built with Laravel and Inertia.js. Features a responsive TailwindCSS catalog, product detail pages, and an order/checkout flow backed by MySQL.",
       technologies: [
         { name: "Laravel", icon: "laravel" },
         { name: "Inertia.js" },
@@ -404,7 +440,7 @@ export const DATA = {
         { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [],
-      images: ["/Nano.png"],
+      images: ["/Nano.webp"],
     },
     {
       title: "ORT FOOD",
@@ -429,7 +465,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      images: ["/Ort_food.png"],
+      images: ["/Ort_food.webp"],
     },
     {
       title: "Prayer",
@@ -455,7 +491,7 @@ export const DATA = {
           icon: <Icons.github className="size-3" />,
         },
       ],
-      images: ["/Prayer.png"],
+      images: ["/Prayer.webp"],
     },
   ],
 } as const;

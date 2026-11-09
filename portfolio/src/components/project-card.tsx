@@ -8,8 +8,8 @@ import Markdown from "react-markdown";
 import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { StackIcon } from "@/components/tech-icon";
-import { useTheme } from "next-themes";
 import { useMounted } from "@/hooks/use-mounted";
+import { useTheme } from "next-themes";
 
 interface TechTag {
   readonly name: string;
@@ -31,10 +31,13 @@ interface Props {
     href: string;
   }[];
   className?: string;
+  /** Tailwind aspect-ratio class for the media area, e.g. "aspect-square". Varying this per card creates the masonry effect. */
+  aspectClassName?: string;
 }
 
 export function ProjectCard({
   title,
+  href,
   description,
   dates,
   tags,
@@ -42,12 +45,28 @@ export function ProjectCard({
   video,
   links,
   className,
+  aspectClassName,
 }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
-  const { resolvedTheme } = useTheme();
   const mounted = useMounted();
+  const { resolvedTheme } = useTheme();
 
   const allImages = images ?? [];
+
+  const openProject = useCallback(() => {
+    if (href) window.open(href, "_blank", "noopener,noreferrer");
+  }, [href]);
+
+  const onCardKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!href) return;
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openProject();
+      }
+    },
+    [href, openProject]
+  );
 
   const nextImage = useCallback(
     (e: React.MouseEvent) => {
@@ -71,13 +90,27 @@ export function ProjectCard({
 
   return (
     <Card
+      role={href ? "link" : undefined}
+      tabIndex={href ? 0 : undefined}
+      onClick={href ? openProject : undefined}
+      onKeyDown={href ? onCardKeyDown : undefined}
       className={cn(
-        "group flex flex-col overflow-hidden border border-border/60 dark:border-white/10 rounded-xl shadow-sm hover:shadow-lg dark:hover:shadow-black/30 transition-all duration-300 ease-out h-full bg-card",
+        "group relative flex flex-col overflow-hidden shadow-sm",
+        "ring-2 ring-offset-2 ring-transparent ring-offset-transparent",
+        "transition-all duration-300 ease-out",
+        "hover:-translate-y-0.5 hover:shadow-lg hover:ring-primary/50 hover:ring-offset-background",
+        "focus-within:-translate-y-0.5 focus-within:shadow-lg focus-within:ring-primary/50 focus-within:ring-offset-background",
+        href && "cursor-pointer outline-none",
         className
       )}
     >
       {/* Image / Video area — edge to edge */}
-      <div className="relative h-48 overflow-hidden bg-muted/50 flex-shrink-0">
+      <div
+        className={cn(
+          "relative overflow-hidden bg-muted/50 flex-shrink-0",
+          aspectClassName ?? "aspect-[4/3]"
+        )}
+      >
         {/* Bottom gradient for depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-[1] pointer-events-none" />
 
@@ -106,7 +139,7 @@ export function ProjectCard({
                   src={img}
                   alt={`${title} - ${index + 1}`}
                   fill
-                  sizes="(max-width: 640px) 100vw, 400px"
+                  sizes="(max-width: 640px) 100vw, 500px"
                   className="object-cover object-top group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
               </div>
@@ -163,7 +196,7 @@ export function ProjectCard({
         ) : !video ? (
           /* Placeholder when no media */
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-5xl font-black text-muted-foreground/15 select-none">
+            <span className="text-5xl font-black text-white/15 select-none">
               {title.charAt(0)}
             </span>
           </div>
@@ -175,10 +208,10 @@ export function ProjectCard({
         {/* Title row */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-semibold text-sm leading-snug text-foreground truncate">
+            <h3 className="font-semibold text-sm leading-snug text-card-foreground truncate">
               {title}
             </h3>
-            <p className="text-[11px] text-muted-foreground/70 mt-0.5 font-medium">
+            <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
               {dates}
             </p>
           </div>
@@ -191,7 +224,7 @@ export function ProjectCard({
                   key={idx}
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
-                  className="text-muted-foreground/60 hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted"
+                  className="text-muted-foreground hover:text-accent transition-colors p-1 rounded-md hover:bg-accent/10"
                   title={l.type}
                 >
                   {l.type === "Source" ? (
@@ -212,7 +245,7 @@ export function ProjectCard({
         </div>
 
         {/* Description */}
-        <div className="prose max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground dark:prose-invert line-clamp-3">
+        <div className="prose dark:prose-invert max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground line-clamp-3">
           <Markdown>{description}</Markdown>
         </div>
 
@@ -222,7 +255,7 @@ export function ProjectCard({
             {tags.map((tag) => (
               <div
                 key={tag.name}
-                className="inline-flex items-center gap-1 bg-secondary/70 dark:bg-white/5 border border-border/50 dark:border-white/10 py-[3px] px-[7px] rounded-md"
+                className="inline-flex items-center gap-1 bg-foreground/5 border border-border py-[3px] px-[7px] rounded-md"
               >
                 {tag.icon && mounted ? (
                   <span className="size-[12px] flex-shrink-0 flex items-center justify-center overflow-hidden [&_svg]:size-full [&_img]:size-full">
@@ -232,11 +265,11 @@ export function ProjectCard({
                     />
                   </span>
                 ) : (
-                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center text-[8px] font-bold text-muted-foreground">
+                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center text-[8px] font-bold text-foreground/70">
                     {tag.name.charAt(0)}
                   </span>
                 )}
-                <span className="text-[11px] font-medium text-muted-foreground">
+                <span className="text-[11px] font-medium text-foreground/80">
                   {tag.name}
                 </span>
               </div>

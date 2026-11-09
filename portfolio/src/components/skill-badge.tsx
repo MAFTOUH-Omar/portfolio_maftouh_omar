@@ -13,7 +13,7 @@ export function SkillBadge({ name, icon }: SkillBadgeProps) {
   const mounted = useMounted();
 
   return (
-    <div className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors cursor-default">
+    <div className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors cursor-default hover:border-accent hover:bg-accent/10">
       <span className="size-5 flex-shrink-0 flex items-center justify-center overflow-hidden [&_svg]:size-full [&_img]:size-full">
         {mounted && (
           <StackIcon
