@@ -25,7 +25,9 @@ export function BackToTop() {
           transition={{ duration: 0.2 }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           aria-label="Back to top"
-          className="fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-colors hover:bg-primary/90 sm:right-6"
+          // Mobile: sit above the dock, which spans almost the full width.
+          // sm+: drop down level with the dock (vertically centred on it).
+          className="fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-colors hover:bg-primary/90 sm:bottom-6 sm:right-6"
         >
           <ArrowUp className="size-4" />
         </motion.button>

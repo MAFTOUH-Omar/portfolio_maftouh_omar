@@ -31,7 +31,7 @@ interface Props {
     href: string;
   }[];
   className?: string;
-  /** Tailwind aspect-ratio class for the media area, e.g. "aspect-square". Varying this per card creates the masonry effect. */
+  /** Tailwind aspect-ratio class for the media area. Defaults to 2:1, the shape of most project screenshots. */
   aspectClassName?: string;
 }
 
@@ -108,7 +108,7 @@ export function ProjectCard({
       <div
         className={cn(
           "relative overflow-hidden bg-muted/50 flex-shrink-0",
-          aspectClassName ?? "aspect-[4/3]"
+          aspectClassName ?? "aspect-[2/1]"
         )}
       >
         {/* Bottom gradient for depth */}
@@ -135,12 +135,21 @@ export function ProjectCard({
                   transform: `translateX(${(index - currentImage) * 100}%)`,
                 }}
               >
+                {/* Blurred fill so images with another ratio (portrait, 16:10…) are shown whole without empty bars */}
+                <Image
+                  src={img}
+                  alt=""
+                  aria-hidden
+                  fill
+                  sizes="(max-width: 640px) 100vw, 420px"
+                  className="scale-110 object-cover opacity-80 blur-2xl"
+                />
                 <Image
                   src={img}
                   alt={`${title} - ${index + 1}`}
                   fill
-                  sizes="(max-width: 640px) 100vw, 500px"
-                  className="object-cover object-top group-hover:scale-[1.04] transition-transform duration-700 ease-out"
+                  sizes="(max-width: 640px) 100vw, 420px"
+                  className="object-contain group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
               </div>
             ))}

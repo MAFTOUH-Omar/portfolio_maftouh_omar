@@ -7,92 +7,75 @@ import Markdown from "react-markdown";
 import BlurFade from "@/components/magicui/blur-fade";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SkillBadge } from "@/components/skill-badge";
+import { CodeFrame } from "@/components/code-frame";
 import { ArrowUpRight } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.04;
-
-// Cycled per card so the gallery packs into an uneven, Pinterest-style masonry
-// instead of a uniform grid.
-const PROJECT_IMAGE_ASPECTS = [
-  "aspect-[4/5]",
-  "aspect-square",
-  "aspect-[3/4]",
-  "aspect-video",
-  "aspect-[4/5]",
-  "aspect-square",
-];
 
 export default function Page() {
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
       <section id="hero">
-        <div className="relative isolate overflow-hidden rounded-lg border border-border bg-card shadow-sm">
-          {/* Glass-fold atmosphere: folded light ribbons in primary / accent / secondary, theme-reactive */}
-          <div aria-hidden className="pointer-events-none absolute inset-0">
-            <div className="absolute -left-24 top-[-70px] h-[200px] w-[150%] rotate-[-24deg] bg-gradient-to-r from-transparent via-primary to-transparent opacity-25 blur-3xl dark:opacity-70" />
-            <div className="absolute -right-24 top-[10px] h-[180px] w-[150%] rotate-[16deg] bg-gradient-to-r from-transparent via-accent to-transparent opacity-20 blur-3xl dark:opacity-50" />
-            <div className="absolute left-[-10%] top-[85px] h-[40px] w-[130%] rotate-[-20deg] bg-gradient-to-r from-transparent via-secondary to-transparent opacity-50 blur-xl dark:opacity-60" />
-          </div>
-
-          {/* Corner stickers */}
-          <span
-            aria-hidden
-            className="absolute left-4 top-4 z-10 -rotate-6 sm:left-6 sm:top-6"
-          >
-            <span className="flex size-9 animate-float items-center justify-center rounded-full border border-border bg-background/70 text-lg shadow-lg backdrop-blur-md motion-reduce:animate-none sm:size-11 sm:text-2xl">
-              👋
-            </span>
-          </span>
-          <span
-            aria-hidden
-            className="absolute bottom-4 right-4 z-10 rotate-6 sm:bottom-6 sm:right-6"
-          >
-            <span className="flex size-9 animate-float items-center justify-center rounded-full border border-border bg-background/70 text-lg shadow-lg backdrop-blur-md motion-reduce:animate-none sm:size-11 sm:text-2xl [animation-delay:-2.5s]">
-              🚀
-            </span>
-          </span>
-
-          <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-4 px-6 py-8 text-center sm:py-12">
-            <BlurFade delay={BLUR_FADE_DELAY}>
-              <Avatar className="size-16 ring-2 ring-primary/40 ring-offset-4 ring-offset-card sm:size-20">
-                <AvatarImage
-                  alt={DATA.name}
-                  src={DATA.avatarUrl}
-                  loading="eager"
-                  fetchPriority="high"
-                />
-                <AvatarFallback>{DATA.initials}</AvatarFallback>
-              </Avatar>
-            </BlurFade>
-            <div className="flex flex-col items-center gap-2">
-              <BlurFadeText
-                as="h1"
-                delay={BLUR_FADE_DELAY}
-                className="text-3xl font-bold tracking-tighter text-foreground sm:text-4xl xl:text-5xl/none"
-                yOffset={8}
-                text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
-              />
-              <BlurFadeText
-                className="max-w-[520px] text-balance text-muted-foreground sm:text-lg"
-                delay={BLUR_FADE_DELAY}
-                text={DATA.description}
-              />
-            </div>
-            <BlurFade delay={BLUR_FADE_DELAY}>
-              <Link
-                href={DATA.contact.social.email.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-3 rounded-full bg-primary py-1.5 pl-5 pr-1.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        <CodeFrame tag="FullStack" attributes={{ craft: "web-dreams" }}>
+          <div className="relative isolate flex flex-col justify-center overflow-hidden rounded-lg bg-hero-ink text-white shadow-2xl shadow-black/25 sm:min-h-[27rem] dark:ring-1 dark:ring-white/10">
+            {/* Card art: bank-card composition (diagonal panel top-right,
+                banded disc bottom-left) painted in the brand palette */}
+            <div aria-hidden className="pointer-events-none absolute inset-0">
+              <div className="absolute inset-0 bg-hero-panel [clip-path:polygon(62%_0,100%_0,100%_28%)] sm:[clip-path:polygon(64%_0,100%_0,100%_68%)]" />
+              <svg
+                viewBox="0 0 340 235"
+                className="absolute bottom-0 left-0 h-auto w-[150px] sm:w-[290px]"
               >
-                Get in touch
-                <span className="flex size-8 items-center justify-center rounded-full bg-primary-foreground/15 text-primary-foreground transition-transform duration-300 group-hover:rotate-45">
-                  <ArrowUpRight className="size-4" />
-                </span>
-              </Link>
-            </BlurFade>
+                <circle cx="80" cy="264" r="262" className="fill-hero-disc" />
+                <circle cx="30" cy="534" r="360" className="fill-hero-ink" />
+              </svg>
+              {/* Depth + glossy sheen over everything */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-black/30" />
+              <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgb(255_255_255/0.06)_45%,transparent_60%)]" />
+            </div>
+
+            <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-4 px-6 py-12 text-center sm:py-14">
+              <BlurFade delay={BLUR_FADE_DELAY}>
+                <Avatar className="size-16 ring-2 ring-hero-panel/50 ring-offset-4 ring-offset-hero-ink sm:size-20">
+                  <AvatarImage
+                    alt={DATA.name}
+                    src={DATA.avatarUrl}
+                    loading="eager"
+                    fetchPriority="high"
+                  />
+                  <AvatarFallback>{DATA.initials}</AvatarFallback>
+                </Avatar>
+              </BlurFade>
+              <div className="flex flex-col items-center gap-2">
+                <BlurFadeText
+                  as="h1"
+                  delay={BLUR_FADE_DELAY}
+                  className="text-3xl font-bold tracking-tighter text-white sm:text-4xl xl:text-5xl/none"
+                  yOffset={8}
+                  text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
+                />
+                <BlurFadeText
+                  className="max-w-[520px] text-balance text-white/75 sm:text-lg"
+                  delay={BLUR_FADE_DELAY}
+                  text={DATA.description}
+                />
+              </div>
+              <BlurFade delay={BLUR_FADE_DELAY}>
+                <Link
+                  href={DATA.contact.social.email.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink shadow-lg shadow-black/20 transition-colors hover:bg-hero-panel"
+                >
+                  Get in touch
+                  <span className="flex size-8 items-center justify-center rounded-full bg-hero-ink text-white transition-transform duration-300 group-hover:rotate-45">
+                    <ArrowUpRight className="size-4" />
+                  </span>
+                </Link>
+              </BlurFade>
+            </div>
           </div>
-        </div>
+        </CodeFrame>
       </section>
       <section id="about">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
@@ -199,9 +182,6 @@ export default function Page() {
                   dates={project.dates}
                   tags={project.technologies}
                   images={project.images}
-                  aspectClassName={
-                    PROJECT_IMAGE_ASPECTS[id % PROJECT_IMAGE_ASPECTS.length]
-                  }
                   links={project.links}
                 />
               </BlurFade>

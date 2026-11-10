@@ -46,6 +46,11 @@
   --ring: var(--electric);
 
   --radius: 0.3rem;
+
+  /* Hero "bank card" — fixed dark palette, intentionally not theme-reactive */
+  --hero-ink: hsl(160 48% 15%);
+  --hero-panel: hsl(38 60% 82%);
+  --hero-disc: hsl(272 78% 60%);
 }
 
 .dark {
@@ -92,6 +97,10 @@
   --color-sand: var(--sand);
   --color-electric: var(--electric);
 
+  --color-hero-ink: var(--hero-ink);
+  --color-hero-panel: var(--hero-panel);
+  --color-hero-disc: var(--hero-disc);
+
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
@@ -123,7 +132,7 @@
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
-  --animate-float: float 5s ease-in-out infinite;
+  --animate-caret: caret-blink 1.1s step-end infinite;
 
   @keyframes accordion-down {
     from {
@@ -141,13 +150,13 @@
       height: 0;
     }
   }
-  @keyframes float {
+  @keyframes caret-blink {
     0%,
     100% {
-      transform: translateY(0);
+      opacity: 1;
     }
     50% {
-      transform: translateY(-6px);
+      opacity: 0;
     }
   }
 }
