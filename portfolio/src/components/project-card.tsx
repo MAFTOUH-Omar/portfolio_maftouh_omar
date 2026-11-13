@@ -1,17 +1,19 @@
 "use client";
 
-import { Card } from "./ui/card";
+import { ProjectDialog } from "@/components/project-dialog";
+import { ProjectGallery } from "@/components/project-gallery";
+import {
+  LinkIcon,
+  TechTagList,
+  type ProjectLabels,
+  type ProjectLink,
+  type TechTag,
+} from "@/components/project-shared";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
+import { Maximize2 } from "lucide-react";
 import Link from "next/link";
-import { useState, useCallback } from "react";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { TechIcon } from "@/components/tech-icon";
-
-interface TechTag {
-  readonly name: string;
-  readonly icon?: string;
-}
+import { useState } from "react";
+import { Card } from "./ui/card";
 
 interface Props {
   title: string;
@@ -19,34 +21,13 @@ interface Props {
   description: string;
   dates: string;
   tags: readonly TechTag[];
-  link?: string;
   images?: readonly string[];
   video?: string;
-  links?: readonly {
-    kind: "website" | "apiDocs" | "source";
-    /** Localized label shown as tooltip / accessible name. */
-    type: string;
-    href: string;
-  }[];
-  /** Localized accessibility strings. */
-  labels: {
-    previousImage: string;
-    nextImage: string;
-    goToImage: string;
-    screenshot: string;
-  };
+  links?: readonly ProjectLink[];
+  labels: ProjectLabels;
   className?: string;
   /** Tailwind aspect-ratio class for the media area. Defaults to 2:1, the shape of most project screenshots. */
   aspectClassName?: string;
-  /** When set, renders the wide "flagship" layout with this badge text. */
-  featuredLabel?: string;
-}
-
-/** Feeds the cursor position to the .spotlight overlay — no React re-render. */
-function trackPointer(e: React.PointerEvent<HTMLElement>) {
-  const rect = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-  e.currentTarget.style.setProperty("--my", `${e.clientY - rect.top}px`);
 }
 
 export function ProjectCard({
@@ -61,259 +42,142 @@ export function ProjectCard({
   className,
   aspectClassName,
   labels,
-  featuredLabel,
 }: Props) {
-  const featured = Boolean(featuredLabel);
   const [currentImage, setCurrentImage] = useState(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const allImages = images ?? [];
+  const sizes = "(max-width: 640px) 100vw, 420px";
 
-  const openProject = useCallback(() => {
-    if (href) window.open(href, "_blank", "noopener,noreferrer");
-  }, [href]);
+  const openDialog = () => setDialogOpen(true);
 
-  const onCardKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (!href) return;
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openProject();
-      }
-    },
-    [href, openProject]
-  );
-
-  const nextImage = useCallback(
-    (e: React.MouseEvent) => {
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    // Only when the card itself is focused, not a link or button inside it.
+    if (e.target !== e.currentTarget) return;
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      e.stopPropagation();
-      setCurrentImage((prev) => (prev + 1) % allImages.length);
-    },
-    [allImages.length]
-  );
-
-  const prevImage = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setCurrentImage(
-        (prev) => (prev - 1 + allImages.length) % allImages.length
-      );
-    },
-    [allImages.length]
-  );
+      openDialog();
+    }
+  };
 
   return (
-    <Card
-      role={href ? "link" : undefined}
-      tabIndex={href ? 0 : undefined}
-      onClick={href ? openProject : undefined}
-      onKeyDown={href ? onCardKeyDown : undefined}
-      onPointerMove={trackPointer}
-      className={cn(
-        "group relative flex flex-col overflow-hidden shadow-sm",
-        featured && "sm:flex-row",
-        "ring-2 ring-offset-2 ring-transparent ring-offset-transparent",
-        "transition-all duration-300 ease-out",
-        "hover:-translate-y-0.5 hover:shadow-lg hover:ring-primary/50 hover:ring-offset-background",
-        "focus-within:-translate-y-0.5 focus-within:shadow-lg focus-within:ring-primary/50 focus-within:ring-offset-background",
-        href && "cursor-pointer outline-none",
-        className
-      )}
-    >
-      {/* Cursor spotlight (fine pointers only, hidden until hover) */}
-      <div
-        aria-hidden
-        className="spotlight pointer-events-none absolute inset-0 z-[5] opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(pointer:coarse)]:hidden"
-      />
-
-      {/* Image / Video area — edge to edge */}
-      <div
+    <>
+      <Card
+        role="button"
+        tabIndex={0}
+        aria-haspopup="dialog"
+        aria-label={`${labels.details} — ${title}`}
+        onClick={openDialog}
+        onKeyDown={onKeyDown}
         className={cn(
-          "relative overflow-hidden bg-muted/50 flex-shrink-0",
-          aspectClassName ?? "aspect-[2/1]",
-          featured && "sm:aspect-auto sm:min-h-72 sm:w-[58%]"
+          "group relative flex cursor-pointer flex-col overflow-hidden outline-none",
+          // Flat hover: lift + primary border, nothing drawn outside the card.
+          "transition-[transform,border-color] duration-300 ease-out",
+          "hover:-translate-y-1 hover:border-primary/60",
+          "focus-visible:-translate-y-1 focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-ring",
+          "motion-reduce:hover:translate-y-0",
+          className
         )}
       >
-        {featured && (
-          <span className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-accent-foreground shadow-md">
-            ★ {featuredLabel}
-          </span>
-        )}
-        {/* Bottom gradient for depth */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-[1] pointer-events-none" />
-
-        {video && (
-          <video
-            src={video}
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover object-top"
-          />
-        )}
-
-        {allImages.length > 0 ? (
-          <>
-            {allImages.map((img, index) => (
-              <div
-                key={index}
-                className="absolute inset-0 transition-transform duration-500 ease-in-out"
-                style={{
-                  transform: `translateX(${(index - currentImage) * 100}%)`,
-                }}
-              >
-                {/* Blurred fill so images with another ratio (portrait, 16:10…) are shown whole without empty bars */}
-                <Image
-                  src={img}
-                  alt=""
-                  aria-hidden
-                  fill
-                  sizes={featured ? "(max-width: 640px) 100vw, 520px" : "(max-width: 640px) 100vw, 420px"}
-                  className="scale-110 object-cover opacity-80 blur-2xl"
-                />
-                <Image
-                  src={img}
-                  alt={`${labels.screenshot} ${title} (${index + 1}/${allImages.length})`}
-                  fill
-                  sizes={featured ? "(max-width: 640px) 100vw, 520px" : "(max-width: 640px) 100vw, 420px"}
-                  className="object-contain group-hover:scale-[1.04] transition-transform duration-700 ease-out"
-                />
-              </div>
-            ))}
-
-            {allImages.length > 1 && (
-              <>
-                {/* Prev / Next */}
-                <button
-                  onClick={prevImage}
-                  className="absolute left-2.5 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-md p-1.5 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/65 hover:scale-110"
-                  aria-label={labels.previousImage}
-                >
-                  <ChevronLeft className="size-3.5" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-2.5 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-md p-1.5 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/65 hover:scale-110"
-                  aria-label={labels.nextImage}
-                >
-                  <ChevronRight className="size-3.5" />
-                </button>
-
-                {/* Pill dots */}
-                <div className="absolute bottom-2.5 left-1/2 z-10 -translate-x-1/2 flex items-center gap-1">
-                  {allImages.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setCurrentImage(index);
-                      }}
-                      className={cn(
-                        "h-1.5 rounded-full transition-all duration-300",
-                        currentImage === index
-                          ? "w-5 bg-white"
-                          : "w-1.5 bg-white/50 hover:bg-white/75"
-                      )}
-                      aria-label={`${labels.goToImage} ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                {/* Counter badge */}
-                <div className="absolute top-2.5 right-2.5 z-10">
-                  <span className="text-white/90 text-[10px] font-medium bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full tabular-nums">
-                    {currentImage + 1}&thinsp;/&thinsp;{allImages.length}
-                  </span>
-                </div>
-              </>
-            )}
-          </>
-        ) : !video ? (
-          /* Placeholder when no media */
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-5xl font-black text-white/15 select-none">
-              {title.charAt(0)}
-            </span>
-          </div>
-        ) : null}
-      </div>
-
-      {/* Card body */}
-      <div className={cn("flex flex-col flex-1 p-4 gap-2", featured && "sm:p-6 sm:gap-3")}>
-        {/* Title row */}
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h3 className={cn("font-semibold text-sm leading-snug text-card-foreground truncate", featured && "sm:text-lg sm:whitespace-normal")}>
-              {title}
-            </h3>
-            <p className="mt-0.5 font-mono text-[10.5px] text-muted-foreground">
-              {dates}
-            </p>
-          </div>
-
-          {links && links.length > 0 && (
-            <div className="flex items-center gap-0.5 flex-shrink-0 mt-0.5">
-              {links.map((l, idx) => (
-                <Link
-                  href={l.href}
-                  key={idx}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="text-muted-foreground hover:text-accent transition-colors p-1 rounded-md hover:bg-accent/10"
-                  title={l.type}
-                  aria-label={`${l.type} — ${title}`}
-                >
-                  {l.kind === "source" ? (
-                    <svg
-                      viewBox="0 0 438.549 438.549"
-                      className="size-[15px]"
-                      fill="currentColor"
-                    >
-                      <path d="M409.132 114.573c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.063-29.408-39.781 0-76.472 9.804-110.063 29.408-33.596 19.605-60.192 46.204-79.8 79.8C9.803 148.168 0 184.854 0 224.63c0 47.78 13.94 90.745 41.827 128.906 27.884 38.164 63.906 64.572 108.063 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417a2549.81 2549.81 0 01-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289 1.525-.859 4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136 6.28 0 11.704-.476 16.274-1.423 4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.068-79.226 27.88-38.161 41.825-81.126 41.825-128.906-.01-39.771-9.818-76.454-29.414-110.049z" />
-                    </svg>
-                  ) : (
-                    <ExternalLink className="size-[15px]" />
-                  )}
-                </Link>
-              ))}
-            </div>
+        {/* Image / Video area — edge to edge */}
+        <div
+          className={cn(
+            "relative flex-shrink-0 overflow-hidden bg-muted/50",
+            aspectClassName ?? "aspect-[2/1]"
           )}
+        >
+          {/* "View details" hint, revealed on hover */}
+          <span
+            aria-hidden
+            className="absolute bottom-2.5 left-2.5 z-10 inline-flex translate-y-1 items-center gap-1.5 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+          >
+            <Maximize2 className="size-3" />
+            {labels.details}
+          </span>
+
+          {video && (
+            <video
+              src={video}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="h-full w-full object-cover object-top"
+            />
+          )}
+
+          {allImages.length > 0 ? (
+            <ProjectGallery
+              images={allImages}
+              title={title}
+              index={currentImage}
+              onIndexChange={setCurrentImage}
+              labels={labels}
+              sizes={sizes}
+            />
+          ) : !video ? (
+            /* Placeholder when no media */
+            <div className="flex h-full w-full items-center justify-center">
+              <span className="select-none text-5xl font-black text-white/15">
+                {title.charAt(0)}
+              </span>
+            </div>
+          ) : null}
         </div>
 
-        {/* Description */}
-        <div className={cn("prose dark:prose-invert max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground line-clamp-3", featured && "sm:text-[13px] sm:line-clamp-none")}>
-          <p>{description}</p>
-        </div>
+        {/* Card body */}
+        <div className="flex flex-1 flex-col gap-2 p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="truncate text-sm font-semibold leading-snug text-card-foreground">
+                {title}
+              </h3>
+              <p className="mt-0.5 font-mono text-[10.5px] text-muted-foreground">{dates}</p>
+            </div>
 
-        {/* Tech tags */}
-        {tags && tags.length > 0 && (
-          <div className="mt-auto pt-2 flex flex-wrap gap-1">
-            {tags.map((tag) => (
-              <div
-                key={tag.name}
-                className="inline-flex items-center gap-1 bg-foreground/5 border border-border py-[3px] px-[7px] rounded-md"
-              >
-                {tag.icon ? (
-                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center overflow-hidden">
-                    <TechIcon name={tag.icon} />
-                  </span>
-                ) : (
-                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center text-[8px] font-bold text-foreground/70">
-                    {tag.name.charAt(0)}
-                  </span>
-                )}
-                <span className="text-[11px] font-medium text-foreground/80">
-                  {tag.name}
-                </span>
+            {links && links.length > 0 && (
+              <div className="relative z-10 mt-0.5 flex flex-shrink-0 items-center gap-0.5">
+                {links.map((l, idx) => (
+                  <Link
+                    href={l.href}
+                    key={idx}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent/10 hover:text-accent"
+                    title={l.type}
+                    aria-label={`${l.type} — ${title}`}
+                  >
+                    <LinkIcon kind={l.kind} className="size-[15px]" />
+                  </Link>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
-      </div>
-    </Card>
+
+          <div
+            className="prose max-w-full line-clamp-3 text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground dark:prose-invert"
+          >
+            <p>{description}</p>
+          </div>
+
+          {tags.length > 0 && <TechTagList tags={tags} className="mt-auto pt-2" />}
+        </div>
+      </Card>
+
+      <ProjectDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        title={title}
+        href={href}
+        description={description}
+        dates={dates}
+        tags={tags}
+        images={allImages}
+        links={links ?? []}
+        labels={labels}
+        initialImage={currentImage}
+      />
+    </>
   );
 }

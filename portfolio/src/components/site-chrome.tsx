@@ -1,9 +1,10 @@
-import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { BackToTop } from "@/components/back-to-top";
+import { CookieConsent } from "@/components/cookie-consent";
+import { HoverGrid } from "@/components/hover-grid";
 import { getDictionary } from "@/data/dictionaries";
 import { getTranslatedSlugs } from "@/data/blog";
 import type { Locale } from "@/lib/i18n";
@@ -21,12 +22,14 @@ export function SiteChrome({
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
       <TooltipProvider delayDuration={0}>
+        <HoverGrid />
         <ScrollProgress />
         {children}
         <BackToTop label={t.a11y.backToTop} />
         <Navbar locale={locale} translatedSlugs={getTranslatedSlugs()} />
       </TooltipProvider>
-      <Analytics />
+      {/* Loads Vercel Analytics only once the visitor accepts. */}
+      <CookieConsent labels={t.cookies} />
     </ThemeProvider>
   );
 }

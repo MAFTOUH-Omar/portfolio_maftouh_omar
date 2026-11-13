@@ -24,7 +24,7 @@ export function BackToTop({ label }: { label: string }) {
       // Mobile: sit above the dock, which spans almost the full width.
       // sm+: drop down level with the dock (vertically centred on it).
       className={cn(
-        "fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-[opacity,transform,background-color] duration-200 hover:bg-primary/90 sm:bottom-6 sm:right-6 motion-reduce:transition-none",
+        "fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[opacity,transform,background-color] duration-200 hover:bg-primary/90 sm:bottom-6 sm:right-6 motion-reduce:transition-none",
         visible
           ? "translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-2.5 scale-80 opacity-0"

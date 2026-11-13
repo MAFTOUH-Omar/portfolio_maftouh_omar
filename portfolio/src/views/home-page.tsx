@@ -67,7 +67,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <JsonLd data={homeJsonLd(locale)} />
       <section id="hero">
         <CodeFrame tag="FullStack" attributes={{ craft: "web-dreams" }}>
-          <div className="relative isolate flex flex-col justify-center overflow-hidden rounded-lg bg-hero-ink text-white shadow-2xl shadow-black/25 sm:min-h-[27rem] dark:ring-1 dark:ring-white/10">
+          <div className="relative isolate flex flex-col justify-center overflow-hidden rounded-lg bg-hero-ink text-white sm:min-h-[27rem] dark:ring-1 dark:ring-white/10">
             {/* Card art: bank-card composition (diagonal panel top-right,
                 banded disc bottom-left) painted in the brand palette */}
             <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -79,9 +79,6 @@ export function HomePage({ locale }: { locale: Locale }) {
                 <circle cx="80" cy="264" r="262" className="fill-hero-disc" />
                 <circle cx="30" cy="534" r="360" className="fill-hero-ink" />
               </svg>
-              {/* Depth + glossy sheen over everything */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-black/30" />
-              <div className="absolute inset-0 bg-[linear-gradient(115deg,transparent_30%,rgb(255_255_255/0.06)_45%,transparent_60%)]" />
             </div>
 
             <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-4 px-6 py-12 text-center sm:py-14">
@@ -131,7 +128,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                   href={DATA.contact.social.email.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink shadow-lg shadow-black/20 transition-colors hover:bg-hero-panel"
+                  className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink transition-colors hover:bg-hero-panel"
                 >
                   {t.hero.cta}
                   <span className="flex size-8 items-center justify-center rounded-full bg-hero-ink text-white transition-transform duration-300 group-hover:rotate-45">
@@ -206,7 +203,9 @@ export function HomePage({ locale }: { locale: Locale }) {
           </BlurFade>
         </div>
       </section>
-      <section id="projects" className="[content-visibility:auto] [contain-intrinsic-size:auto_2400px]">
+      {/* content-visibility implies paint containment, which clips anything drawn
+          outside the section box. -mx-6/px-6 gives the hover lift and focus ring room. */}
+      <section id="projects" className="-mx-6 px-6 pb-6 [content-visibility:auto] [contain-intrinsic-size:auto_2400px]">
         <div className="flex w-full flex-col gap-y-6 pt-6">
           <SectionHeading
             index="05"
@@ -214,20 +213,11 @@ export function HomePage({ locale }: { locale: Locale }) {
             intro={t.projects.intro}
             delay={BLUR_FADE_DELAY * 11}
           />
-          {/* The first project is the flagship: full width, side by side on larger screens. */}
-          {DATA.projects.slice(0, 1).map((project) => (
-            <BlurFade key={project.title} delay={BLUR_FADE_DELAY * 12}>
-              <ProjectCard
-                {...projectCardProps(project, locale)}
-                featuredLabel={t.projects.featured}
-              />
-            </BlurFade>
-          ))}
           <div className="columns-1 gap-4 sm:columns-2 lg:gap-5">
-            {DATA.projects.slice(1).map((project, id) => (
+            {DATA.projects.map((project, id) => (
               <BlurFade
                 key={project.title}
-                delay={BLUR_FADE_DELAY * 12 + (id + 1) * 0.05}
+                delay={BLUR_FADE_DELAY * 12 + id * 0.05}
                 className="mb-4 break-inside-avoid lg:mb-5"
               >
                 <ProjectCard {...projectCardProps(project, locale)} />
@@ -238,17 +228,16 @@ export function HomePage({ locale }: { locale: Locale }) {
       </section>
       <section
         id="contact"
-        className="flex flex-col gap-y-6 pb-8 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
+        className="-mx-6 flex flex-col gap-y-6 px-6 pb-16 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
       >
         <SectionHeading index="06" title={t.contact.title} delay={BLUR_FADE_DELAY * 16} />
         <BlurFade delay={BLUR_FADE_DELAY * 17}>
           {/* Bookends the page: same card art as the hero, mirrored. */}
-          <div className="relative isolate overflow-hidden rounded-lg bg-hero-ink px-6 py-12 text-center text-white shadow-2xl shadow-black/25 sm:px-12 sm:py-16 dark:ring-1 dark:ring-white/10">
+          <div className="relative isolate overflow-hidden rounded-lg bg-hero-ink px-6 py-12 text-center text-white sm:px-12 sm:py-16 dark:ring-1 dark:ring-white/10">
             <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
               <div className="absolute inset-0 bg-hero-panel [clip-path:polygon(0_78%,0_100%,34%_100%)] sm:[clip-path:polygon(0_45%,0_100%,30%_100%)]" />
               <div className="absolute -right-20 -top-20 size-56 rounded-full bg-hero-disc sm:size-72" />
               <div className="absolute -right-20 -top-20 size-56 translate-x-12 translate-y-14 rounded-full bg-hero-ink sm:size-72" />
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-transparent to-black/30" />
             </div>
             <h3 className="text-balance text-3xl font-bold tracking-tighter sm:text-5xl">
               {t.contact.headline}
@@ -261,7 +250,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 href={DATA.contact.social.email.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink shadow-lg shadow-black/20 transition-colors hover:bg-hero-panel"
+                className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink transition-colors hover:bg-hero-panel"
               >
                 {t.contact.email}
                 <span className="flex size-8 items-center justify-center rounded-full bg-hero-ink text-white transition-transform duration-300 group-hover:rotate-45">

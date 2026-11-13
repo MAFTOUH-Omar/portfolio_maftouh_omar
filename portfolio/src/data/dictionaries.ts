@@ -33,7 +33,6 @@ export const dictionaries = {
     },
     projects: {
       title: "Projets",
-      featured: "Projet phare",
       intro:
         "J'ai travaillé sur des projets variés, du simple site vitrine aux applications web complexes. En voici quelques-uns parmi mes préférés.",
     },
@@ -66,6 +65,16 @@ export const dictionaries = {
       nextImage: "Image suivante",
       goToImage: "Aller à l'image",
       screenshot: "Capture d'écran du projet",
+      close: "Fermer",
+      details: "Voir les détails",
+      stack: "Stack technique",
+      visit: "Voir le projet",
+    },
+    cookies: {
+      title: "Cookies & confidentialité",
+      text: "J'utilise une mesure d'audience anonyme, sans cookies publicitaires, pour savoir quelles pages sont consultées. Vous acceptez ?",
+      accept: "Accepter",
+      reject: "Refuser",
     },
     notFound: {
       title: "Page introuvable",
@@ -104,7 +113,6 @@ export const dictionaries = {
     },
     projects: {
       title: "Projects",
-      featured: "Featured",
       intro:
         "I've worked on a variety of projects, from simple websites to complex web applications. Here are a few of my favorites.",
     },
@@ -137,6 +145,16 @@ export const dictionaries = {
       nextImage: "Next image",
       goToImage: "Go to image",
       screenshot: "Screenshot of the project",
+      close: "Close",
+      details: "View details",
+      stack: "Tech stack",
+      visit: "Visit project",
+    },
+    cookies: {
+      title: "Cookies & privacy",
+      text: "I use anonymous audience measurement, with no advertising cookies, to see which pages are read. Is that OK with you?",
+      accept: "Accept",
+      reject: "Decline",
     },
     notFound: {
       title: "Page not found",

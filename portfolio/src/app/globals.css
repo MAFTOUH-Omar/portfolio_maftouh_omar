@@ -234,38 +234,95 @@
   }
 }
 
-/* Page backdrop: soft brand glows + film grain, fixed behind everything.
-   Static paint (no animation), so it costs nothing while scrolling. */
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+/* Page backdrop: grid revealed around the cursor (<HoverGrid />), lines +
+   dots at intersections, masked by a spotlight that follows the pointer
+   (--spot-x / --spot-y), plus cells that light up as it passes.
+   --hover-grid-cell must stay equal to CELL_PX in components/hover-grid.tsx. */
+.hover-grid {
+  --hover-grid-cell: 64px;
+  --hover-grid-line: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --hover-grid-dot: color-mix(in oklab, var(--forest) 55%, transparent);
+  --hover-grid-fill: color-mix(in oklab, var(--forest) 7%, transparent);
+  background-image:
+    radial-gradient(circle, var(--hover-grid-dot) 1.5px, transparent 2px),
+    linear-gradient(to right, var(--hover-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--hover-grid-line) 1px, transparent 1px);
+  background-size: var(--hover-grid-cell) var(--hover-grid-cell);
+  background-position:
+    calc(var(--hover-grid-cell) / -2) calc(var(--hover-grid-cell) / -2),
+    0 0,
+    0 0;
+  -webkit-mask-image: radial-gradient(circle 15rem at var(--spot-x, -100rem) var(--spot-y, -100rem), black 0%, transparent 100%);
+  mask-image: radial-gradient(circle 15rem at var(--spot-x, -100rem) var(--spot-y, -100rem), black 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 300ms ease;
 }
-body::before {
-  background:
-    radial-gradient(56rem 28rem at 50% -8rem, color-mix(in oklab, var(--electric) 13%, transparent), transparent 70%),
-    radial-gradient(36rem 22rem at 100% 30%, color-mix(in oklab, var(--forest) 10%, transparent), transparent 70%),
-    radial-gradient(32rem 20rem at 0% 75%, color-mix(in oklab, var(--sand) 45%, transparent), transparent 70%);
+.dark .hover-grid {
+  --hover-grid-line: color-mix(in oklab, var(--foreground) 8%, transparent);
+  --hover-grid-dot: color-mix(in oklab, var(--electric) 70%, transparent);
+  --hover-grid-fill: color-mix(in oklab, var(--electric) 10%, transparent);
 }
-body::after {
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+.hover-grid[data-active] {
+  opacity: 1;
 }
-.dark body::after {
-  opacity: 0.06;
+.hover-grid-cell {
+  position: absolute;
+  width: var(--hover-grid-cell);
+  height: var(--hover-grid-cell);
+  background: var(--hover-grid-fill);
+  animation: hover-grid-cell 900ms ease-out forwards;
+}
+@keyframes hover-grid-cell {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
-/* Spotlight that follows the cursor on project cards (--mx/--my set in JS). */
-.spotlight {
-  background: radial-gradient(
-    22rem circle at var(--mx, 50%) var(--my, 50%),
-    color-mix(in oklab, var(--electric) 14%, transparent),
-    transparent 65%
-  );
+/* Project details dialog (native <dialog>) */
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.project-dialog[open] {
+  animation: dialog-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@media (max-width: 639px) {
+  .project-dialog[open] {
+    animation: sheet-in 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+.project-dialog[open]::backdrop {
+  animation: fade-in 0.28s ease-out;
+}
+/* Lock page scroll behind an open dialog without layout shift. */
+html:has(dialog[open]) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+/* Cookie banner entrance, slightly delayed so it never competes with the hero. */
+@keyframes banner-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.cookie-banner {
+  animation: banner-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .project-dialog[open],
+  .project-dialog[open]::backdrop,
+  .cookie-banner {
+    animation: none;
+  }
+}
+
 
 /* Smooth color swap on theme change for browsers without the View
    Transitions API (Firefox, older Safari), which otherwise flip instantly. */

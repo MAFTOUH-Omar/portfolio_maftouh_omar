@@ -19,11 +19,14 @@ export function SectionHeading({ index, title, intro, delay = 0, className }: Pr
   return (
     <BlurFade delay={delay} className={cn("flex flex-col gap-2", className)}>
       <div className="flex items-center gap-3">
-        <span aria-hidden className="font-mono text-xs font-medium text-accent tabular-nums">
+        <span
+          aria-hidden
+          className="rounded-md bg-hero-ink px-2 py-0.5 font-mono text-sm font-semibold tabular-nums text-hero-panel sm:text-base dark:ring-1 dark:ring-white/10"
+        >
           {index}
         </span>
         <h2 className="text-xl font-bold tracking-tight sm:text-2xl">{title}</h2>
-        <span aria-hidden className="h-px flex-1 bg-gradient-to-r from-border to-transparent" />
+        <span aria-hidden className="h-px flex-1 bg-primary/40" />
       </div>
       {intro && (
         <p className="max-w-prose text-pretty text-sm text-muted-foreground">{intro}</p>

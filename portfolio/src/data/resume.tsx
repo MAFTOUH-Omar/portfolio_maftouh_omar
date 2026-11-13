@@ -221,7 +221,7 @@ export const DATA = {
         { name: "ESLint", icon: "eslint" },
       ],
       links: [{ ...LINK.website, href: "https://plaayer-portail.laravel.cloud/" }],
-      images: ["/plaayer-browser.webp", "/plaayer-tv.webp"],
+      images: ["/plaayer-browser.webp"],
     },
     {
       title: "FILEVAULT",
