@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +26,7 @@ export function SiteChrome({
         <BackToTop label={t.a11y.backToTop} />
         <Navbar locale={locale} translatedSlugs={getTranslatedSlugs()} />
       </TooltipProvider>
+      <Analytics />
     </ThemeProvider>
   );
 }
