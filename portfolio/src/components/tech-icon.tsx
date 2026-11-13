@@ -9,7 +9,17 @@ type IconEntry = { light: string; dark?: string };
  * file once even when a logo repeats across cards. Light/dark variants are
  * swapped with CSS, so it renders on the server with no theme flicker.
  */
-export function TechIcon({ name, className }: { name: string; className?: string }) {
+export function TechIcon({
+  name,
+  className,
+  loading = "lazy",
+}: {
+  name: string;
+  className?: string;
+  /** "eager" for icons that move into view by CSS transform (marquee): lazy
+   *  loading only checks layout position, so those would never load. */
+  loading?: "lazy" | "eager";
+}) {
   const icon = (icons as Record<string, IconEntry>)[name];
   if (!icon) return null;
 
@@ -21,7 +31,7 @@ export function TechIcon({ name, className }: { name: string; className?: string
         alt=""
         width={20}
         height={20}
-        loading="lazy"
+        loading={loading}
         decoding="async"
         className={cn("size-full", icon.dark && "dark:hidden", className)}
       />
@@ -32,7 +42,7 @@ export function TechIcon({ name, className }: { name: string; className?: string
           alt=""
           width={20}
           height={20}
-          loading="lazy"
+          loading={loading}
           decoding="async"
           className={cn("hidden size-full dark:block", className)}
         />

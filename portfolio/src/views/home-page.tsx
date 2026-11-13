@@ -10,13 +10,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import BlurFade from "@/components/magicui/blur-fade";
-import { SkillBadge } from "@/components/skill-badge";
+import { LogoCloud } from "@/components/logo-cloud";
+import { HoverHighlight } from "@/components/hover-highlight";
 import { CodeFrame } from "@/components/code-frame";
 import { ArrowUpRight, Download } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { CopyEmailButton } from "@/components/copy-email-button";
 
 const BLUR_FADE_DELAY = 0.04;
+const GITHUB_USERNAME = new URL(DATA.contact.social.GitHub.url).pathname.slice(1);
 
 export function homeMetadata(locale: Locale): Metadata {
   return {
@@ -195,11 +197,14 @@ export function HomePage({ locale }: { locale: Locale }) {
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-3">
           <SectionHeading index="04" title={t.sections.skills} delay={BLUR_FADE_DELAY * 9} />
-          {/* One animation for the whole grid instead of one per badge. */}
-          <BlurFade delay={BLUR_FADE_DELAY * 10} className="flex flex-wrap gap-2">
-            {DATA.skills.map((skill) => (
-              <SkillBadge key={skill.name} name={skill.name} icon={skill.icon} />
-            ))}
+          <BlurFade delay={BLUR_FADE_DELAY * 10}>
+            <LogoCloud
+              username={GITHUB_USERNAME}
+              profileUrl={DATA.contact.social.GitHub.url}
+              skills={DATA.skills}
+              labels={t.skills}
+              dateLocale={localeConfig[locale].dateLocale}
+            />
           </BlurFade>
         </div>
       </section>
@@ -213,7 +218,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             intro={t.projects.intro}
             delay={BLUR_FADE_DELAY * 11}
           />
-          <div className="columns-1 gap-4 sm:columns-2 lg:gap-5">
+          <HoverHighlight className="columns-1 gap-4 sm:columns-2 lg:gap-5">
             {DATA.projects.map((project, id) => (
               <BlurFade
                 key={project.title}
@@ -223,12 +228,12 @@ export function HomePage({ locale }: { locale: Locale }) {
                 <ProjectCard {...projectCardProps(project, locale)} />
               </BlurFade>
             ))}
-          </div>
+          </HoverHighlight>
         </div>
       </section>
       <section
         id="contact"
-        className="-mx-6 flex flex-col gap-y-6 px-6 pb-16 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
+        className="-mx-6 flex flex-col gap-y-6 px-6 pt-4 pb-16 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
       >
         <SectionHeading index="06" title={t.contact.title} delay={BLUR_FADE_DELAY * 16} />
         <BlurFade delay={BLUR_FADE_DELAY * 17}>

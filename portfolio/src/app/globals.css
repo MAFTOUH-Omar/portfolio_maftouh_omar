@@ -234,47 +234,51 @@
   }
 }
 
-/* Page backdrop: grid revealed around the cursor (<HoverGrid />), lines +
-   dots at intersections, masked by a spotlight that follows the pointer
-   (--spot-x / --spot-y), plus cells that light up as it passes.
-   --hover-grid-cell must stay equal to CELL_PX in components/hover-grid.tsx. */
-.hover-grid {
-  --hover-grid-cell: 64px;
-  --hover-grid-line: color-mix(in oklab, var(--foreground) 10%, transparent);
-  --hover-grid-dot: color-mix(in oklab, var(--forest) 55%, transparent);
-  --hover-grid-fill: color-mix(in oklab, var(--forest) 7%, transparent);
-  background-image:
-    radial-gradient(circle, var(--hover-grid-dot) 1.5px, transparent 2px),
-    linear-gradient(to right, var(--hover-grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--hover-grid-line) 1px, transparent 1px);
-  background-size: var(--hover-grid-cell) var(--hover-grid-cell);
-  background-position:
-    calc(var(--hover-grid-cell) / -2) calc(var(--hover-grid-cell) / -2),
-    0 0,
-    0 0;
-  -webkit-mask-image: radial-gradient(circle 15rem at var(--spot-x, -100rem) var(--spot-y, -100rem), black 0%, transparent 100%);
-  mask-image: radial-gradient(circle 15rem at var(--spot-x, -100rem) var(--spot-y, -100rem), black 0%, transparent 100%);
+/* Logo marquee (LogoCloud): each row holds two identical tracks; sliding
+   one track width + gap loops seamlessly. Pauses on hover. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 0.5rem)); }
+}
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+.marquee-track[data-reverse] {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee,
+  .marquee-track {
+    flex-wrap: wrap;
+  }
+  .marquee-track {
+    animation: none;
+  }
+  .marquee-track[aria-hidden] {
+    display: none;
+  }
+}
+
+/* <HoverHighlight>: 0.15s fade in/out (the 0.2s exit delay is in JS) and a
+   glide between items (Aceternity card-hover-effect timings). */
+.hover-highlight {
   opacity: 0;
-  transition: opacity 300ms ease;
+  transition:
+    opacity 0.15s ease,
+    transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.dark .hover-grid {
-  --hover-grid-line: color-mix(in oklab, var(--foreground) 8%, transparent);
-  --hover-grid-dot: color-mix(in oklab, var(--electric) 70%, transparent);
-  --hover-grid-fill: color-mix(in oklab, var(--electric) 10%, transparent);
-}
-.hover-grid[data-active] {
+.hover-highlight[data-visible] {
   opacity: 1;
 }
-.hover-grid-cell {
-  position: absolute;
-  width: var(--hover-grid-cell);
-  height: var(--hover-grid-cell);
-  background: var(--hover-grid-fill);
-  animation: hover-grid-cell 900ms ease-out forwards;
-}
-@keyframes hover-grid-cell {
-  from { opacity: 1; }
-  to { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .hover-highlight {
+    transition: opacity 0.15s ease;
+  }
 }
 
 /* Project details dialog (native <dialog>) */

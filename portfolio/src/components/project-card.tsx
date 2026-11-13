@@ -66,16 +66,16 @@ export function ProjectCard({
         role="button"
         tabIndex={0}
         aria-haspopup="dialog"
+        data-hover-item
         aria-label={`${labels.details} — ${title}`}
         onClick={openDialog}
         onKeyDown={onKeyDown}
         className={cn(
           "group relative flex cursor-pointer flex-col overflow-hidden outline-none",
-          // Flat hover: lift + primary border, nothing drawn outside the card.
-          "transition-[transform,border-color] duration-300 ease-out",
-          "hover:-translate-y-1 hover:border-primary/60",
-          "focus-visible:-translate-y-1 focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-ring",
-          "motion-reduce:hover:translate-y-0",
+          // Hover background comes from <HoverHighlight>; the card only tints its border.
+          "transition-colors duration-200",
+          "hover:border-primary/60",
+          "focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-ring",
           className
         )}
       >

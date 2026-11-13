@@ -31,6 +31,14 @@ export const dictionaries = {
       education: "Formation",
       skills: "Compétences",
     },
+    skills: {
+      contributions: "{n} contributions sur GitHub cette année",
+      day: "{n} contribution(s) le {date}",
+      noDay: "Aucune contribution le {date}",
+      less: "Moins",
+      more: "Plus",
+      logos: "Technologies que j'utilise",
+    },
     projects: {
       title: "Projets",
       intro:
@@ -110,6 +118,14 @@ export const dictionaries = {
       work: "Work Experience",
       education: "Education",
       skills: "Skills",
+    },
+    skills: {
+      contributions: "{n} contributions on GitHub in the last year",
+      day: "{n} contribution(s) on {date}",
+      noDay: "No contributions on {date}",
+      less: "Less",
+      more: "More",
+      logos: "Technologies I use",
     },
     projects: {
       title: "Projects",
