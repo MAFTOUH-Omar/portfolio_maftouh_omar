@@ -4,12 +4,9 @@ import { Card } from "./ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import Markdown from "react-markdown";
 import { useState, useCallback } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { StackIcon } from "@/components/tech-icon";
-import { useMounted } from "@/hooks/use-mounted";
-import { useTheme } from "next-themes";
+import { TechIcon } from "@/components/tech-icon";
 
 interface TechTag {
   readonly name: string;
@@ -57,8 +54,6 @@ export function ProjectCard({
   labels,
 }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
-  const mounted = useMounted();
-  const { resolvedTheme } = useTheme();
 
   const allImages = images ?? [];
 
@@ -266,7 +261,7 @@ export function ProjectCard({
 
         {/* Description */}
         <div className="prose dark:prose-invert max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground line-clamp-3">
-          <Markdown>{description}</Markdown>
+          <p>{description}</p>
         </div>
 
         {/* Tech tags */}
@@ -277,12 +272,9 @@ export function ProjectCard({
                 key={tag.name}
                 className="inline-flex items-center gap-1 bg-foreground/5 border border-border py-[3px] px-[7px] rounded-md"
               >
-                {tag.icon && mounted ? (
-                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center overflow-hidden [&_svg]:size-full [&_img]:size-full">
-                    <StackIcon
-                      name={tag.icon}
-                      variant={resolvedTheme === "dark" ? "dark" : "light"}
-                    />
+                {tag.icon ? (
+                  <span className="size-[12px] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                    <TechIcon name={tag.icon} />
                   </span>
                 ) : (
                   <span className="size-[12px] flex-shrink-0 flex items-center justify-center text-[8px] font-bold text-foreground/70">

@@ -36,7 +36,7 @@ export function LanguageSwitcher({
       href={localizePath(target, path)}
       hrefLang={target}
       lang={target}
-      aria-label={label}
+      aria-label={`${target.toUpperCase()} — ${label}`}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
         "size-12 text-xs font-semibold uppercase tracking-wide",

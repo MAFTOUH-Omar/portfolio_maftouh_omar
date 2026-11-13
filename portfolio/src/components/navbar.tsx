@@ -99,7 +99,7 @@ export default function Navbar({ locale, translatedSlugs }: Props) {
         <DockIcon>
           <Tooltip>
             <TooltipTrigger asChild>
-              <ModeToggle />
+              <ModeToggle label={t.nav.theme} />
             </TooltipTrigger>
             <TooltipContent>
               <p>{t.nav.theme}</p>

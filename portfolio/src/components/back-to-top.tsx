@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export function BackToTop({ label }: { label: string }) {
   const [visible, setVisible] = useState(false);
@@ -15,23 +15,22 @@ export function BackToTop({ label }: { label: string }) {
   }, []);
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.button
-          type="button"
-          initial={{ opacity: 0, scale: 0.8, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.8, y: 10 }}
-          transition={{ duration: 0.2 }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label={label}
-          // Mobile: sit above the dock, which spans almost the full width.
-          // sm+: drop down level with the dock (vertically centred on it).
-          className="fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-colors hover:bg-primary/90 sm:bottom-6 sm:right-6"
-        >
-          <ArrowUp className="size-4" />
-        </motion.button>
+    <button
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      aria-label={label}
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
+      // Mobile: sit above the dock, which spans almost the full width.
+      // sm+: drop down level with the dock (vertically centred on it).
+      className={cn(
+        "fixed bottom-20 right-4 z-40 flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-[opacity,transform,background-color] duration-200 hover:bg-primary/90 sm:bottom-6 sm:right-6 motion-reduce:transition-none",
+        visible
+          ? "translate-y-0 scale-100 opacity-100"
+          : "pointer-events-none translate-y-2.5 scale-80 opacity-0"
       )}
-    </AnimatePresence>
+    >
+      <ArrowUp className="size-4" />
+    </button>
   );
 }

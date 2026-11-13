@@ -1,4 +1,3 @@
-import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
 import { ResumeCard } from "@/components/resume-card";
 import { JsonLd } from "@/components/json-ld";
@@ -9,9 +8,8 @@ import { openGraphFor, personSchema, PERSON_ID, WEBSITE_ID } from "@/lib/seo";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
-import Markdown from "react-markdown";
+import Image from "next/image";
 import BlurFade from "@/components/magicui/blur-fade";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SkillBadge } from "@/components/skill-badge";
 import { CodeFrame } from "@/components/code-frame";
 import { ArrowUpRight } from "lucide-react";
@@ -86,19 +84,21 @@ export function HomePage({ locale }: { locale: Locale }) {
 
             <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-4 px-6 py-12 text-center sm:py-14">
               <BlurFade delay={BLUR_FADE_DELAY}>
-                <Avatar className="size-16 ring-2 ring-hero-panel/50 ring-offset-4 ring-offset-hero-ink sm:size-20">
-                  <AvatarImage
-                    alt={`${DATA.fullName} — ${DATA.role[locale]}`}
-                    src={DATA.avatarUrl}
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                  <AvatarFallback>{DATA.initials}</AvatarFallback>
-                </Avatar>
+                {/* Above the fold: fetched eagerly, served at the right size as AVIF/WebP. */}
+                <Image
+                  src={DATA.avatarUrl}
+                  alt={`${DATA.fullName} — ${DATA.role[locale]}`}
+                  width={80}
+                  height={80}
+                  sizes="(min-width: 640px) 80px, 64px"
+                  loading="eager"
+                  fetchPriority="high"
+                  className="size-16 rounded-full object-cover ring-2 ring-hero-panel/50 ring-offset-4 ring-offset-hero-ink sm:size-20"
+                />
               </BlurFade>
               <div className="flex flex-col items-center gap-2">
                 {/* The H1 carries the target query (role + city) for search engines. */}
-                <BlurFade delay={BLUR_FADE_DELAY} yOffset={8}>
+                <BlurFade delay={BLUR_FADE_DELAY} yOffset={8} variant="slide">
                   <h1 className="flex flex-col items-center gap-2">
                     <span className="text-3xl font-bold tracking-tighter text-white sm:text-4xl xl:text-5xl/none">
                       {t.hero.greeting}
@@ -109,14 +109,13 @@ export function HomePage({ locale }: { locale: Locale }) {
                     </span>
                   </h1>
                 </BlurFade>
-                <BlurFadeText
-                  className="max-w-[520px] text-balance text-white/75 sm:text-lg"
-                  delay={BLUR_FADE_DELAY}
-                  text={DATA.description[locale]}
-                  as="p"
-                />
+                <BlurFade delay={BLUR_FADE_DELAY} yOffset={8} variant="slide">
+                  <p className="max-w-[520px] text-balance text-white/75 sm:text-lg">
+                    {DATA.description[locale]}
+                  </p>
+                </BlurFade>
               </div>
-              <BlurFade delay={BLUR_FADE_DELAY}>
+              <BlurFade delay={BLUR_FADE_DELAY} variant="slide">
                 <Link
                   href={DATA.contact.social.email.url}
                   target="_blank"
@@ -139,7 +138,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
           <div className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-            <Markdown>{DATA.summary[locale]}</Markdown>
+            <p>{DATA.summary[locale]}</p>
           </div>
         </BlurFade>
       </section>
@@ -196,16 +195,15 @@ export function HomePage({ locale }: { locale: Locale }) {
           <BlurFade delay={BLUR_FADE_DELAY * 9}>
             <h2 className="text-xl font-bold">{t.sections.skills}</h2>
           </BlurFade>
-          <div className="flex flex-wrap gap-2">
-            {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill.name} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
-                <SkillBadge name={skill.name} icon={skill.icon} />
-              </BlurFade>
+          {/* One animation for the whole grid instead of one per badge. */}
+          <BlurFade delay={BLUR_FADE_DELAY * 10} className="flex flex-wrap gap-2">
+            {DATA.skills.map((skill) => (
+              <SkillBadge key={skill.name} name={skill.name} icon={skill.icon} />
             ))}
-          </div>
+          </BlurFade>
         </div>
       </section>
-      <section id="projects">
+      <section id="projects" className="[content-visibility:auto] [contain-intrinsic-size:auto_2400px]">
         <div className="space-y-12 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 11}>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
@@ -248,7 +246,7 @@ export function HomePage({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
-      <section id="contact">
+      <section id="contact" className="[content-visibility:auto] [contain-intrinsic-size:auto_420px]">
         <div className="grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12">
           <BlurFade delay={BLUR_FADE_DELAY * 16}>
             <div className="space-y-3">
@@ -264,7 +262,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                   href={DATA.contact.social.email.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-4 hover:decoration-2"
                 >
                   {t.contact.link}
                 </Link>{" "}
@@ -272,7 +270,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 <Link
                   href="/cv-maftouh-omar.pdf"
                   download
-                  className="text-primary hover:underline"
+                  className="text-primary underline underline-offset-4 hover:decoration-2"
                 >
                   {t.contact.cv}
                 </Link>

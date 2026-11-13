@@ -1,11 +1,10 @@
 "use client";
 
-import { Avatar , AvatarFallback , AvatarImage} from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { Card, CardHeader } from "./ui/card";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
 import { ChevronRightIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -46,14 +45,15 @@ export const ResumeCard = ({
     >
       <Card className="flex p-3 sm:p-4">
         <div className="flex-none">
-          <Avatar className="border border-border size-12 m-auto bg-white">
-            <AvatarImage
+          <div className="relative m-auto size-12 overflow-hidden rounded-full border border-border bg-white">
+            <Image
               src={logoUrl}
               alt={altText}
+              fill
+              sizes="48px"
               className="object-contain"
             />
-            <AvatarFallback>{altText[0]}</AvatarFallback>
-          </Avatar>
+          </div>
         </div>
         <div className="flex-grow ml-4 items-center flex-col group">
           <CardHeader>
@@ -87,21 +87,17 @@ export const ResumeCard = ({
             {subtitle && <div className="font-sans text-xs text-muted-foreground">{subtitle}</div>}
           </CardHeader>
           {description && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{
-                opacity: isExpanded ? 1 : 0,
-
-                height: isExpanded ? "auto" : 0,
-              }}
-              transition={{
-                duration: 0.7,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="mt-2 text-xs sm:text-sm"
+            // grid-rows 0fr → 1fr animates to the content's natural height in pure CSS.
+            <div
+              className={cn(
+                "grid transition-[grid-template-rows,opacity] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] motion-reduce:transition-none",
+                isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              )}
             >
-              {description}
-            </motion.div>
+              <div className="overflow-hidden">
+                <div className="mt-2 text-xs sm:text-sm">{description}</div>
+              </div>
+            </div>
           )}
         </div>
       </Card>

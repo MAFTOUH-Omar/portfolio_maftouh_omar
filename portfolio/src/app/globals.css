@@ -11,6 +11,55 @@
   mix-blend-mode: normal;
 }
 
+/* Entrance animation for <BlurFade> — pure CSS, runs on first paint.
+   Only opacity + transform are animated: both run on the compositor (GPU).
+   Animating `filter: blur()` on ~100 elements cost seconds of main-thread
+   time on mid-range phones. */
+@keyframes blur-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--bf-y, 6px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(calc(var(--bf-y, 6px) * -1));
+  }
+}
+.blur-fade {
+  animation: blur-fade-in var(--bf-duration, 0.4s) ease-out var(--bf-delay, 0s) both;
+}
+@keyframes slide-in {
+  from { transform: translateY(var(--bf-y, 6px)); }
+  to { transform: translateY(calc(var(--bf-y, 6px) * -1)); }
+}
+.slide-in {
+  animation: slide-in var(--bf-duration, 0.4s) ease-out var(--bf-delay, 0s) both;
+}
+
+/* Reading progress bar bound to the page scroll (no JS). */
+@keyframes scroll-progress-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.scroll-progress {
+  display: none;
+}
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    display: block;
+    animation: scroll-progress-grow linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blur-fade,
+  .slide-in {
+    animation: none;
+    transform: translateY(calc(var(--bf-y, 6px) * -1));
+  }
+}
+
 :root {
   /* Brand palette — forest green, sand beige, electric purple */
   --forest: hsl(160 45% 22%);

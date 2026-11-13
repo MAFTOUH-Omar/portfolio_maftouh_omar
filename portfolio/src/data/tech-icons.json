@@ -1,0 +1,171 @@
+{
+  "aws": {
+    "light": "/icons/aws.svg",
+    "dark": "/icons/aws-dark.svg"
+  },
+  "bootstrap5": {
+    "light": "/icons/bootstrap5.svg",
+    "dark": "/icons/bootstrap5-dark.svg"
+  },
+  "claude": {
+    "light": "/icons/claude.svg"
+  },
+  "cloudflare": {
+    "light": "/icons/cloudflare.svg"
+  },
+  "css3": {
+    "light": "/icons/css3.svg"
+  },
+  "docker": {
+    "light": "/icons/docker.svg"
+  },
+  "eslint": {
+    "light": "/icons/eslint.svg"
+  },
+  "expressjs": {
+    "light": "/icons/expressjs.svg",
+    "dark": "/icons/expressjs-dark.svg"
+  },
+  "figma": {
+    "light": "/icons/figma.svg"
+  },
+  "git": {
+    "light": "/icons/git.svg"
+  },
+  "github": {
+    "light": "/icons/github.svg",
+    "dark": "/icons/github-dark.svg"
+  },
+  "graphql": {
+    "light": "/icons/graphql.svg"
+  },
+  "gsap": {
+    "light": "/icons/gsap.svg",
+    "dark": "/icons/gsap-dark.svg"
+  },
+  "html5": {
+    "light": "/icons/html5.svg"
+  },
+  "java": {
+    "light": "/icons/java.svg",
+    "dark": "/icons/java-dark.svg"
+  },
+  "jira": {
+    "light": "/icons/jira.svg",
+    "dark": "/icons/jira-dark.svg"
+  },
+  "js": {
+    "light": "/icons/js.svg"
+  },
+  "kubernetes": {
+    "light": "/icons/kubernetes.svg"
+  },
+  "laravel": {
+    "light": "/icons/laravel.svg"
+  },
+  "materialui": {
+    "light": "/icons/materialui.svg"
+  },
+  "mongodb": {
+    "light": "/icons/mongodb.svg",
+    "dark": "/icons/mongodb-dark.svg"
+  },
+  "motion": {
+    "light": "/icons/motion.svg",
+    "dark": "/icons/motion-dark.svg"
+  },
+  "mysql": {
+    "light": "/icons/mysql.svg"
+  },
+  "nestjs": {
+    "light": "/icons/nestjs.svg"
+  },
+  "nextjs": {
+    "light": "/icons/nextjs.svg",
+    "dark": "/icons/nextjs-dark.svg"
+  },
+  "nginx": {
+    "light": "/icons/nginx.svg"
+  },
+  "nodejs": {
+    "light": "/icons/nodejs.svg"
+  },
+  "ollama": {
+    "light": "/icons/ollama.svg",
+    "dark": "/icons/ollama-dark.svg"
+  },
+  "openai": {
+    "light": "/icons/openai.svg",
+    "dark": "/icons/openai-dark.svg"
+  },
+  "openapi": {
+    "light": "/icons/openapi.svg"
+  },
+  "oracle": {
+    "light": "/icons/oracle.svg"
+  },
+  "php": {
+    "light": "/icons/php.svg"
+  },
+  "pm2": {
+    "light": "/icons/pm2.svg"
+  },
+  "postgresql": {
+    "light": "/icons/postgresql.svg"
+  },
+  "postman": {
+    "light": "/icons/postman.svg",
+    "dark": "/icons/postman-dark.svg"
+  },
+  "python": {
+    "light": "/icons/python.svg"
+  },
+  "react": {
+    "light": "/icons/react.svg"
+  },
+  "redis": {
+    "light": "/icons/redis.svg",
+    "dark": "/icons/redis-dark.svg"
+  },
+  "redux": {
+    "light": "/icons/redux.svg",
+    "dark": "/icons/redux-dark.svg"
+  },
+  "shadcnui": {
+    "light": "/icons/shadcnui.svg",
+    "dark": "/icons/shadcnui-dark.svg"
+  },
+  "sonarqube": {
+    "light": "/icons/sonarqube.svg"
+  },
+  "spring": {
+    "light": "/icons/spring.svg"
+  },
+  "stripe": {
+    "light": "/icons/stripe.svg",
+    "dark": "/icons/stripe-dark.svg"
+  },
+  "swagger": {
+    "light": "/icons/swagger.svg"
+  },
+  "tailwindcss": {
+    "light": "/icons/tailwindcss.svg"
+  },
+  "tanstack": {
+    "light": "/icons/tanstack.webp"
+  },
+  "terraform": {
+    "light": "/icons/terraform.svg"
+  },
+  "typescript": {
+    "light": "/icons/typescript.svg"
+  },
+  "vercel": {
+    "light": "/icons/vercel.svg",
+    "dark": "/icons/vercel-dark.svg"
+  },
+  "vitejs": {
+    "light": "/icons/vitejs.svg",
+    "dark": "/icons/vitejs-dark.svg"
+  }
+}

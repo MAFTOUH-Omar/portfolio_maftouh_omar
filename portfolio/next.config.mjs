@@ -34,6 +34,28 @@ const nextConfig = {
     // Required by app/global-not-found.tsx (two root layouts: fr and en).
     globalNotFound: true,
   },
+  images: {
+    // AVIF first (~20-30% smaller than WebP), WebP fallback.
+    formats: ["image/avif", "image/webp"],
+    // Optimized images stay cached on Vercel's CDN for 31 days.
+    minimumCacheTTL: 2678400,
+  },
+  async headers() {
+    // Files in /public are not content-hashed, so Vercel serves them with
+    // max-age=0 by default. Tech icons almost never change: cache them for a
+    // month in the browser, refreshed in the background after that.
+    return [
+      {
+        source: "/icons/:file*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=604800",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return legacyBlogRedirects();
   },

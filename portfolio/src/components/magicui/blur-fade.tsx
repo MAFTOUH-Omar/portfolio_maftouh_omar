@@ -1,59 +1,46 @@
-"use client";
-
-import { AnimatePresence, motion, useInView, Variants } from "framer-motion";
-import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface BlurFadeProps {
   children: React.ReactNode;
   className?: string;
-  variant?: {
-    hidden: { y: number };
-    visible: { y: number };
-  };
   duration?: number;
   delay?: number;
   yOffset?: number;
-  inView?: boolean;
-  inViewMargin?: string;
-  blur?: string;
+  /**
+   * "slide" keeps the content fully opaque and only moves it. Use it above
+   * the fold: an element that starts at opacity 0 isn't counted as painted,
+   * which pushes back the Largest Contentful Paint.
+   */
+  variant?: "fade" | "slide";
 }
+
+/**
+ * Fade + slide-in entrance, done in pure CSS (`.blur-fade` in globals.css).
+ * It used to be framer-motion, which kept server-rendered content at
+ * opacity 0 until the JS bundle hydrated — delaying the LCP. CSS animations
+ * start on first paint and need no JavaScript.
+ */
 const BlurFade = ({
   children,
   className,
-  variant,
   duration = 0.4,
   delay = 0,
   yOffset = 6,
-  inView = false,
-  inViewMargin = "-50px",
-  blur = "6px",
+  variant = "fade",
 }: BlurFadeProps) => {
-  const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin as never });
-  const isInView = !inView || inViewResult;
-  const defaultVariants: Variants = {
-    hidden: { y: yOffset, opacity: 0, filter: `blur(${blur})` },
-    visible: { y: -yOffset, opacity: 1, filter: `blur(0px)` },
-  };
-  const combinedVariants = variant || defaultVariants;
   return (
-    <AnimatePresence>
-      <motion.div
-        ref={ref}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        exit="hidden"
-        variants={combinedVariants}
-        transition={{
-          delay: 0.04 + delay,
-          duration,
-          ease: "easeOut",
-        }}
-        className={className}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <div
+      className={cn(variant === "slide" ? "slide-in" : "blur-fade", className)}
+      style={
+        {
+          "--bf-delay": `${0.04 + delay}s`,
+          "--bf-duration": `${duration}s`,
+          "--bf-y": `${yOffset}px`,
+        } as React.CSSProperties
+      }
+    >
+      {children}
+    </div>
   );
 };
 

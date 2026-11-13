@@ -2,12 +2,11 @@
 
 import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
 import { flushSync } from "react-dom";
 import { useCallback } from "react";
 import { useMounted } from "@/hooks/use-mounted";
 
-export function ModeToggle() {
+export function ModeToggle({ label }: { label: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
 
@@ -67,7 +66,7 @@ export function ModeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" type="button" size="icon" className="px-2">
+      <Button variant="ghost" type="button" size="icon" className="px-2" aria-label={label}>
         <div className="size-5" />
       </Button>
     );
@@ -79,6 +78,7 @@ export function ModeToggle() {
       type="button"
       size="icon"
       className="px-2"
+      aria-label={label}
       onClick={toggleTheme}
     >
       <svg
@@ -89,32 +89,38 @@ export function ModeToggle() {
         viewBox="0 0 32 32"
         className="size-5"
       >
+        {/* CSS transitions (no framer-motion); transform-box keeps origins on each shape. */}
         <clipPath id="theme-toggle-clip">
-          <motion.path
-            animate={{
-              y: isDark ? 0 : 10,
-              x: isDark ? 0 : -12,
-            }}
-            transition={{ ease: "easeInOut", duration: 0.5 }}
+          <path
             d="M0-5h30a1 1 0 0 0 9 13v24H0Z"
+            style={{
+              transform: isDark ? "translate(0, 0)" : "translate(-12px, 10px)",
+              transition: "transform 0.5s ease-in-out",
+            }}
           />
         </clipPath>
         <g clipPath="url(#theme-toggle-clip)">
-          <motion.circle
-            animate={{ r: isDark ? 8 : 10 }}
-            transition={{ ease: "easeInOut", duration: 0.5 }}
+          <circle
             cx="16"
             cy="16"
-          />
-          <motion.g
-            animate={{
-              rotate: isDark ? 0 : -100,
-              scale: isDark ? 1 : 0.5,
-              opacity: isDark ? 1 : 0,
+            r="10"
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: "center",
+              transform: isDark ? "scale(0.8)" : "scale(1)",
+              transition: "transform 0.5s ease-in-out",
             }}
-            transition={{ ease: "easeInOut", duration: 0.5 }}
+          />
+          <g
             stroke="currentColor"
             strokeWidth="1.5"
+            style={{
+              transformBox: "fill-box",
+              transformOrigin: "center",
+              transform: isDark ? "rotate(0deg) scale(1)" : "rotate(-100deg) scale(0.5)",
+              opacity: isDark ? 1 : 0,
+              transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
+            }}
           >
             <path d="M16 5.5v-4" />
             <path d="M16 30.5v-4" />
@@ -124,7 +130,7 @@ export function ModeToggle() {
             <path d="m5.7 26.3 2.9-2.9" />
             <path d="m5.8 5.8 2.8 2.8" />
             <path d="m23.4 23.4 2.9 2.9" />
-          </motion.g>
+          </g>
         </g>
       </svg>
     </Button>
