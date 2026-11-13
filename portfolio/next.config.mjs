@@ -44,16 +44,15 @@ const nextConfig = {
     // Files in /public are not content-hashed, so Vercel serves them with
     // max-age=0 by default. Tech icons almost never change: cache them for a
     // month in the browser, refreshed in the background after that.
-    return [
+    const longCache = [
       {
-        source: "/icons/:file*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=2592000, stale-while-revalidate=604800",
-          },
-        ],
+        key: "Cache-Control",
+        value: "public, max-age=2592000, stale-while-revalidate=604800",
       },
+    ];
+    return [
+      { source: "/icons/:file*", headers: longCache },
+      { source: "/flags/:file*", headers: longCache },
     ];
   },
   async redirects() {

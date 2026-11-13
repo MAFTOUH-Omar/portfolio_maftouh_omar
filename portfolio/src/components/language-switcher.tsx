@@ -5,6 +5,12 @@ import { localizePath, neutralPath, otherLocale, type Locale } from "@/lib/i18n"
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 
+/** Flag shown for each locale (64px WebP in public/flags, ~2–3 KB each). */
+const FLAG: Record<Locale, string> = {
+  fr: "/flags/fr.webp",
+  en: "/flags/gb.webp",
+};
+
 interface Props extends Omit<React.ComponentPropsWithRef<"a">, "href"> {
   locale: Locale;
   label: string;
@@ -13,6 +19,7 @@ interface Props extends Omit<React.ComponentPropsWithRef<"a">, "href"> {
 }
 
 /**
+ * Shows the flag of the language you'd switch *to*.
  * Plain <a> on purpose: each locale has its own root layout (and <html lang>),
  * so switching is a full document load anyway.
  */
@@ -36,14 +43,22 @@ export function LanguageSwitcher({
       href={localizePath(target, path)}
       hrefLang={target}
       lang={target}
-      aria-label={`${target.toUpperCase()} — ${label}`}
+      aria-label={label}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),
-        "size-12 text-xs font-semibold uppercase tracking-wide",
+        "size-12",
         className
       )}
     >
-      {target}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={FLAG[target]}
+        alt=""
+        width={22}
+        height={22}
+        decoding="async"
+        className="size-[22px]"
+      />
     </a>
   );
 }
