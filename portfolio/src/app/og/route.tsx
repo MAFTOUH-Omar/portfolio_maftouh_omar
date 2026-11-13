@@ -3,7 +3,8 @@ import { DATA } from "@/data/resume";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const title = searchParams.get("title") ?? DATA.name;
+  // Capped so the endpoint can't be used to render arbitrary long text.
+  const title = (searchParams.get("title") ?? DATA.fullName).slice(0, 120);
 
   return new ImageResponse(
     (
@@ -28,7 +29,7 @@ export async function GET(request: Request) {
             letterSpacing: "-0.02em",
           }}
         >
-          {DATA.name}
+          {DATA.fullName}
         </div>
         <div
           style={{

@@ -1,16 +1,38 @@
 import { Icons } from "@/components/icons";
-import { HomeIcon, NotebookIcon } from "lucide-react";
+import { SITE_URL } from "@/lib/site";
+
+/** Labels for project links; `kind` drives the icon, the label is shown to users. */
+const LINK = {
+  website: { kind: "website", label: { fr: "Site web", en: "Website" } },
+  apiDocs: { kind: "apiDocs", label: { fr: "Docs API", en: "API Docs" } },
+  source: { kind: "source", label: { fr: "Code source", en: "Source" } },
+} as const;
+
+const PRESENT = { fr: "Aujourd'hui", en: "Today" } as const;
 
 export const DATA = {
   name: "MAFTOUH OMAR",
+  fullName: "Omar Maftouh",
+  givenName: "Omar",
+  familyName: "Maftouh",
   initials: "MO",
-  url: "https://omarmaftouh.com",
-  location: "San Francisco, CA",
-  locationLink: "https://www.google.com/maps/place/sanfrancisco",
-  description:
-    "Full-stack Developer | Data Science Student Front/Back-End, UI/UX Enthusiast | Problem Solver Crafting Web Dreams!",
-  summary:
-    "Junior Full Stack Developer and Data Science student, passionate about building complete web solutions. With a keen interest in application security and a solid background in Digital Development. I also have experience with WordPress and a strong desire to learn and evolve in the field of Data Science.",
+  url: SITE_URL,
+  location: { fr: "Casablanca, Maroc", en: "Casablanca, Morocco" },
+  locationLink: "https://www.google.com/maps/place/Casablanca",
+  address: {
+    locality: "Casablanca",
+    region: "Casablanca-Settat",
+    country: "MA",
+  },
+  role: { fr: "Développeur Full Stack", en: "Full Stack Developer" },
+  description: {
+    fr: "Développeur Full Stack | Front-end & Back-end, passionné d'UI/UX | Je transforme vos idées en applications web performantes.",
+    en: "Full Stack Developer | Front-end & Back-end, UI/UX Enthusiast | Problem Solver Crafting Web Dreams!",
+  },
+  summary: {
+    fr: "Développeur Full Stack junior basé à Casablanca (Maroc) et étudiant en Data Science, passionné par la création de solutions web complètes. Fort intérêt pour la sécurité des applications et solide formation en Développement Digital. J'ai également de l'expérience avec WordPress et une forte envie d'apprendre et d'évoluer dans le domaine de la Data Science.",
+    en: "Junior Full Stack Developer based in Casablanca, Morocco, and Data Science student, passionate about building complete web solutions. With a keen interest in application security and a solid background in Digital Development. I also have experience with WordPress and a strong desire to learn and evolve in the field of Data Science.",
+  },
   avatarUrl: "/me.webp",
   skills: [
     { name: "JavaScript", icon: "js" },
@@ -51,10 +73,6 @@ export const DATA = {
     { name: "Ollama", icon: "ollama" },
     { name: "Claude", icon: "claude" },
   ],
-  navbar: [
-    { href: "/", icon: HomeIcon, label: "Home" },
-    { href: "/blog", icon: NotebookIcon, label: "Blog" },
-  ],
   contact: {
     email: "m.omarmaftouh@gmail.com",
     tel: "0604534791",
@@ -87,44 +105,53 @@ export const DATA = {
       company: "NovaCode",
       href: "",
       badges: [],
-      location: "Full time",
-      title: "Full-stack Developer",
+      location: { fr: "Temps plein", en: "Full time" },
+      title: { fr: "Développeur Full Stack", en: "Full-stack Developer" },
       logoUrl: "/novacode.jpg",
-      start: "Mai 2024",
-      end: "Today",
-      description:
-        "Built a streaming dashboard for reseller & subscription management with Telegram WebHook, 2FA via Twilio, roles & permissions, Redis jobs, and supervision via Telescope & Horizon. Developed a digital products store with multi-brand streaming, multi-payment checkout (PayPal, CMI, Google Pay, Crypto/Coinbase), and OAuth Google/JWT auth. Handled full server infrastructure: iDRAC, MariaDB Enterprise, MaxScale load balancing, Galera Cluster, Nginx, Certbot, Cloudflare API, and CI/CD via GitHub Actions.",
+      start: { fr: "Mai 2024", en: "May 2024" },
+      end: PRESENT,
+      description: {
+        fr: "Développement d'un dashboard de streaming pour la gestion des revendeurs et des abonnements : WebHook Telegram, 2FA via Twilio, rôles et permissions, jobs Redis et supervision via Telescope & Horizon. Création d'une boutique de produits digitaux multi-marques avec paiement multiple (PayPal, CMI, Google Pay, Crypto/Coinbase) et authentification OAuth Google/JWT. Gestion complète de l'infrastructure serveur : iDRAC, MariaDB Enterprise, load balancing MaxScale, Galera Cluster, Nginx, Certbot, API Cloudflare et CI/CD via GitHub Actions.",
+        en: "Built a streaming dashboard for reseller & subscription management with Telegram WebHook, 2FA via Twilio, roles & permissions, Redis jobs, and supervision via Telescope & Horizon. Developed a digital products store with multi-brand streaming, multi-payment checkout (PayPal, CMI, Google Pay, Crypto/Coinbase), and OAuth Google/JWT auth. Handled full server infrastructure: iDRAC, MariaDB Enterprise, MaxScale load balancing, Galera Cluster, Nginx, Certbot, Cloudflare API, and CI/CD via GitHub Actions.",
+      },
     },
     {
       company: "Locamed Santé & Confort",
       href: "",
       badges: [],
-      location: "Freelance",
-      title: "Full-stack Developer",
+      location: { fr: "Freelance", en: "Freelance" },
+      title: { fr: "Développeur Full Stack", en: "Full-stack Developer" },
       logoUrl: "/locamed.jpg",
-      start: "Sept 2025",
-      end: "Today",
-      description:
-        "Developed the Locamed e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and monitoring via Lens.js — built with Next.js 15, Express.js, Sequelize, Elasticsearch, and GitHub Actions. Currently leading a full rebrand migrating the platform from WordPress to a modern stack with Next.js 16, NestJS backend, NextAuth, TanStack, Redux Toolkit, and ApiDog documentation.",
+      start: { fr: "Sept. 2025", en: "Sept 2025" },
+      end: PRESENT,
+      description: {
+        fr: "Développement du portail e-santé Locamed : catalogue produits par spécialité, prise de rendez-vous, promotions, paiement CMI et à la livraison, suivi des commandes et monitoring via Lens.js — avec Next.js 15, Express.js, Sequelize, Elasticsearch et GitHub Actions. Je pilote actuellement la refonte complète de la plateforme, migrée de WordPress vers une stack moderne : Next.js 16, backend NestJS, NextAuth, TanStack, Redux Toolkit et documentation ApiDog.",
+        en: "Developed the Locamed e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and monitoring via Lens.js — built with Next.js 15, Express.js, Sequelize, Elasticsearch, and GitHub Actions. Currently leading a full rebrand migrating the platform from WordPress to a modern stack with Next.js 16, NestJS backend, NextAuth, TanStack, Redux Toolkit, and ApiDog documentation.",
+      },
     },
     {
       company: "Freelance",
       badges: [],
       href: "",
-      location: "Remote",
-      title: "Full-stack Developer",
+      location: { fr: "À distance", en: "Remote" },
+      title: { fr: "Développeur Full Stack", en: "Full-stack Developer" },
       logoUrl: "/upwork.svg",
-      start: "Mai 2023",
-      end: "Today",
-      description:
-        "Delivered freelance web projects using Laravel, Node.js, React, and Next.js, including REST & GraphQL APIs, Laravel Inertia/Blade dashboards with TailwindCSS and Shadcn, SSL configuration, performance optimization, and full production environment setup and deployment.",
+      start: { fr: "Mai 2023", en: "May 2023" },
+      end: PRESENT,
+      description: {
+        fr: "Réalisation de projets web en freelance avec Laravel, Node.js, React et Next.js : API REST et GraphQL, dashboards Laravel Inertia/Blade avec TailwindCSS et Shadcn, configuration SSL, optimisation des performances, mise en place des environnements de production et déploiement.",
+        en: "Delivered freelance web projects using Laravel, Node.js, React, and Next.js, including REST & GraphQL APIs, Laravel Inertia/Blade dashboards with TailwindCSS and Shadcn, SSL configuration, performance optimization, and full production environment setup and deployment.",
+      },
     },
   ],
   education: [
     {
       school: "ESTEM - Ecole Supérieure de Technologie et de Management",
       href: "https://www.estem.ma/",
-      degree: "Cycle Ingenieur ,Genie Logiciel",
+      degree: {
+        fr: "Cycle Ingénieur, Génie Logiciel",
+        en: "Engineering Degree, Software Engineering",
+      },
       logoUrl: "/estem.webp",
       start: "2025",
       end: "2027",
@@ -132,7 +159,10 @@ export const DATA = {
     {
       school: "UNIVERSITE SULTAN MOULAY SLIMANE FACULTE",
       href: "https://www.fpbm.ma/new/",
-      degree: "Bachelor of Excellence, Data Science and Information Systems Security",
+      degree: {
+        fr: "Licence d'Excellence, Data Science et Sécurité des Systèmes d'Information",
+        en: "Bachelor of Excellence, Data Science and Information Systems Security",
+      },
       logoUrl: "/images.jpg",
       start: "2023",
       end: "2024",
@@ -140,7 +170,10 @@ export const DATA = {
     {
       school: "ISGI Khouribga",
       href: "",
-      degree: "Technician specialized in full stack development",
+      degree: {
+        fr: "Technicien spécialisé en développement full stack",
+        en: "Technician specialized in full stack development",
+      },
       logoUrl: "/OFPPT.png",
       start: "2021",
       end: "2023",
@@ -148,7 +181,10 @@ export const DATA = {
     {
       school: "TECH 57",
       href: "",
-      degree: "Website development with wordpress certificate",
+      degree: {
+        fr: "Certificat en développement de sites web avec WordPress",
+        en: "Website development with WordPress certificate",
+      },
       logoUrl: "/tech57.jpg",
       start: "2023",
       end: "2023",
@@ -158,10 +194,12 @@ export const DATA = {
     {
       title: "PLAAYER PORTAIL",
       href: "https://plaayer-portail.laravel.cloud/",
-      dates: "Oct 2026 - Today",
+      dates: { fr: "Oct. 2026 - Aujourd'hui", en: "Oct 2026 - Today" },
       active: true,
-      description:
-        "Plaayer activates Samsung Smart TVs as playlist players in 30 seconds, with playlist management from a web portal. Built with Laravel 13, PHP 8.5, Inertia.js v3 & TypeScript, GSAP/Motion animations and a custom icon set. Stripe & Paddle subscription billing, PostgreSQL 15 with read replica, SonarQube Cloud quality gating, and SEO-optimized pages, deployed via Docker Compose, Kubernetes, and Terraform IaC.",
+      description: {
+        fr: "Plaayer active les Smart TV Samsung comme lecteurs de playlists en 30 secondes, avec gestion des playlists depuis un portail web. Développé avec Laravel 13, PHP 8.5, Inertia.js v3 et TypeScript, animations GSAP/Motion et jeu d'icônes sur mesure. Abonnements via Stripe et Paddle, PostgreSQL 15 avec réplica en lecture, contrôle qualité SonarQube Cloud et pages optimisées pour le SEO, déployé via Docker Compose, Kubernetes et Terraform (IaC).",
+        en: "Plaayer activates Samsung Smart TVs as playlist players in 30 seconds, with playlist management from a web portal. Built with Laravel 13, PHP 8.5, Inertia.js v3 & TypeScript, GSAP/Motion animations and a custom icon set. Stripe & Paddle subscription billing, PostgreSQL 15 with read replica, SonarQube Cloud quality gating, and SEO-optimized pages, deployed via Docker Compose, Kubernetes, and Terraform IaC.",
+      },
       technologies: [
         { name: "Laravel 13", icon: "laravel" },
         { name: "PHP 8.5", icon: "php" },
@@ -182,60 +220,46 @@ export const DATA = {
         { name: "SonarQube Cloud", icon: "sonarqube" },
         { name: "ESLint", icon: "eslint" },
       ],
-      links: [
-        {
-          type: "Website",
-          href: "https://plaayer-portail.laravel.cloud/",
-          icon: <Icons.globe className="size-3" />,
-        },
-      ],
+      links: [{ ...LINK.website, href: "https://plaayer-portail.laravel.cloud/" }],
       images: ["/plaayer-browser.webp", "/plaayer-tv.webp"],
     },
     {
       title: "FILEVAULT",
       href: "https://filevault-client.vercel.app",
-      dates: "Sep 2026 - Today",
+      dates: { fr: "Sept. 2026 - Aujourd'hui", en: "Sep 2026 - Today" },
       active: true,
-      description:
-        "Secure file vault built with Spring Boot & JDK 27 after moving from Laravel/Symfony. JWT auth with refresh rotation, role-based quotas, direct uploads to Cloudflare R2 with expiring signed links, Scalar API docs, and CI/CD via GitHub Actions to Docker Swarm on Oracle Cloud.",
+      description: {
+        fr: "Coffre-fort de fichiers sécurisé développé avec Spring Boot et JDK 27, après une migration depuis Laravel/Symfony. Authentification JWT avec rotation des refresh tokens, quotas par rôle, upload direct vers Cloudflare R2 avec liens signés à expiration, documentation API Scalar et CI/CD via GitHub Actions vers Docker Swarm sur Oracle Cloud.",
+        en: "Secure file vault built with Spring Boot & JDK 27 after moving from Laravel/Symfony. JWT auth with refresh rotation, role-based quotas, direct uploads to Cloudflare R2 with expiring signed links, Scalar API docs, and CI/CD via GitHub Actions to Docker Swarm on Oracle Cloud.",
+      },
       technologies: [
-        { name: "Spring Boot" , icon: "spring" },
-        { name: "JDK 27" , icon: "java" },
+        { name: "Spring Boot", icon: "spring" },
+        { name: "JDK 27", icon: "java" },
         { name: "Next.js", icon: "nextjs" },
         { name: "TailwindCSS", icon: "tailwindcss" },
         { name: "Cloudflare R2", icon: "cloudflare" },
-        { name: "Scalar" , icon: "openapi" },
+        { name: "Scalar", icon: "openapi" },
         { name: "Docker", icon: "docker" },
-        { name: "Docker Swarm" , icon: "docker" },
-        { name: "Oracle Cloud" , icon: "oracle" },
+        { name: "Docker Swarm", icon: "docker" },
+        { name: "Oracle Cloud", icon: "oracle" },
         { name: "GitHub Actions", icon: "github" },
       ],
       links: [
-        {
-          type: "Website",
-          href: "https://filevault-client.vercel.app",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "API Docs",
-          href: "https://api.filevault-omar.duckdns.org/scalar",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/filevault-server",
-          icon: <Icons.github className="size-3" />,
-        },
+        { ...LINK.website, href: "https://filevault-client.vercel.app" },
+        { ...LINK.apiDocs, href: "https://api.filevault-omar.duckdns.org/scalar" },
+        { ...LINK.source, href: "https://github.com/MAFTOUH-Omar/filevault-server" },
       ],
       images: ["/filevault.webp"],
     },
     {
       title: "REBRAND LOCAMED",
       href: "https://locamed-client-side.vercel.app",
-      dates: "Jan 2026 - Today",
+      dates: { fr: "Janv. 2026 - Aujourd'hui", en: "Jan 2026 - Today" },
       active: true,
-      description:
-        "Complete platform rebrand migrating from WordPress to a modern stack — client & admin sides, NestJS API backend, NextAuth authentication, ApiDog documentation, Redux state management, and TanStack data fetching.",
+      description: {
+        fr: "Refonte complète de la plateforme, migrée de WordPress vers une stack moderne — espaces client et admin, API backend NestJS, authentification NextAuth, documentation ApiDog, gestion d'état Redux et data fetching avec TanStack.",
+        en: "Complete platform rebrand migrating from WordPress to a modern stack — client & admin sides, NestJS API backend, NextAuth authentication, ApiDog documentation, Redux state management, and TanStack data fetching.",
+      },
       technologies: [
         { name: "Next.js 16", icon: "nextjs" },
         { name: "NestJS", icon: "nestjs" },
@@ -246,22 +270,18 @@ export const DATA = {
         { name: "Redux Toolkit", icon: "redux" },
         { name: "GitHub Actions", icon: "github" },
       ],
-      links: [
-        {
-          type: "Website",
-          href: "https://locamed-client-side.vercel.app",
-          icon: <Icons.globe className="size-3" />,
-        },
-      ],
+      links: [{ ...LINK.website, href: "https://locamed-client-side.vercel.app" }],
       images: ["/locamed_rebrand.webp"],
     },
     {
       title: "LOCAMED PORTAIL",
       href: "https://locamed-portal.vercel.app",
-      dates: "Sept 2025 - Jan 2026",
+      dates: { fr: "Sept. 2025 - Janv. 2026", en: "Sept 2025 - Jan 2026" },
       active: true,
-      description:
-        "Full-stack e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and real-time monitoring via Lens.js.",
+      description: {
+        fr: "Portail e-santé full stack : catalogue produits par spécialité, prise de rendez-vous, promotions, paiement CMI et à la livraison, suivi des commandes et monitoring en temps réel via Lens.js.",
+        en: "Full-stack e-health portal featuring product catalog by specialty, appointment booking, promotions, CMI & COD payments, order tracking, and real-time monitoring via Lens.js.",
+      },
       technologies: [
         { name: "Next.js 15", icon: "nextjs" },
         { name: "TypeScript", icon: "typescript" },
@@ -276,22 +296,18 @@ export const DATA = {
         { name: "Vercel", icon: "vercel" },
         { name: "GitHub Actions", icon: "github" },
       ],
-      links: [
-        {
-          type: "Website",
-          href: "https://locamed-portal.vercel.app",
-          icon: <Icons.globe className="size-3" />,
-        },
-      ],
+      links: [{ ...LINK.website, href: "https://locamed-portal.vercel.app" }],
       images: ["/locamed_preview.webp", "/locamed_portail_commande.webp"],
     },
     {
       title: "NOVACODE DASHBOARD STREAMING",
       href: "",
-      dates: "May 2024 - Today",
+      dates: { fr: "Mai 2024 - Aujourd'hui", en: "May 2024 - Today" },
       active: true,
-      description:
-        "Reseller & subscription management dashboard with Telegram WebHook notifications, 2FA authentication via Twilio, role-based permissions, Redis job queues, and supervision through Laravel Telescope & Horizon.",
+      description: {
+        fr: "Dashboard de gestion des revendeurs et des abonnements : notifications via WebHook Telegram, authentification 2FA via Twilio, permissions par rôle, files de jobs Redis et supervision avec Laravel Telescope & Horizon.",
+        en: "Reseller & subscription management dashboard with Telegram WebHook notifications, 2FA authentication via Twilio, role-based permissions, Redis job queues, and supervision through Laravel Telescope & Horizon.",
+      },
       technologies: [
         { name: "Laravel 11", icon: "laravel" },
         { name: "PHP 8.3", icon: "php" },
@@ -310,10 +326,12 @@ export const DATA = {
     {
       title: "TMDB STREAMING BOT",
       href: "",
-      dates: "Jun 2024 - Today",
+      dates: { fr: "Juin 2024 - Aujourd'hui", en: "Jun 2024 - Today" },
       active: true,
-      description:
-        "Python automation pipeline that scrapes streaming sources, fetches movie & TV show metadata via TMDB API, encodes media with FFmpeg, and manages content delivery through a Telegram bot interface.",
+      description: {
+        fr: "Pipeline d'automatisation en Python qui collecte des sources de streaming, récupère les métadonnées des films et séries via l'API TMDB, encode les médias avec FFmpeg et gère la diffusion du contenu via un bot Telegram.",
+        en: "Python automation pipeline that scrapes streaming sources, fetches movie & TV show metadata via TMDB API, encodes media with FFmpeg, and manages content delivery through a Telegram bot interface.",
+      },
       technologies: [
         { name: "Python", icon: "python" },
         { name: "TMDB API" },
@@ -328,10 +346,12 @@ export const DATA = {
     {
       title: "Store IPTV",
       href: "https://store.thesmartiptv.com/",
-      dates: "Oct 2023 - Oct 2024",
+      dates: { fr: "Oct. 2023 - Oct. 2024", en: "Oct 2023 - Oct 2024" },
       active: true,
-      description:
-        "A full-stack MERN project designed to create a dynamic web application, integrating MongoDB, Express, React, and Node.js. The project features seamless front-end and back-end communication, user authentication, and real-time data processing for an enhanced user experience.",
+      description: {
+        fr: "Projet full stack MERN pour une application web dynamique intégrant MongoDB, Express, React et Node.js : communication fluide entre front-end et back-end, authentification des utilisateurs et traitement des données en temps réel pour une meilleure expérience utilisateur.",
+        en: "A full-stack MERN project designed to create a dynamic web application, integrating MongoDB, Express, React, and Node.js. The project features seamless front-end and back-end communication, user authentication, and real-time data processing for an enhanced user experience.",
+      },
       technologies: [
         { name: "React", icon: "react" },
         { name: "Node.js", icon: "nodejs" },
@@ -343,22 +363,18 @@ export const DATA = {
         { name: "PayPal" },
         { name: "Coinbase" },
       ],
-      links: [
-        {
-          type: "Website",
-          href: "https://store.thesmartiptv.com/",
-          icon: <Icons.globe className="size-3" />,
-        },
-      ],
+      links: [{ ...LINK.website, href: "https://store.thesmartiptv.com/" }],
       images: ["/Store.webp"],
     },
     {
       title: "MCIE",
       href: "https://mcie-client-dmtv.vercel.app/",
-      dates: "Aug 2024 - Sep 2024",
+      dates: { fr: "Août 2024 - Sept. 2024", en: "Aug 2024 - Sep 2024" },
       active: true,
-      description:
-        "An independent, non-profit center, founded in 2019, by researchers in economic and financial participatory transactions in Morocco.",
+      description: {
+        fr: "Centre indépendant à but non lucratif, fondé en 2019 par des chercheurs en transactions économiques et financières participatives au Maroc.",
+        en: "An independent, non-profit center, founded in 2019, by researchers in economic and financial participatory transactions in Morocco.",
+      },
       technologies: [
         { name: "React", icon: "react" },
         { name: "Node.js", icon: "nodejs" },
@@ -368,26 +384,20 @@ export const DATA = {
         { name: "Aceternity UI" },
       ],
       links: [
-        {
-          type: "Website",
-          href: "https://mcie-client-dmtv.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/MCIE_CLIENT",
-          icon: <Icons.github className="size-3" />,
-        },
+        { ...LINK.website, href: "https://mcie-client-dmtv.vercel.app/" },
+        { ...LINK.source, href: "https://github.com/MAFTOUH-Omar/MCIE_CLIENT" },
       ],
       images: ["/Mcie.webp"],
     },
     {
       title: "RebornOTT",
       href: "",
-      dates: "June 2024 - September 2024",
+      dates: { fr: "Juin 2024 - Sept. 2024", en: "June 2024 - September 2024" },
       active: true,
-      description:
-        "A custom dashboard built using the Quickframe template, featuring seamless API integration for real-time data visualization and management. The project offers an intuitive interface for monitoring and analyzing key metrics efficiently.",
+      description: {
+        fr: "Dashboard sur mesure basé sur le template Quickframe, avec intégration d'API pour la visualisation et la gestion des données en temps réel. Le projet offre une interface intuitive pour suivre et analyser efficacement les indicateurs clés.",
+        en: "A custom dashboard built using the Quickframe template, featuring seamless API integration for real-time data visualization and management. The project offers an intuitive interface for monitoring and analyzing key metrics efficiently.",
+      },
       technologies: [
         { name: "Vite.js", icon: "vitejs" },
         { name: "Material UI", icon: "materialui" },
@@ -401,10 +411,12 @@ export const DATA = {
     {
       title: "Panda snack",
       href: "https://panda-snack.vercel.app/",
-      dates: "Oct 2023 - Oct 2023",
+      dates: { fr: "Oct. 2023 - Oct. 2023", en: "Oct 2023 - Oct 2023" },
       active: true,
-      description:
-        "Panda Snack is a MERN stack website designed for an online snack shop. The project offers a smooth user experience with dynamic product displays, secure checkout, and real-time order tracking, all managed through an intuitive and responsive interface.",
+      description: {
+        fr: "Panda Snack est un site MERN conçu pour une boutique de snacks en ligne : affichage dynamique des produits, paiement sécurisé et suivi des commandes en temps réel, le tout via une interface intuitive et responsive.",
+        en: "Panda Snack is a MERN stack website designed for an online snack shop. The project offers a smooth user experience with dynamic product displays, secure checkout, and real-time order tracking, all managed through an intuitive and responsive interface.",
+      },
       technologies: [
         { name: "React", icon: "react" },
         { name: "Node.js", icon: "nodejs" },
@@ -413,26 +425,20 @@ export const DATA = {
         { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [
-        {
-          type: "Website",
-          href: "https://panda-snack.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/panda_snack_front/",
-          icon: <Icons.github className="size-3" />,
-        },
+        { ...LINK.website, href: "https://panda-snack.vercel.app/" },
+        { ...LINK.source, href: "https://github.com/MAFTOUH-Omar/panda_snack_front/" },
       ],
       images: ["/Panda.webp"],
     },
     {
       title: "Nano 4K",
       href: "",
-      dates: "Aug 2024 - Sep 2024",
+      dates: { fr: "Août 2024 - Sept. 2024", en: "Aug 2024 - Sep 2024" },
       active: true,
-      description:
-        "Nano 4K is a product showcase site for a 4K streaming device, built with Laravel and Inertia.js. Features a responsive TailwindCSS catalog, product detail pages, and an order/checkout flow backed by MySQL.",
+      description: {
+        fr: "Nano 4K est un site vitrine pour un boîtier de streaming 4K, développé avec Laravel et Inertia.js : catalogue responsive en TailwindCSS, pages produits et tunnel de commande adossé à MySQL.",
+        en: "Nano 4K is a product showcase site for a 4K streaming device, built with Laravel and Inertia.js. Features a responsive TailwindCSS catalog, product detail pages, and an order/checkout flow backed by MySQL.",
+      },
       technologies: [
         { name: "Laravel", icon: "laravel" },
         { name: "Inertia.js" },
@@ -445,51 +451,39 @@ export const DATA = {
     {
       title: "ORT FOOD",
       href: "",
-      dates: "Aug 2022 - Sep 2022",
+      dates: { fr: "Août 2022 - Sept. 2022", en: "Aug 2022 - Sep 2022" },
       active: true,
-      description:
-        "ORT FOOD is a Next.js website crafted for a restaurant, offering seamless browsing of menus, online ordering, and real-time order updates, all through a fast and responsive interface.",
+      description: {
+        fr: "ORT FOOD est un site Next.js conçu pour un restaurant : consultation des menus, commande en ligne et suivi des commandes en temps réel, via une interface rapide et responsive.",
+        en: "ORT FOOD is a Next.js website crafted for a restaurant, offering seamless browsing of menus, online ordering, and real-time order updates, all through a fast and responsive interface.",
+      },
       technologies: [
         { name: "Next.js", icon: "nextjs" },
         { name: "TailwindCSS", icon: "tailwindcss" },
       ],
       links: [
-        {
-          type: "Website",
-          href: "https://ort-food.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/Ort_Food",
-          icon: <Icons.github className="size-3" />,
-        },
+        { ...LINK.website, href: "https://ort-food.vercel.app/" },
+        { ...LINK.source, href: "https://github.com/MAFTOUH-Omar/Ort_Food" },
       ],
       images: ["/Ort_food.webp"],
     },
     {
       title: "Prayer",
       href: "",
-      dates: "Sep 2022 - Nov 2022",
+      dates: { fr: "Sept. 2022 - Nov. 2022", en: "Sep 2022 - Nov 2022" },
       active: true,
-      description:
-        "PrayerTime is a full-stack Next.js application displaying daily prayer times with a sleek interface for tracking the next prayer. The project includes OAuth authentication for secure access, ensuring a personalized experience for users.",
+      description: {
+        fr: "PrayerTime est une application full stack Next.js qui affiche les horaires de prière quotidiens avec une interface épurée pour suivre la prochaine prière. Le projet inclut une authentification OAuth pour un accès sécurisé et une expérience personnalisée.",
+        en: "PrayerTime is a full-stack Next.js application displaying daily prayer times with a sleek interface for tracking the next prayer. The project includes OAuth authentication for secure access, ensuring a personalized experience for users.",
+      },
       technologies: [
         { name: "Next.js", icon: "nextjs" },
         { name: "TailwindCSS", icon: "tailwindcss" },
         { name: "OAuth" },
       ],
       links: [
-        {
-          type: "Website",
-          href: "https://prayer-ort.vercel.app/",
-          icon: <Icons.globe className="size-3" />,
-        },
-        {
-          type: "Source",
-          href: "https://github.com/MAFTOUH-Omar/Prayer/tree/main/client",
-          icon: <Icons.github className="size-3" />,
-        },
+        { ...LINK.website, href: "https://prayer-ort.vercel.app/" },
+        { ...LINK.source, href: "https://github.com/MAFTOUH-Omar/Prayer/tree/main/client" },
       ],
       images: ["/Prayer.webp"],
     },

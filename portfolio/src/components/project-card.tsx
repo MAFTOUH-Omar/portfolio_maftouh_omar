@@ -26,10 +26,18 @@ interface Props {
   images?: readonly string[];
   video?: string;
   links?: readonly {
-    icon: React.ReactNode;
+    kind: "website" | "apiDocs" | "source";
+    /** Localized label shown as tooltip / accessible name. */
     type: string;
     href: string;
   }[];
+  /** Localized accessibility strings. */
+  labels: {
+    previousImage: string;
+    nextImage: string;
+    goToImage: string;
+    screenshot: string;
+  };
   className?: string;
   /** Tailwind aspect-ratio class for the media area. Defaults to 2:1, the shape of most project screenshots. */
   aspectClassName?: string;
@@ -46,6 +54,7 @@ export function ProjectCard({
   links,
   className,
   aspectClassName,
+  labels,
 }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
   const mounted = useMounted();
@@ -146,7 +155,7 @@ export function ProjectCard({
                 />
                 <Image
                   src={img}
-                  alt={`${title} - ${index + 1}`}
+                  alt={`${labels.screenshot} ${title} (${index + 1}/${allImages.length})`}
                   fill
                   sizes="(max-width: 640px) 100vw, 420px"
                   className="object-contain group-hover:scale-[1.04] transition-transform duration-700 ease-out"
@@ -160,14 +169,14 @@ export function ProjectCard({
                 <button
                   onClick={prevImage}
                   className="absolute left-2.5 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-md p-1.5 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/65 hover:scale-110"
-                  aria-label="Previous image"
+                  aria-label={labels.previousImage}
                 >
                   <ChevronLeft className="size-3.5" />
                 </button>
                 <button
                   onClick={nextImage}
                   className="absolute right-2.5 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/40 backdrop-blur-md p-1.5 text-white opacity-0 transition-all duration-200 group-hover:opacity-100 hover:bg-black/65 hover:scale-110"
-                  aria-label="Next image"
+                  aria-label={labels.nextImage}
                 >
                   <ChevronRight className="size-3.5" />
                 </button>
@@ -188,7 +197,7 @@ export function ProjectCard({
                           ? "w-5 bg-white"
                           : "w-1.5 bg-white/50 hover:bg-white/75"
                       )}
-                      aria-label={`Go to image ${index + 1}`}
+                      aria-label={`${labels.goToImage} ${index + 1}`}
                     />
                   ))}
                 </div>
@@ -232,11 +241,13 @@ export function ProjectCard({
                   href={l.href}
                   key={idx}
                   target="_blank"
+                  rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   className="text-muted-foreground hover:text-accent transition-colors p-1 rounded-md hover:bg-accent/10"
                   title={l.type}
+                  aria-label={`${l.type} — ${title}`}
                 >
-                  {l.type === "Source" ? (
+                  {l.kind === "source" ? (
                     <svg
                       viewBox="0 0 438.549 438.549"
                       className="size-[15px]"

@@ -1,7 +1,13 @@
 import BlurFadeText from "@/components/magicui/blur-fade-text";
 import { ProjectCard } from "@/components/project-card";
 import { ResumeCard } from "@/components/resume-card";
+import { JsonLd } from "@/components/json-ld";
+import { getDictionary } from "@/data/dictionaries";
 import { DATA } from "@/data/resume";
+import { languageAlternates, localeConfig, localizePath, type Locale } from "@/lib/i18n";
+import { openGraphFor, personSchema, PERSON_ID, WEBSITE_ID } from "@/lib/seo";
+import { absoluteUrl, SITE_URL } from "@/lib/site";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Markdown from "react-markdown";
 import BlurFade from "@/components/magicui/blur-fade";
@@ -12,9 +18,53 @@ import { ArrowUpRight } from "lucide-react";
 
 const BLUR_FADE_DELAY = 0.04;
 
-export default function Page() {
+export function homeMetadata(locale: Locale): Metadata {
+  return {
+    alternates: {
+      canonical: localizePath(locale, "/"),
+      languages: languageAlternates("/"),
+    },
+    openGraph: openGraphFor(locale, { url: localizePath(locale, "/") }),
+  };
+}
+
+function homeJsonLd(locale: Locale) {
+  const t = getDictionary(locale);
+  const pageUrl = absoluteUrl(localizePath(locale, "/"));
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": WEBSITE_ID,
+        url: SITE_URL,
+        name: DATA.fullName,
+        alternateName: [DATA.name, "omarmaftouh.com"],
+        inLanguage: Object.values(localeConfig).map((c) => c.htmlLang),
+        publisher: { "@id": PERSON_ID },
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": `${pageUrl}#profilepage`,
+        url: pageUrl,
+        name: t.meta.title,
+        description: t.meta.description,
+        inLanguage: localeConfig[locale].htmlLang,
+        isPartOf: { "@id": WEBSITE_ID },
+        mainEntity: { "@id": PERSON_ID },
+      },
+      personSchema(locale),
+    ],
+  };
+}
+
+export function HomePage({ locale }: { locale: Locale }) {
+  const t = getDictionary(locale);
+
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
+      <JsonLd data={homeJsonLd(locale)} />
       <section id="hero">
         <CodeFrame tag="FullStack" attributes={{ craft: "web-dreams" }}>
           <div className="relative isolate flex flex-col justify-center overflow-hidden rounded-lg bg-hero-ink text-white shadow-2xl shadow-black/25 sm:min-h-[27rem] dark:ring-1 dark:ring-white/10">
@@ -38,7 +88,7 @@ export default function Page() {
               <BlurFade delay={BLUR_FADE_DELAY}>
                 <Avatar className="size-16 ring-2 ring-hero-panel/50 ring-offset-4 ring-offset-hero-ink sm:size-20">
                   <AvatarImage
-                    alt={DATA.name}
+                    alt={`${DATA.fullName} — ${DATA.role[locale]}`}
                     src={DATA.avatarUrl}
                     loading="eager"
                     fetchPriority="high"
@@ -47,17 +97,23 @@ export default function Page() {
                 </Avatar>
               </BlurFade>
               <div className="flex flex-col items-center gap-2">
-                <BlurFadeText
-                  as="h1"
-                  delay={BLUR_FADE_DELAY}
-                  className="text-3xl font-bold tracking-tighter text-white sm:text-4xl xl:text-5xl/none"
-                  yOffset={8}
-                  text={`Hi, I'm ${DATA.name.split(" ")[0]}`}
-                />
+                {/* The H1 carries the target query (role + city) for search engines. */}
+                <BlurFade delay={BLUR_FADE_DELAY} yOffset={8}>
+                  <h1 className="flex flex-col items-center gap-2">
+                    <span className="text-3xl font-bold tracking-tighter text-white sm:text-4xl xl:text-5xl/none">
+                      {t.hero.greeting}
+                    </span>
+                    <span className="sr-only"> — </span>
+                    <span className="text-sm font-semibold uppercase tracking-[0.18em] text-hero-panel sm:text-base">
+                      {t.hero.role}
+                    </span>
+                  </h1>
+                </BlurFade>
                 <BlurFadeText
                   className="max-w-[520px] text-balance text-white/75 sm:text-lg"
                   delay={BLUR_FADE_DELAY}
-                  text={DATA.description}
+                  text={DATA.description[locale]}
+                  as="p"
                 />
               </div>
               <BlurFade delay={BLUR_FADE_DELAY}>
@@ -67,7 +123,7 @@ export default function Page() {
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink shadow-lg shadow-black/20 transition-colors hover:bg-hero-panel"
                 >
-                  Get in touch
+                  {t.hero.cta}
                   <span className="flex size-8 items-center justify-center rounded-full bg-hero-ink text-white transition-transform duration-300 group-hover:rotate-45">
                     <ArrowUpRight className="size-4" />
                   </span>
@@ -79,18 +135,18 @@ export default function Page() {
       </section>
       <section id="about">
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <h2 className="text-xl font-bold">About</h2>
+          <h2 className="text-xl font-bold">{t.sections.about}</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
           <div className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-            <Markdown>{DATA.summary}</Markdown>
+            <Markdown>{DATA.summary[locale]}</Markdown>
           </div>
         </BlurFade>
       </section>
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 5}>
-            <h2 className="text-xl font-bold">Work Experience</h2>
+            <h2 className="text-xl font-bold">{t.sections.work}</h2>
           </BlurFade>
           {DATA.work.map((work, id) => (
             <BlurFade
@@ -102,11 +158,11 @@ export default function Page() {
                 logoUrl={work.logoUrl}
                 altText={work.company}
                 title={work.company}
-                subtitle={work.title}
+                subtitle={work.title[locale]}
                 href={work.href}
                 badges={work.badges}
-                period={`${work.start} - ${work.end ?? "Present"}`}
-                description={work.description}
+                period={`${work.start[locale]} - ${work.end[locale]}`}
+                description={work.description[locale]}
               />
             </BlurFade>
           ))}
@@ -115,7 +171,7 @@ export default function Page() {
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 7}>
-            <h2 className="text-xl font-bold">Education</h2>
+            <h2 className="text-xl font-bold">{t.sections.education}</h2>
           </BlurFade>
           {DATA.education.map((education, id) => (
             <BlurFade
@@ -128,7 +184,7 @@ export default function Page() {
                 logoUrl={education.logoUrl}
                 altText={education.school}
                 title={education.school}
-                subtitle={education.degree}
+                subtitle={education.degree[locale]}
                 period={`${education.start} - ${education.end}`}
               />
             </BlurFade>
@@ -138,7 +194,7 @@ export default function Page() {
       <section id="skills">
         <div className="flex min-h-0 flex-col gap-y-3">
           <BlurFade delay={BLUR_FADE_DELAY * 9}>
-            <h2 className="text-xl font-bold">Skills</h2>
+            <h2 className="text-xl font-bold">{t.sections.skills}</h2>
           </BlurFade>
           <div className="flex flex-wrap gap-2">
             {DATA.skills.map((skill, id) => (
@@ -155,15 +211,13 @@ export default function Page() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                  My Projects
+                  {t.projects.badge}
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Check out my latest work
+                  {t.projects.title}
                 </h2>
                 <p className="text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  I&apos;ve worked on a variety of projects, from simple
-                  websites to complex web applications. Here are a few of my
-                  favorites.
+                  {t.projects.intro}
                 </p>
               </div>
             </div>
@@ -178,11 +232,16 @@ export default function Page() {
                 <ProjectCard
                   href={project.href}
                   title={project.title}
-                  description={project.description}
-                  dates={project.dates}
+                  description={project.description[locale]}
+                  dates={project.dates[locale]}
                   tags={project.technologies}
                   images={project.images}
-                  links={project.links}
+                  links={project.links.map((link) => ({
+                    kind: link.kind,
+                    type: link.label[locale],
+                    href: link.href,
+                  }))}
+                  labels={t.a11y}
                 />
               </BlurFade>
             ))}
@@ -194,29 +253,28 @@ export default function Page() {
           <BlurFade delay={BLUR_FADE_DELAY * 16}>
             <div className="space-y-3">
               <div className="inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm">
-                Contact
+                {t.contact.badge}
               </div>
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                Get in Touch
+                {t.contact.title}
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Want to chat? Just shoot me a dm{" "}
+                {t.contact.before}{" "}
                 <Link
                   href={DATA.contact.social.email.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary hover:underline"
                 >
-                  with a direct question on mail
+                  {t.contact.link}
                 </Link>{" "}
-                and I&apos;ll respond whenever I can. I will ignore all
-                soliciting.{" "}
+                {t.contact.after}{" "}
                 <Link
                   href="/cv-maftouh-omar.pdf"
                   download
                   className="text-primary hover:underline"
                 >
-                  Feel free to download my CV for more details.
+                  {t.contact.cv}
                 </Link>
               </p>
             </div>
