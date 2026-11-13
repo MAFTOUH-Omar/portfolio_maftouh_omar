@@ -23,6 +23,7 @@ export const dictionaries = {
       greeting: "Salut, je suis Omar",
       role: "Développeur Full Stack · Casablanca, Maroc",
       cta: "Me contacter",
+      available: "Disponible pour de nouveaux projets",
     },
     sections: {
       about: "À propos",
@@ -31,19 +32,19 @@ export const dictionaries = {
       skills: "Compétences",
     },
     projects: {
-      badge: "Mes projets",
-      title: "Découvrez mes derniers projets",
+      title: "Projets",
+      featured: "Projet phare",
       intro:
         "J'ai travaillé sur des projets variés, du simple site vitrine aux applications web complexes. En voici quelques-uns parmi mes préférés.",
     },
     contact: {
-      badge: "Contact",
-      title: "Me contacter",
-      before: "Envie d'échanger ? Envoyez-moi",
-      link: "un message direct par e-mail",
-      after:
-        "et je vous répondrai dès que possible. Les sollicitations commerciales seront ignorées.",
-      cv: "Téléchargez mon CV pour plus de détails.",
+      title: "Contact",
+      headline: "Travaillons ensemble",
+      body: "Un projet web, une mission freelance ou un poste à pourvoir ? Écrivez-moi, je réponds rapidement.",
+      email: "M'écrire",
+      copy: "Copier l'e-mail",
+      copied: "E-mail copié !",
+      cv: "Télécharger le CV",
     },
     blog: {
       heading: "blog",
@@ -93,6 +94,7 @@ export const dictionaries = {
       greeting: "Hi, I'm Omar",
       role: "Full Stack Developer · Casablanca, Morocco",
       cta: "Get in touch",
+      available: "Available for new projects",
     },
     sections: {
       about: "About",
@@ -101,18 +103,19 @@ export const dictionaries = {
       skills: "Skills",
     },
     projects: {
-      badge: "My Projects",
-      title: "Check out my latest work",
+      title: "Projects",
+      featured: "Featured",
       intro:
         "I've worked on a variety of projects, from simple websites to complex web applications. Here are a few of my favorites.",
     },
     contact: {
-      badge: "Contact",
-      title: "Get in Touch",
-      before: "Want to chat? Just shoot me a dm",
-      link: "with a direct question on mail",
-      after: "and I'll respond whenever I can. I will ignore all soliciting.",
-      cv: "Feel free to download my CV for more details.",
+      title: "Contact",
+      headline: "Let's work together",
+      body: "A web project, a freelance mission or an open role? Drop me a line — I reply quickly.",
+      email: "Email me",
+      copy: "Copy email",
+      copied: "Email copied!",
+      cv: "Download CV",
     },
     blog: {
       heading: "blog",

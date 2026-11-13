@@ -38,6 +38,15 @@ interface Props {
   className?: string;
   /** Tailwind aspect-ratio class for the media area. Defaults to 2:1, the shape of most project screenshots. */
   aspectClassName?: string;
+  /** When set, renders the wide "flagship" layout with this badge text. */
+  featuredLabel?: string;
+}
+
+/** Feeds the cursor position to the .spotlight overlay — no React re-render. */
+function trackPointer(e: React.PointerEvent<HTMLElement>) {
+  const rect = e.currentTarget.getBoundingClientRect();
+  e.currentTarget.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+  e.currentTarget.style.setProperty("--my", `${e.clientY - rect.top}px`);
 }
 
 export function ProjectCard({
@@ -52,7 +61,9 @@ export function ProjectCard({
   className,
   aspectClassName,
   labels,
+  featuredLabel,
 }: Props) {
+  const featured = Boolean(featuredLabel);
   const [currentImage, setCurrentImage] = useState(0);
 
   const allImages = images ?? [];
@@ -98,8 +109,10 @@ export function ProjectCard({
       tabIndex={href ? 0 : undefined}
       onClick={href ? openProject : undefined}
       onKeyDown={href ? onCardKeyDown : undefined}
+      onPointerMove={trackPointer}
       className={cn(
         "group relative flex flex-col overflow-hidden shadow-sm",
+        featured && "sm:flex-row",
         "ring-2 ring-offset-2 ring-transparent ring-offset-transparent",
         "transition-all duration-300 ease-out",
         "hover:-translate-y-0.5 hover:shadow-lg hover:ring-primary/50 hover:ring-offset-background",
@@ -108,13 +121,25 @@ export function ProjectCard({
         className
       )}
     >
+      {/* Cursor spotlight (fine pointers only, hidden until hover) */}
+      <div
+        aria-hidden
+        className="spotlight pointer-events-none absolute inset-0 z-[5] opacity-0 transition-opacity duration-300 group-hover:opacity-100 [@media(pointer:coarse)]:hidden"
+      />
+
       {/* Image / Video area — edge to edge */}
       <div
         className={cn(
           "relative overflow-hidden bg-muted/50 flex-shrink-0",
-          aspectClassName ?? "aspect-[2/1]"
+          aspectClassName ?? "aspect-[2/1]",
+          featured && "sm:aspect-auto sm:min-h-72 sm:w-[58%]"
         )}
       >
+        {featured && (
+          <span className="absolute left-2.5 top-2.5 z-10 inline-flex items-center gap-1.5 rounded-full bg-accent px-2.5 py-0.5 text-[11px] font-semibold text-accent-foreground shadow-md">
+            ★ {featuredLabel}
+          </span>
+        )}
         {/* Bottom gradient for depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-[1] pointer-events-none" />
 
@@ -145,14 +170,14 @@ export function ProjectCard({
                   alt=""
                   aria-hidden
                   fill
-                  sizes="(max-width: 640px) 100vw, 420px"
+                  sizes={featured ? "(max-width: 640px) 100vw, 520px" : "(max-width: 640px) 100vw, 420px"}
                   className="scale-110 object-cover opacity-80 blur-2xl"
                 />
                 <Image
                   src={img}
                   alt={`${labels.screenshot} ${title} (${index + 1}/${allImages.length})`}
                   fill
-                  sizes="(max-width: 640px) 100vw, 420px"
+                  sizes={featured ? "(max-width: 640px) 100vw, 520px" : "(max-width: 640px) 100vw, 420px"}
                   className="object-contain group-hover:scale-[1.04] transition-transform duration-700 ease-out"
                 />
               </div>
@@ -217,14 +242,14 @@ export function ProjectCard({
       </div>
 
       {/* Card body */}
-      <div className="flex flex-col flex-1 p-4 gap-2">
+      <div className={cn("flex flex-col flex-1 p-4 gap-2", featured && "sm:p-6 sm:gap-3")}>
         {/* Title row */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <h3 className="font-semibold text-sm leading-snug text-card-foreground truncate">
+            <h3 className={cn("font-semibold text-sm leading-snug text-card-foreground truncate", featured && "sm:text-lg sm:whitespace-normal")}>
               {title}
             </h3>
-            <p className="text-[11px] text-muted-foreground mt-0.5 font-medium">
+            <p className="mt-0.5 font-mono text-[10.5px] text-muted-foreground">
               {dates}
             </p>
           </div>
@@ -260,7 +285,7 @@ export function ProjectCard({
         </div>
 
         {/* Description */}
-        <div className="prose dark:prose-invert max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground line-clamp-3">
+        <div className={cn("prose dark:prose-invert max-w-full text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground line-clamp-3", featured && "sm:text-[13px] sm:line-clamp-none")}>
           <p>{description}</p>
         </div>
 

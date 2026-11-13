@@ -80,7 +80,7 @@ export const ResumeCard = ({
                   )}
                 />
               </h3>
-              <div className="text-xs sm:text-sm tabular-nums text-muted-foreground text-right">
+              <div className="font-mono text-[11px] sm:text-xs tabular-nums text-muted-foreground text-right">
                 {period}
               </div>
             </div>

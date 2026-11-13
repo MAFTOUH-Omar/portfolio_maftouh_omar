@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { dictionaries } from "@/data/dictionaries";
-import { fontSans } from "@/lib/fonts";
+import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
 // Two root layouts (fr / en) means no single layout can render unmatched URLs.
@@ -17,7 +17,7 @@ export default function GlobalNotFound() {
       <body
         className={cn(
           "flex min-h-screen flex-col items-center justify-center gap-8 bg-background px-6 text-center font-sans antialiased",
-          fontSans.variable
+          fontSans.variable, fontMono.variable
         )}
       >
         <p className="font-mono text-sm text-muted-foreground">404</p>
