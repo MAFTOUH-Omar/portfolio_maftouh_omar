@@ -69,7 +69,7 @@ export default async function AdminSkillsPage() {
           <TableRow>
             <TableHead>Icon</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Order</TableHead>
+            <TableHead className="hidden sm:table-cell">Order</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -80,7 +80,7 @@ export default async function AdminSkillsPage() {
                 <TechIcon name={skill.icon} className="size-5" />
               </TableCell>
               <TableCell>{skill.name}</TableCell>
-              <TableCell>{skill.sortOrder}</TableCell>
+              <TableCell className="hidden sm:table-cell">{skill.sortOrder}</TableCell>
               <TableCell className="flex justify-end gap-2 text-right">
                 <EntityDialog
                   trigger="Edit"

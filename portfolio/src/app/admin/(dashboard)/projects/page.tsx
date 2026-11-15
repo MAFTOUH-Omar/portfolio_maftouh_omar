@@ -30,7 +30,7 @@ function imagesText(images: unknown) {
 
 function ProjectFields({ project }: { project?: ProjectRow }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="col-span-2 space-y-2">
         <Label htmlFor="title">Title</Label>
         <Input id="title" name="title" required defaultValue={project?.title} />
@@ -126,9 +126,9 @@ export default async function AdminProjectsPage() {
         <TableHeader>
           <TableRow>
             <TableHead>Title</TableHead>
-            <TableHead>Dates</TableHead>
-            <TableHead>Active</TableHead>
-            <TableHead>Order</TableHead>
+            <TableHead className="hidden sm:table-cell">Dates</TableHead>
+            <TableHead className="hidden md:table-cell">Active</TableHead>
+            <TableHead className="hidden md:table-cell">Order</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -136,9 +136,9 @@ export default async function AdminProjectsPage() {
           {projectRows.map((project) => (
             <TableRow key={project.id}>
               <TableCell>{project.title}</TableCell>
-              <TableCell>{project.datesFr}</TableCell>
-              <TableCell>{project.active ? "Yes" : "No"}</TableCell>
-              <TableCell>{project.sortOrder}</TableCell>
+              <TableCell className="hidden sm:table-cell">{project.datesFr}</TableCell>
+              <TableCell className="hidden md:table-cell">{project.active ? "Yes" : "No"}</TableCell>
+              <TableCell className="hidden md:table-cell">{project.sortOrder}</TableCell>
               <TableCell className="flex justify-end gap-2 text-right">
                 <EntityDialog
                   trigger="Edit"

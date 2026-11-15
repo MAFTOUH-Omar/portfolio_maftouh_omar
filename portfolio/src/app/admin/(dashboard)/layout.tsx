@@ -1,4 +1,4 @@
-import { AdminSidebar } from "@/components/admin/sidebar";
+import { AdminHeader } from "@/components/admin/header";
 import { getSession } from "@/lib/session";
 
 export default async function AdminDashboardLayout({
@@ -9,9 +9,9 @@ export default async function AdminDashboardLayout({
   const session = await getSession();
 
   return (
-    <div className="flex min-h-screen">
-      <AdminSidebar email={session?.email ?? ""} />
-      <main className="min-w-0 flex-1 p-6 sm:p-8">{children}</main>
+    <div className="min-h-screen">
+      <AdminHeader email={session?.email ?? ""} />
+      <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">{children}</main>
     </div>
   );
 }

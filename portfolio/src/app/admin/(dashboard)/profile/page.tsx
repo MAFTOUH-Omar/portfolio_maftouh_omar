@@ -18,7 +18,7 @@ export default async function AdminProfilePage() {
     <div className="max-w-3xl space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
       <ProfileForm>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="name">Display name</Label>
             <Input id="name" name="name" required defaultValue={row.name} />
@@ -70,7 +70,7 @@ export default async function AdminProfilePage() {
           <Textarea id="summaryEn" name="summaryEn" required rows={4} defaultValue={row.summaryEn} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="locationFr">Location (FR)</Label>
             <Input id="locationFr" name="locationFr" required defaultValue={row.locationFr} />
@@ -107,7 +107,7 @@ export default async function AdminProfilePage() {
 
         <div className="space-y-3 rounded-lg border p-4">
           <p className="text-sm font-medium">Social links</p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="githubUrl">GitHub URL</Label>
               <Input id="githubUrl" name="githubUrl" defaultValue={social.GitHub?.url ?? ""} />

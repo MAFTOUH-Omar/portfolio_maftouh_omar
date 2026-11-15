@@ -28,7 +28,7 @@ function PostFields({
   selectedTagIds: Set<string>;
 }) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="space-y-2">
         <Label htmlFor="slug">Slug</Label>
         <Input id="slug" name="slug" required defaultValue={post?.slug} placeholder="my-post" />
@@ -144,9 +144,9 @@ export default async function AdminPostsPage() {
         <TableHeader>
           <TableRow>
             <TableHead>Title</TableHead>
-            <TableHead>Locale</TableHead>
+            <TableHead className="hidden sm:table-cell">Locale</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Updated</TableHead>
+            <TableHead className="hidden md:table-cell">Updated</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -154,11 +154,13 @@ export default async function AdminPostsPage() {
           {postRows.map((post) => (
             <TableRow key={post.id}>
               <TableCell>{post.title}</TableCell>
-              <TableCell>{post.locale}</TableCell>
+              <TableCell className="hidden sm:table-cell">{post.locale}</TableCell>
               <TableCell>
                 <Badge variant={post.status === "published" ? "default" : "outline"}>{post.status}</Badge>
               </TableCell>
-              <TableCell>{post.updatedAt.toISOString().slice(0, 10)}</TableCell>
+              <TableCell className="hidden md:table-cell">
+                {post.updatedAt.toISOString().slice(0, 10)}
+              </TableCell>
               <TableCell className="flex justify-end gap-2 text-right">
                 <EntityDialog
                   trigger="Edit"

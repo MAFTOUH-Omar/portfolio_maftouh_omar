@@ -47,7 +47,7 @@ export default async function AdminTagsPage() {
           <TableRow>
             <TableHead>Slug</TableHead>
             <TableHead>Name (FR)</TableHead>
-            <TableHead>Name (EN)</TableHead>
+            <TableHead className="hidden sm:table-cell">Name (EN)</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -56,7 +56,7 @@ export default async function AdminTagsPage() {
             <TableRow key={tag.id}>
               <TableCell>{tag.slug}</TableCell>
               <TableCell>{tag.nameFr}</TableCell>
-              <TableCell>{tag.nameEn}</TableCell>
+              <TableCell className="hidden sm:table-cell">{tag.nameEn}</TableCell>
               <TableCell className="flex justify-end gap-2 text-right">
                 <EntityDialog
                   trigger="Edit"
