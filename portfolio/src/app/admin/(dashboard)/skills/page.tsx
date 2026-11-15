@@ -3,6 +3,7 @@ import { db } from "@/db/client";
 import { skills as skillsTable } from "@/db/schema";
 import icons from "@/data/tech-icons.json";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TechIcon } from "@/components/tech-icon";
@@ -57,11 +58,12 @@ export default async function AdminSkillsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Skills</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Skills</h1>
         <EntityDialog trigger="New skill" title="New skill" action={createSkill}>
           <SkillFields />
         </EntityDialog>
       </div>
+      <Card className="overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -94,6 +96,7 @@ export default async function AdminSkillsPage() {
           ))}
         </TableBody>
       </Table>
+      </Card>
     </div>
   );
 }

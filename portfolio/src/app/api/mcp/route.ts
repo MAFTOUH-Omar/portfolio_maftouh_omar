@@ -1,10 +1,22 @@
 import { and, desc, eq } from "drizzle-orm";
 import { createMcpHandler, withMcpAuth } from "mcp-handler";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db/client";
 import { postTags, posts, tags } from "@/db/schema";
 import { newId } from "@/lib/id";
 import { slugify } from "@/lib/slug";
+
+/** Mirrors the admin posts actions' invalidation so a post published here
+ *  (e.g. by the weekly trending-topic routine) shows up immediately instead
+ *  of waiting for the next deploy or a cache expiry. */
+function revalidatePost(locale: "fr" | "en", slug: string) {
+  revalidatePath("/admin/posts");
+  revalidatePath("/blog");
+  revalidatePath("/en/blog");
+  revalidatePath("/sitemap.xml");
+  revalidatePath(`/${locale === "fr" ? "" : "en/"}blog/${slug}`);
+}
 
 export const runtime = "nodejs";
 
@@ -169,6 +181,8 @@ const handler = createMcpHandler(
           await syncPostTags(id, await resolveTagIds(input.tags));
         }
 
+        if (input.status === "published") revalidatePost(input.locale, slug);
+
         return {
           content: [
             {
@@ -218,6 +232,8 @@ const handler = createMcpHandler(
         if (tagNames) {
           await syncPostTags(existing.id, await resolveTagIds(tagNames));
         }
+
+        revalidatePost(locale, slug);
 
         return { content: [{ type: "text", text: `Updated post "${slug}" (${locale}).` }] };
       }

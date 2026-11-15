@@ -47,6 +47,7 @@ function revalidatePosts(slug?: string, locale?: string) {
   revalidatePath("/admin/posts");
   revalidatePath("/blog");
   revalidatePath("/en/blog");
+  revalidatePath("/sitemap.xml");
   if (slug && locale) {
     revalidatePath(`/${locale === "fr" ? "" : "en/"}blog/${slug}`);
   }

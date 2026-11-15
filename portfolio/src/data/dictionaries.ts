@@ -59,6 +59,7 @@ export const dictionaries = {
       description:
         "Articles d'Omar Maftouh, développeur full stack au Maroc : développement web, Next.js, Laravel, Node.js et retours d'expérience.",
       empty: "Les premiers articles arrivent bientôt.",
+      back: "Retour au blog",
     },
     nav: {
       home: "Accueil",
@@ -147,6 +148,7 @@ export const dictionaries = {
       description:
         "Articles by Omar Maftouh, full stack developer in Morocco: web development, Next.js, Laravel, Node.js and lessons learned.",
       empty: "First articles coming soon.",
+      back: "Back to blog",
     },
     nav: {
       home: "Home",

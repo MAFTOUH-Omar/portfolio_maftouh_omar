@@ -2,6 +2,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { postTags, posts as postsTable, tags as tagsTable } from "@/db/schema";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -128,7 +129,7 @@ export default async function AdminPostsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Blog posts</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Blog posts</h1>
         <EntityDialog
           trigger="New post"
           title="New post"
@@ -138,6 +139,7 @@ export default async function AdminPostsPage() {
           <PostFields allTags={allTags} selectedTagIds={new Set()} />
         </EntityDialog>
       </div>
+      <Card className="overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -173,6 +175,7 @@ export default async function AdminPostsPage() {
           ))}
         </TableBody>
       </Table>
+      </Card>
     </div>
   );
 }

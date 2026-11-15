@@ -16,7 +16,7 @@ export default async function AdminProfilePage() {
 
   return (
     <div className="max-w-3xl space-y-6">
-      <h1 className="text-2xl font-semibold">Profile</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
       <ProfileForm>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">

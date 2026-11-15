@@ -2,6 +2,7 @@ import { asc } from "drizzle-orm";
 import { db } from "@/db/client";
 import { projects as projectsTable } from "@/db/schema";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -110,7 +111,7 @@ export default async function AdminProjectsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Projects</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
         <EntityDialog
           trigger="New project"
           title="New project"
@@ -120,6 +121,7 @@ export default async function AdminProjectsPage() {
           <ProjectFields />
         </EntityDialog>
       </div>
+      <Card className="overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -153,6 +155,7 @@ export default async function AdminProjectsPage() {
           ))}
         </TableBody>
       </Table>
+      </Card>
     </div>
   );
 }

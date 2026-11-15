@@ -2,6 +2,7 @@ import { asc } from "drizzle-orm";
 import { db } from "@/db/client";
 import { education as educationTable } from "@/db/schema";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EntityDialog } from "@/components/admin/entity-dialog";
@@ -55,7 +56,7 @@ export default async function AdminEducationPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Education</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Education</h1>
         <EntityDialog
           trigger="New entry"
           title="New education entry"
@@ -65,6 +66,7 @@ export default async function AdminEducationPage() {
           <EducationFields />
         </EntityDialog>
       </div>
+      <Card className="overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
@@ -98,6 +100,7 @@ export default async function AdminEducationPage() {
           ))}
         </TableBody>
       </Table>
+      </Card>
     </div>
   );
 }

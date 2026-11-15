@@ -2,8 +2,10 @@ import { BlogPost, blogPostMetadata, blogPostStaticParams } from "@/views/blog";
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Every post is prerendered; unknown slugs are a 404.
-export const dynamicParams = false;
+// Known posts are prerendered at build time; a slug published later (from the
+// admin UI or the MCP server) is rendered on demand on first visit and then
+// cached — without this, new posts would 404 until the next full deploy.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return blogPostStaticParams("fr");

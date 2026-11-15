@@ -74,7 +74,7 @@ export default async function AdminVisitorsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Visitors</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Visitors</h1>
 
       <Card>
         <CardHeader>
