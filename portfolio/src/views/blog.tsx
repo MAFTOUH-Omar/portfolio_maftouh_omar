@@ -1,8 +1,8 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { JsonLd } from "@/components/json-ld";
-import { getBlogPosts, getPost, getPostLocales } from "@/data/blog";
+import { getBlogPosts, getBlogPostsByTag, getPost, getPostLocales, getUsedTagSlugs } from "@/data/blog";
 import { getDictionary } from "@/data/dictionaries";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 import { languageAlternates, localeConfig, localizePath, locales, type Locale } from "@/lib/i18n";
 import { ogImageUrl, openGraphFor, PERSON_ID } from "@/lib/seo";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
@@ -26,6 +26,7 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
     if ((await getBlogPosts(l)).length > 0) withPosts.push(l);
   }
   const indexable = withPosts.includes(locale);
+  const data = await getSiteData();
 
   return {
     title: t.blog.title,
@@ -36,8 +37,8 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
         ? { languages: languageAlternates("/blog", withPosts) }
         : {}),
     },
-    openGraph: openGraphFor(locale, {
-      title: `${t.blog.title} | ${DATA.fullName}`,
+    openGraph: await openGraphFor(locale, {
+      title: `${t.blog.title} | ${data.fullName}`,
       description: t.blog.description,
       url: path,
     }),
@@ -95,7 +96,7 @@ export async function blogPostMetadata(locale: Locale, slug: string): Promise<Me
   const { title, summary: description, publishedAt, updatedAt, image } = post.metadata;
   const path = localizePath(locale, `/blog/${slug}`);
   const ogImage = image ?? ogImageUrl(title);
-  const translations = getPostLocales(slug);
+  const translations = await getPostLocales(slug);
 
   return {
     title,
@@ -106,7 +107,7 @@ export async function blogPostMetadata(locale: Locale, slug: string): Promise<Me
         ? { languages: languageAlternates(`/blog/${slug}`, translations) }
         : {}),
     },
-    openGraph: openGraphFor(locale, {
+    openGraph: await openGraphFor(locale, {
       title,
       description,
       type: "article",
@@ -130,6 +131,7 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
   if (!post) notFound();
 
   const t = getDictionary(locale);
+  const data = await getSiteData();
   const url = absoluteUrl(localizePath(locale, `/blog/${post.slug}`));
   const image = absoluteUrl(post.metadata.image ?? ogImageUrl(post.metadata.title));
 
@@ -147,12 +149,15 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
                 description: post.metadata.summary,
                 datePublished: post.metadata.publishedAt,
                 dateModified: post.metadata.updatedAt ?? post.metadata.publishedAt,
+                ...(post.tags.length > 0
+                  ? { keywords: post.tags.map((tag) => tag.name).join(", ") }
+                  : {}),
                 inLanguage: localeConfig[locale].htmlLang,
                 image,
                 url,
                 mainEntityOfPage: url,
-                author: { "@type": "Person", "@id": PERSON_ID, name: DATA.fullName, url: SITE_URL },
-                publisher: { "@type": "Person", "@id": PERSON_ID, name: DATA.fullName, url: SITE_URL },
+                author: { "@type": "Person", "@id": PERSON_ID, name: data.fullName, url: SITE_URL },
+                publisher: { "@type": "Person", "@id": PERSON_ID, name: data.fullName, url: SITE_URL },
               },
               {
                 "@type": "BreadcrumbList",
@@ -188,10 +193,86 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
             </time>
           </Suspense>
         </div>
+        {post.tags.length > 0 ? (
+          <div className="mb-8 flex flex-wrap gap-2 max-w-[650px]">
+            {post.tags.map((tag) => (
+              <Link
+                key={tag.slug}
+                href={localizePath(locale, `/blog/tag/${tag.slug}`)}
+                className="rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {tag.name}
+              </Link>
+            ))}
+          </div>
+        ) : null}
         <article
           className="prose dark:prose-invert"
           dangerouslySetInnerHTML={{ __html: post.source }}
         ></article>
+      </section>
+    </main>
+  );
+}
+
+/* --------------------------------------------------------------------- tag */
+
+export async function tagPageStaticParams(locale: Locale) {
+  const slugs = await getUsedTagSlugs(locale);
+  return slugs.map((tag) => ({ tag }));
+}
+
+export async function tagPageMetadata(locale: Locale, tagSlug: string): Promise<Metadata> {
+  const t = getDictionary(locale);
+  const posts = await getBlogPostsByTag(locale, tagSlug);
+  const tagName = posts[0]?.tags.find((tag) => tag.slug === tagSlug)?.name ?? tagSlug;
+  const path = localizePath(locale, `/blog/tag/${tagSlug}`);
+
+  return {
+    title: `${tagName} — ${t.blog.title}`,
+    description: t.blog.description,
+    alternates: { canonical: path },
+    openGraph: await openGraphFor(locale, {
+      title: `${tagName} — ${t.blog.title}`,
+      description: t.blog.description,
+      url: path,
+    }),
+    // Thin, duplicative listing pages: index the post itself, not every tag facet.
+    robots: { index: false, follow: true },
+  };
+}
+
+export async function TagPage({ locale, tag }: { locale: Locale; tag: string }) {
+  const t = getDictionary(locale);
+  const posts = await getBlogPostsByTag(locale, tag);
+  if (posts.length === 0) notFound();
+  const tagName = posts[0].tags.find((postTag) => postTag.slug === tag)?.name ?? tag;
+
+  return (
+    <main>
+      <section>
+        <BlurFade delay={BLUR_FADE_DELAY}>
+          <h1 className="font-medium text-2xl mb-8 tracking-tighter">{tagName}</h1>
+        </BlurFade>
+        {posts.map((post, id) => (
+          <BlurFade delay={BLUR_FADE_DELAY * 2 + id * 0.05} key={post.slug}>
+            <Link
+              className="flex flex-col space-y-1 mb-4"
+              href={localizePath(locale, `/blog/${post.slug}`)}
+            >
+              <div className="w-full flex flex-col">
+                <p className="tracking-tight">{post.metadata.title}</p>
+                <p className="h-6 text-xs text-muted-foreground">{post.metadata.publishedAt}</p>
+              </div>
+            </Link>
+          </BlurFade>
+        ))}
+        <Link
+          href={localizePath(locale, "/blog")}
+          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+        >
+          {t.blog.heading}
+        </Link>
       </section>
     </main>
   );

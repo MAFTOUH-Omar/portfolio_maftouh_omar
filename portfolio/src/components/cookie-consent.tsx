@@ -41,6 +41,12 @@ function subscribe(onChange: () => void) {
   };
 }
 
+/** Shared by anything that needs to respect the visitor's analytics choice
+ *  (Vercel Analytics here, the first-party visit tracker elsewhere). */
+export function useConsent() {
+  return useSyncExternalStore(subscribe, readConsent, () => "ssr" as const);
+}
+
 interface Props {
   labels: { title: string; text: string; accept: string; reject: string };
 }
@@ -51,7 +57,7 @@ interface Props {
  * so it never affects the static HTML or hydration.
  */
 export function CookieConsent({ labels }: Props) {
-  const consent = useSyncExternalStore(subscribe, readConsent, () => "ssr" as const);
+  const consent = useConsent();
 
   return (
     <>

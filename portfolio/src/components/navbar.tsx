@@ -9,7 +9,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { getDictionary } from "@/data/dictionaries";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 import { localizePath, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HomeIcon, NotebookIcon } from "lucide-react";
@@ -20,8 +20,9 @@ interface Props {
   translatedSlugs: readonly string[];
 }
 
-export default function Navbar({ locale, translatedSlugs }: Props) {
+export default async function Navbar({ locale, translatedSlugs }: Props) {
   const t = getDictionary(locale);
+  const data = await getSiteData();
   const items = [
     { href: localizePath(locale, "/"), icon: HomeIcon, label: t.nav.home },
     { href: localizePath(locale, "/blog"), icon: NotebookIcon, label: t.nav.blog },
@@ -52,7 +53,7 @@ export default function Navbar({ locale, translatedSlugs }: Props) {
           </DockIcon>
         ))}
         <Separator orientation="vertical" className="h-full" />
-        {Object.entries(DATA.contact.social)
+        {Object.entries(data.contact.social)
           .filter(([, social]) => social.navbar)
           .map(([key, social]) => {
             const label = key === "email" ? t.nav.email : social.name;

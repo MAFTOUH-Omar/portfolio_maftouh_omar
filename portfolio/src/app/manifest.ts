@@ -1,12 +1,13 @@
 import { getDictionary } from "@/data/dictionaries";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 import type { MetadataRoute } from "next";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const t = getDictionary("fr");
+  const data = await getSiteData();
   return {
     name: t.meta.title,
-    short_name: DATA.fullName,
+    short_name: data.fullName,
     description: t.meta.description,
     lang: "fr-MA",
     start_url: "/",

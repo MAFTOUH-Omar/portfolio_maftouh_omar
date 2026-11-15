@@ -1,5 +1,5 @@
 import { getBlogPosts, getPostLocales } from "@/data/blog";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 import { languageAlternates, localizePath, locales, type Locale } from "@/lib/i18n";
 import { absoluteUrl } from "@/lib/site";
 import type { MetadataRoute } from "next";
@@ -10,11 +10,12 @@ import type { MetadataRoute } from "next";
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const buildDate = new Date().toISOString().split("T")[0];
+  const data = await getSiteData();
 
   // Home page images help the portfolio show up in Google Images.
   const homeImages = [
-    DATA.avatarUrl,
-    ...DATA.projects.flatMap((project) => project.images),
+    data.avatarUrl,
+    ...data.projects.flatMap((project) => project.images),
   ].map((src) => absoluteUrl(src));
 
   const home: MetadataRoute.Sitemap = locales.map((locale) => ({
@@ -46,19 +47,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         : {}),
     }));
 
-  const posts: MetadataRoute.Sitemap = postsByLocale.flatMap(([locale, list]) =>
-    list.map((post) => {
-      const translations = getPostLocales(post.slug);
-      return {
-        url: absoluteUrl(localizePath(locale, `/blog/${post.slug}`)),
-        lastModified: post.metadata.updatedAt ?? post.metadata.publishedAt,
-        changeFrequency: "yearly" as const,
-        priority: 0.6,
-        ...(translations.length > 1
-          ? { alternates: { languages: languageAlternates(`/blog/${post.slug}`, translations) } }
-          : {}),
-      };
-    })
+  const posts: MetadataRoute.Sitemap = await Promise.all(
+    postsByLocale.flatMap(([locale, list]) =>
+      list.map(async (post) => {
+        const translations = await getPostLocales(post.slug);
+        return {
+          url: absoluteUrl(localizePath(locale, `/blog/${post.slug}`)),
+          lastModified: post.metadata.updatedAt ?? post.metadata.publishedAt,
+          changeFrequency: "yearly" as const,
+          priority: 0.6,
+          ...(translations.length > 1
+            ? { alternates: { languages: languageAlternates(`/blog/${post.slug}`, translations) } }
+            : {}),
+        };
+      })
+    )
   );
 
   return [...home, ...blogIndexes, ...posts];

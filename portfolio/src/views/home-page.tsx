@@ -2,7 +2,7 @@ import { ProjectCard } from "@/components/project-card";
 import { ResumeCard } from "@/components/resume-card";
 import { JsonLd } from "@/components/json-ld";
 import { getDictionary } from "@/data/dictionaries";
-import { DATA } from "@/data/resume";
+import { getSiteData, type Project } from "@/data/resume";
 import { languageAlternates, localeConfig, localizePath, type Locale } from "@/lib/i18n";
 import { openGraphFor, personSchema, PERSON_ID, WEBSITE_ID } from "@/lib/seo";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
@@ -18,19 +18,18 @@ import { SectionHeading } from "@/components/section-heading";
 import { CopyEmailButton } from "@/components/copy-email-button";
 
 const BLUR_FADE_DELAY = 0.04;
-const GITHUB_USERNAME = new URL(DATA.contact.social.GitHub.url).pathname.slice(1);
 
-export function homeMetadata(locale: Locale): Metadata {
+export async function homeMetadata(locale: Locale): Promise<Metadata> {
   return {
     alternates: {
       canonical: localizePath(locale, "/"),
       languages: languageAlternates("/"),
     },
-    openGraph: openGraphFor(locale, { url: localizePath(locale, "/") }),
+    openGraph: await openGraphFor(locale, { url: localizePath(locale, "/") }),
   };
 }
 
-function homeJsonLd(locale: Locale) {
+async function homeJsonLd(locale: Locale, data: Awaited<ReturnType<typeof getSiteData>>) {
   const t = getDictionary(locale);
   const pageUrl = absoluteUrl(localizePath(locale, "/"));
 
@@ -41,8 +40,8 @@ function homeJsonLd(locale: Locale) {
         "@type": "WebSite",
         "@id": WEBSITE_ID,
         url: SITE_URL,
-        name: DATA.fullName,
-        alternateName: [DATA.name, "omarmaftouh.com"],
+        name: data.fullName,
+        alternateName: [data.name, "omarmaftouh.com"],
         inLanguage: Object.values(localeConfig).map((c) => c.htmlLang),
         publisher: { "@id": PERSON_ID },
       },
@@ -56,17 +55,20 @@ function homeJsonLd(locale: Locale) {
         isPartOf: { "@id": WEBSITE_ID },
         mainEntity: { "@id": PERSON_ID },
       },
-      personSchema(locale),
+      await personSchema(locale),
     ],
   };
 }
 
-export function HomePage({ locale }: { locale: Locale }) {
+export async function HomePage({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
+  const data = await getSiteData();
+  const jsonLd = await homeJsonLd(locale, data);
+  const githubUsername = new URL(data.contact.social.GitHub.url).pathname.slice(1);
 
   return (
     <main className="flex flex-col min-h-[100dvh] space-y-10">
-      <JsonLd data={homeJsonLd(locale)} />
+      <JsonLd data={jsonLd} />
       <section id="hero">
         <CodeFrame tag="FullStack" attributes={{ craft: "web-dreams" }}>
           <div className="relative isolate flex flex-col justify-center overflow-hidden rounded-lg bg-hero-ink text-white sm:min-h-[27rem] dark:ring-1 dark:ring-white/10">
@@ -87,8 +89,8 @@ export function HomePage({ locale }: { locale: Locale }) {
               <BlurFade delay={BLUR_FADE_DELAY}>
                 {/* Above the fold: fetched eagerly, served at the right size as AVIF/WebP. */}
                 <Image
-                  src={DATA.avatarUrl}
-                  alt={`${DATA.fullName} — ${DATA.role[locale]}`}
+                  src={data.avatarUrl}
+                  alt={`${data.fullName} — ${data.role[locale]}`}
                   width={80}
                   height={80}
                   sizes="(min-width: 640px) 80px, 64px"
@@ -121,13 +123,13 @@ export function HomePage({ locale }: { locale: Locale }) {
                 </BlurFade>
                 <BlurFade delay={BLUR_FADE_DELAY} yOffset={8} variant="slide">
                   <p className="max-w-[520px] text-balance text-white/75 sm:text-lg">
-                    {DATA.description[locale]}
+                    {data.description[locale]}
                   </p>
                 </BlurFade>
               </div>
               <BlurFade delay={BLUR_FADE_DELAY} variant="slide">
                 <Link
-                  href={DATA.contact.social.email.url}
+                  href={data.contact.social.email.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink transition-colors hover:bg-hero-panel"
@@ -146,14 +148,14 @@ export function HomePage({ locale }: { locale: Locale }) {
         <SectionHeading index="01" title={t.sections.about} delay={BLUR_FADE_DELAY * 3} />
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
           <div className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
-            <p>{DATA.summary[locale]}</p>
+            <p>{data.summary[locale]}</p>
           </div>
         </BlurFade>
       </section>
       <section id="work">
         <div className="flex min-h-0 flex-col gap-y-3">
           <SectionHeading index="02" title={t.sections.work} delay={BLUR_FADE_DELAY * 5} />
-          {DATA.work.map((work, id) => (
+          {data.work.map((work, id) => (
             <BlurFade
               key={work.company}
               delay={BLUR_FADE_DELAY * 6 + id * 0.05}
@@ -165,7 +167,6 @@ export function HomePage({ locale }: { locale: Locale }) {
                 title={work.company}
                 subtitle={work.title[locale]}
                 href={work.href}
-                badges={work.badges}
                 period={`${work.start[locale]} - ${work.end[locale]}`}
                 description={work.description[locale]}
               />
@@ -176,7 +177,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <section id="education">
         <div className="flex min-h-0 flex-col gap-y-3">
           <SectionHeading index="03" title={t.sections.education} delay={BLUR_FADE_DELAY * 7} />
-          {DATA.education.map((education, id) => (
+          {data.education.map((education, id) => (
             <BlurFade
               key={education.school}
               delay={BLUR_FADE_DELAY * 8 + id * 0.05}
@@ -199,9 +200,9 @@ export function HomePage({ locale }: { locale: Locale }) {
           <SectionHeading index="04" title={t.sections.skills} delay={BLUR_FADE_DELAY * 9} />
           <BlurFade delay={BLUR_FADE_DELAY * 10}>
             <LogoCloud
-              username={GITHUB_USERNAME}
-              profileUrl={DATA.contact.social.GitHub.url}
-              skills={DATA.skills}
+              username={githubUsername}
+              profileUrl={data.contact.social.GitHub.url}
+              skills={data.skills}
               labels={t.skills}
               dateLocale={localeConfig[locale].dateLocale}
             />
@@ -219,7 +220,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             delay={BLUR_FADE_DELAY * 11}
           />
           <HoverHighlight className="columns-1 gap-4 sm:columns-2 lg:gap-5">
-            {DATA.projects.map((project, id) => (
+            {data.projects.map((project, id) => (
               <BlurFade
                 key={project.title}
                 delay={BLUR_FADE_DELAY * 12 + id * 0.05}
@@ -252,7 +253,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <Link
-                href={DATA.contact.social.email.url}
+                href={data.contact.social.email.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group inline-flex items-center gap-3 rounded-full bg-white py-1.5 pl-5 pr-1.5 text-sm font-medium text-hero-ink transition-colors hover:bg-hero-panel"
@@ -263,7 +264,7 @@ export function HomePage({ locale }: { locale: Locale }) {
                 </span>
               </Link>
               <CopyEmailButton
-                email={DATA.contact.email}
+                email={data.contact.email}
                 label={t.contact.copy}
                 copiedLabel={t.contact.copied}
                 className={secondaryCta}
@@ -271,12 +272,12 @@ export function HomePage({ locale }: { locale: Locale }) {
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
               <Link
-                href={DATA.contact.social.LinkedIn.url}
+                href={data.contact.social.LinkedIn.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={secondaryCta}
               >
-                <DATA.contact.social.LinkedIn.icon className="size-4" />
+                <data.contact.social.LinkedIn.icon className="size-4" />
                 LinkedIn
               </Link>
               <a href="/cv-maftouh-omar.pdf" download className={secondaryCta}>
@@ -294,7 +295,7 @@ export function HomePage({ locale }: { locale: Locale }) {
 const secondaryCta =
   "inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:border-white/40 hover:bg-white/10";
 
-function projectCardProps(project: (typeof DATA.projects)[number], locale: Locale) {
+function projectCardProps(project: Project, locale: Locale) {
   return {
     href: project.href,
     title: project.title,

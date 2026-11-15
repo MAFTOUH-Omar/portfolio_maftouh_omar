@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getDictionary } from "@/data/dictionaries";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 import { localeConfig, locales, type Locale } from "@/lib/i18n";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 
@@ -16,8 +16,9 @@ export function ogImageUrl(title: string): string {
  * Site-wide defaults for a locale's root layout. Pages override title,
  * description, canonical and hreflang.
  */
-export function rootMetadata(locale: Locale): Metadata {
+export async function rootMetadata(locale: Locale): Promise<Metadata> {
   const t = getDictionary(locale);
+  const data = await getSiteData();
   const image = {
     url: ogImageUrl(t.meta.ogTitle),
     width: 1200,
@@ -29,18 +30,19 @@ export function rootMetadata(locale: Locale): Metadata {
     metadataBase: new URL(SITE_URL),
     title: {
       default: t.meta.title,
-      template: `%s | ${DATA.fullName}`,
+      template: `%s | ${data.fullName}`,
     },
     description: t.meta.description,
     keywords: [...t.meta.keywords],
-    authors: [{ name: DATA.fullName, url: SITE_URL }],
-    creator: DATA.fullName,
-    applicationName: DATA.fullName,
+    alternates: { types: { "application/rss+xml": `${SITE_URL}/rss.xml` } },
+    authors: [{ name: data.fullName, url: SITE_URL }],
+    creator: data.fullName,
+    applicationName: data.fullName,
     category: "technology",
     openGraph: {
       title: t.meta.title,
       description: t.meta.description,
-      siteName: DATA.fullName,
+      siteName: data.fullName,
       locale: localeConfig[locale].ogLocale,
       alternateLocale: locales
         .filter((l) => l !== locale)
@@ -80,54 +82,54 @@ export function rootMetadata(locale: Locale): Metadata {
  * Page-level openGraph. Next replaces (not merges) the layout's openGraph
  * object, so every page must carry the full set of fields.
  */
-export function openGraphFor(
+export async function openGraphFor(
   locale: Locale,
   overrides: NonNullable<Metadata["openGraph"]>
-): NonNullable<Metadata["openGraph"]> {
-  return { ...rootMetadata(locale).openGraph, ...overrides } as NonNullable<
-    Metadata["openGraph"]
-  >;
+): Promise<NonNullable<Metadata["openGraph"]>> {
+  const base = await rootMetadata(locale);
+  return { ...base.openGraph, ...overrides } as NonNullable<Metadata["openGraph"]>;
 }
 
 /** Person entity shared by the home page graph and blog post authorship. */
-export function personSchema(locale: Locale) {
-  const role = DATA.role[locale];
+export async function personSchema(locale: Locale) {
+  const data = await getSiteData();
+  const role = data.role[locale];
   return {
     "@type": "Person",
     "@id": PERSON_ID,
-    name: DATA.fullName,
-    alternateName: DATA.name,
-    givenName: DATA.givenName,
-    familyName: DATA.familyName,
+    name: data.fullName,
+    alternateName: data.name,
+    givenName: data.givenName,
+    familyName: data.familyName,
     url: SITE_URL,
-    image: absoluteUrl(DATA.avatarUrl),
+    image: absoluteUrl(data.avatarUrl),
     jobTitle: role,
-    description: DATA.summary[locale],
+    description: data.summary[locale],
     address: {
       "@type": "PostalAddress",
-      addressLocality: DATA.address.locality,
-      addressRegion: DATA.address.region,
-      addressCountry: DATA.address.country,
+      addressLocality: data.address.locality,
+      addressRegion: data.address.region,
+      addressCountry: data.address.country,
     },
     hasOccupation: {
       "@type": "Occupation",
       name: role,
       occupationLocation: {
         "@type": "City",
-        name: DATA.address.locality,
+        name: data.address.locality,
         containedInPlace: { "@type": "Country", name: "Morocco" },
       },
-      skills: DATA.skills.map((s) => s.name).join(", "),
+      skills: data.skills.map((s) => s.name).join(", "),
     },
-    knowsAbout: DATA.skills.map((s) => s.name),
+    knowsAbout: data.skills.map((s) => s.name),
     knowsLanguage: locales.map((l) => localeConfig[l].hreflang),
-    worksFor: { "@type": "Organization", name: DATA.work[0].company },
-    alumniOf: DATA.education.map((e) => ({
+    worksFor: { "@type": "Organization", name: data.work[0].company },
+    alumniOf: data.education.map((e) => ({
       "@type": "EducationalOrganization",
       name: e.school,
       ...(e.href ? { url: e.href } : {}),
     })),
-    sameAs: Object.entries(DATA.contact.social)
+    sameAs: Object.entries(data.contact.social)
       .filter(([key]) => key !== "email")
       .map(([, social]) => social.url),
   };

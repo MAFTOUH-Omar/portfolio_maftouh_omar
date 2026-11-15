@@ -1,10 +1,11 @@
 import { ImageResponse } from "next/og";
-import { DATA } from "@/data/resume";
+import { getSiteData } from "@/data/resume";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
+  const data = await getSiteData();
   // Capped so the endpoint can't be used to render arbitrary long text.
-  const title = (searchParams.get("title") ?? DATA.fullName).slice(0, 120);
+  const title = (searchParams.get("title") ?? data.fullName).slice(0, 120);
 
   return new ImageResponse(
     (
@@ -29,7 +30,7 @@ export async function GET(request: Request) {
             letterSpacing: "-0.02em",
           }}
         >
-          {DATA.fullName}
+          {data.fullName}
         </div>
         <div
           style={{
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
             color: "#71717a",
           }}
         >
-          {DATA.url.replace(/^https?:\/\//, "")}
+          {data.url.replace(/^https?:\/\//, "")}
         </div>
       </div>
     ),

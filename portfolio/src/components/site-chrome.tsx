@@ -4,12 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { BackToTop } from "@/components/back-to-top";
 import { CookieConsent } from "@/components/cookie-consent";
+import { VisitorTracker } from "@/components/visitor-tracker";
 import { getDictionary } from "@/data/dictionaries";
 import { getTranslatedSlugs } from "@/data/blog";
 import type { Locale } from "@/lib/i18n";
 
 /** Everything inside <body> shared by the French and English root layouts. */
-export function SiteChrome({
+export async function SiteChrome({
   locale,
   children,
 }: {
@@ -17,6 +18,7 @@ export function SiteChrome({
   children: React.ReactNode;
 }) {
   const t = getDictionary(locale);
+  const translatedSlugs = await getTranslatedSlugs();
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
@@ -24,10 +26,11 @@ export function SiteChrome({
         <ScrollProgress />
         {children}
         <BackToTop label={t.a11y.backToTop} />
-        <Navbar locale={locale} translatedSlugs={getTranslatedSlugs()} />
+        <Navbar locale={locale} translatedSlugs={translatedSlugs} />
       </TooltipProvider>
       {/* Loads Vercel Analytics only once the visitor accepts. */}
       <CookieConsent labels={t.cookies} />
+      <VisitorTracker />
     </ThemeProvider>
   );
 }

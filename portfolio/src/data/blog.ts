@@ -1,11 +1,11 @@
-import fs from "fs";
-import matter from "gray-matter";
-import path from "path";
+import { and, desc, eq } from "drizzle-orm";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { db } from "@/db/client";
+import { postTags, posts as postsTable, tags as tagsTable } from "@/db/schema";
 import { locales, type Locale } from "@/lib/i18n";
 
 type Metadata = {
@@ -16,28 +16,17 @@ type Metadata = {
   image?: string;
 };
 
+export type PostTag = { slug: string; name: string };
+
 export type Post = {
   source: string;
   metadata: Metadata;
   slug: string;
   locale: Locale;
+  tags: PostTag[];
 };
 
-/** Posts live in content/<locale>/<slug>.mdx — the same slug in both folders marks a translation. */
-const CONTENT_DIR = path.join(process.cwd(), "content");
-
-function localeDir(locale: Locale) {
-  return path.join(CONTENT_DIR, locale);
-}
-
-function getSlugs(locale: Locale): string[] {
-  const dir = localeDir(locale);
-  if (!fs.existsSync(dir)) return [];
-  return fs
-    .readdirSync(dir)
-    .filter((file) => path.extname(file) === ".mdx")
-    .map((file) => path.basename(file, ".mdx"));
-}
+type PostRow = typeof postsTable.$inferSelect;
 
 export async function markdownToHTML(markdown: string) {
   const p = await unified()
@@ -57,43 +46,102 @@ export async function markdownToHTML(markdown: string) {
   return p.toString();
 }
 
-export function postExists(locale: Locale, slug: string): boolean {
-  // Slugs come from the URL: only accept plain file names.
-  if (!/^[a-z0-9-]+$/i.test(slug)) return false;
-  return fs.existsSync(path.join(localeDir(locale), `${slug}.mdx`));
-}
+async function toPost(row: PostRow): Promise<Post> {
+  const tagRows = await db
+    .select({ slug: tagsTable.slug, nameFr: tagsTable.nameFr, nameEn: tagsTable.nameEn })
+    .from(postTags)
+    .innerJoin(tagsTable, eq(postTags.tagId, tagsTable.id))
+    .where(eq(postTags.postId, row.id));
 
-/** Returns null when the post doesn't exist in that locale. */
-export async function getPost(locale: Locale, slug: string): Promise<Post | null> {
-  if (!postExists(locale, slug)) return null;
-  const source = fs.readFileSync(path.join(localeDir(locale), `${slug}.mdx`), "utf-8");
-  const { content: rawContent, data } = matter(source);
+  const publishedAt = (row.publishedAt ?? row.updatedAt).toISOString();
+
   return {
-    source: await markdownToHTML(rawContent),
-    metadata: data as Metadata,
-    slug,
-    locale,
+    source: await markdownToHTML(row.contentMd),
+    metadata: {
+      title: row.title,
+      summary: row.summary,
+      publishedAt,
+      updatedAt: row.updatedAt.toISOString(),
+      image: row.coverImage ?? undefined,
+    },
+    slug: row.slug,
+    locale: row.locale as Locale,
+    tags: tagRows.map((tag) => ({
+      slug: tag.slug,
+      name: row.locale === "fr" ? tag.nameFr : tag.nameEn,
+    })),
   };
 }
 
-/** Posts of a locale, newest first. */
+export async function postExists(locale: Locale, slug: string): Promise<boolean> {
+  // Slugs come from the URL: only accept plain file names.
+  if (!/^[a-z0-9-]+$/i.test(slug)) return false;
+  const [row] = await db
+    .select({ id: postsTable.id })
+    .from(postsTable)
+    .where(and(eq(postsTable.slug, slug), eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .limit(1);
+  return !!row;
+}
+
+/** Returns null when the post doesn't exist (or isn't published) in that locale. */
+export async function getPost(locale: Locale, slug: string): Promise<Post | null> {
+  const [row] = await db
+    .select()
+    .from(postsTable)
+    .where(and(eq(postsTable.slug, slug), eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .limit(1);
+  if (!row) return null;
+  return toPost(row);
+}
+
+/** Published posts of a locale, newest first. */
 export async function getBlogPosts(locale: Locale): Promise<Post[]> {
-  const posts = await Promise.all(getSlugs(locale).map((slug) => getPost(locale, slug)));
-  return posts
-    .filter((post): post is Post => post !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime()
-    );
+  const rows = await db
+    .select()
+    .from(postsTable)
+    .where(and(eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .orderBy(desc(postsTable.publishedAt));
+  return Promise.all(rows.map(toPost));
+}
+
+/** Published posts of a locale carrying the given tag, newest first. */
+export async function getBlogPostsByTag(locale: Locale, tagSlug: string): Promise<Post[]> {
+  const posts = await getBlogPosts(locale);
+  return posts.filter((post) => post.tags.some((tag) => tag.slug === tagSlug));
+}
+
+/** All distinct tag slugs used by at least one published post in that locale. */
+export async function getUsedTagSlugs(locale: Locale): Promise<string[]> {
+  const posts = await getBlogPosts(locale);
+  const slugs = new Set(posts.flatMap((post) => post.tags.map((tag) => tag.slug)));
+  return [...slugs];
 }
 
 /** Locales in which a given slug is published (used for hreflang). */
-export function getPostLocales(slug: string): Locale[] {
-  return locales.filter((locale) => postExists(locale, slug));
+export async function getPostLocales(slug: string): Promise<Locale[]> {
+  const rows = await db
+    .select({ locale: postsTable.locale })
+    .from(postsTable)
+    .where(and(eq(postsTable.slug, slug), eq(postsTable.status, "published")));
+  const found = new Set(rows.map((row) => row.locale));
+  return locales.filter((locale) => found.has(locale));
 }
 
 /** Slugs published in every locale, i.e. posts the language switcher can map 1:1. */
-export function getTranslatedSlugs(): string[] {
-  const [first, ...rest] = locales;
-  return getSlugs(first).filter((slug) => rest.every((locale) => postExists(locale, slug)));
+export async function getTranslatedSlugs(): Promise<string[]> {
+  const rows = await db
+    .select({ slug: postsTable.slug, locale: postsTable.locale })
+    .from(postsTable)
+    .where(eq(postsTable.status, "published"));
+
+  const bySlug = new Map<string, Set<string>>();
+  for (const row of rows) {
+    const set = bySlug.get(row.slug) ?? new Set<string>();
+    set.add(row.locale);
+    bySlug.set(row.slug, set);
+  }
+  return [...bySlug.entries()]
+    .filter(([, present]) => locales.every((locale) => present.has(locale)))
+    .map(([slug]) => slug);
 }

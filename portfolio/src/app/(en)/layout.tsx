@@ -6,7 +6,9 @@ import { localeConfig } from "@/lib/i18n";
 import { rootMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = rootMetadata("en");
+export async function generateMetadata(): Promise<Metadata> {
+  return rootMetadata("en");
+}
 
 /** Root layout for the English site (/en, /en/blog). */
 export default function EnglishRootLayout({ children }: { children: React.ReactNode }) {

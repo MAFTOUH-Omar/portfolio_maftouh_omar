@@ -50,9 +50,18 @@ const nextConfig = {
         value: "public, max-age=2592000, stale-while-revalidate=604800",
       },
     ];
+    const securityHeaders = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+    ];
     return [
       { source: "/icons/:file*", headers: longCache },
       { source: "/flags/:file*", headers: longCache },
+      { source: "/:path*", headers: securityHeaders },
+      // /admin isn't a target for clickjacking framing of anything valuable
+      // elsewhere, but there's no reason to allow it to be framed at all.
+      { source: "/admin/:path*", headers: [{ key: "X-Frame-Options", value: "DENY" }] },
     ];
   },
   async redirects() {
