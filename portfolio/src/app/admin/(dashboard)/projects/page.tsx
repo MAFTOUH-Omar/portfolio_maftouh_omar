@@ -59,7 +59,7 @@ function ProjectFields({ project }: { project?: ProjectRow }) {
         <Textarea id="descriptionEn" name="descriptionEn" required defaultValue={project?.descriptionEn} rows={3} />
       </div>
       <div className="col-span-2 space-y-2">
-        <Label htmlFor="technologiesText">Technologies (one per line, "Name" or "Name|icon-key")</Label>
+        <Label htmlFor="technologiesText">Technologies (one per line, &quot;Name&quot; or &quot;Name|icon-key&quot;)</Label>
         <Textarea
           id="technologiesText"
           name="technologiesText"

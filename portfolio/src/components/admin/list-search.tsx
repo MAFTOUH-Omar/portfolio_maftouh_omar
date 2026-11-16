@@ -30,16 +30,22 @@ function ListSearchInner({ placeholder = "Search…" }: { placeholder?: string }
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [value, setValue] = useState(searchParams.get("q") ?? "");
+  const urlQuery = searchParams.get("q") ?? "";
+
+  const [value, setValue] = useState(urlQuery);
+  // Mirrors the URL so an external change (back/forward navigation) can be
+  // told apart from the user's own typing — adjusted during render rather
+  // than in an effect, per https://react.dev/learn/you-might-not-need-an-effect.
+  const [syncedQuery, setSyncedQuery] = useState(urlQuery);
+  if (urlQuery !== syncedQuery) {
+    setSyncedQuery(urlQuery);
+    setValue(urlQuery);
+  }
+
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    setValue(searchParams.get("q") ?? "");
-  }, [searchParams]);
-
-  useEffect(() => {
-    const current = searchParams.get("q") ?? "";
-    if (value === current) return;
+    if (value === urlQuery) return;
 
     const timeout = setTimeout(() => {
       const params = new URLSearchParams(searchParams);

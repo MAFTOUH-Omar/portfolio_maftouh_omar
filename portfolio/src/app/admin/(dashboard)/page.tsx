@@ -5,8 +5,16 @@ import { db } from "@/db/client";
 import { posts, projects, skills, visits } from "@/db/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VisitTrendChart } from "@/components/admin/visit-trend-chart";
+import { VisitRangeFilter } from "@/components/admin/visit-range-filter";
+import { isoDate, resolveVisitRange } from "@/lib/visit-range";
 
-export default async function AdminDashboardPage() {
+export default async function AdminDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string; from?: string; to?: string }>;
+}) {
+  const range = resolveVisitRange(await searchParams);
+
   const [
     [{ count: projectCount }],
     [{ count: skillCount }],
@@ -24,16 +32,16 @@ export default async function AdminDashboardPage() {
         count: sql<number>`count(*)`,
       })
       .from(visits)
-      .where(sql`${visits.createdAt} >= now() - interval '14 days'`)
+      .where(sql`${visits.createdAt} >= ${range.from.toISOString()} and ${visits.createdAt} <= ${range.to.toISOString()}`)
       .groupBy(sql`date_trunc('day', ${visits.createdAt})`)
       .orderBy(sql`date_trunc('day', ${visits.createdAt})`),
   ]);
 
   const dailyMap = new Map(dailyRows.map((row) => [row.day, Number(row.count)]));
-  const last14Days = Array.from({ length: 14 }, (_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (13 - index));
-    const key = date.toISOString().slice(0, 10);
+  const rangeDays = Array.from({ length: range.days }, (_, index) => {
+    const date = new Date(range.from);
+    date.setDate(date.getDate() + index);
+    const key = isoDate(date);
     return { day: key, count: dailyMap.get(key) ?? 0 };
   });
 
@@ -67,13 +75,14 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
       <Card className="p-4 sm:p-5">
-        <CardHeader className="p-0 pb-4">
+        <CardHeader className="flex-col items-start gap-3 space-y-0 p-0 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Visits — last 14 days
+            Visits — {range.label}
           </CardTitle>
+          <VisitRangeFilter />
         </CardHeader>
         <CardContent className="p-0">
-          <VisitTrendChart data={last14Days} />
+          <VisitTrendChart data={rangeDays} />
         </CardContent>
       </Card>
     </div>

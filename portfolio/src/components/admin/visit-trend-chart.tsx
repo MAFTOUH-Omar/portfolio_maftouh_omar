@@ -86,6 +86,7 @@ export function VisitTrendChart({ data }: { data: Point[] }) {
       <div className="relative">
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          preserveAspectRatio="none"
           className="h-40 w-full touch-none overflow-visible"
           onPointerMove={handleMove}
           onPointerLeave={() => setHoverIndex(null)}

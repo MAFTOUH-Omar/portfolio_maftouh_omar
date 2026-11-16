@@ -1,8 +1,10 @@
-import { desc, sql } from "drizzle-orm";
+import { and, desc, gte, lte, sql } from "drizzle-orm";
 import { db } from "@/db/client";
 import { visits } from "@/db/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VisitTrendChart } from "@/components/admin/visit-trend-chart";
+import { VisitRangeFilter } from "@/components/admin/visit-range-filter";
+import { isoDate, resolveVisitRange, type VisitRange } from "@/lib/visit-range";
 
 type Row = { label: string; count: number };
 type TextColumn =
@@ -15,10 +17,11 @@ type TextColumn =
   | typeof visits.language
   | typeof visits.utmSource;
 
-async function topBy(column: TextColumn, fallback: string) {
+async function topBy(column: TextColumn, fallback: string, range: VisitRange) {
   const rows = await db
     .select({ label: sql<string>`coalesce(${column}, ${fallback})`, count: sql<number>`count(*)` })
     .from(visits)
+    .where(and(gte(visits.createdAt, range.from), lte(visits.createdAt, range.to)))
     .groupBy(column)
     .orderBy(desc(sql`count(*)`))
     .limit(8);
@@ -60,7 +63,13 @@ function BarList({ title, rows }: { title: string; rows: Row[] }) {
   );
 }
 
-export default async function AdminVisitorsPage() {
+export default async function AdminVisitorsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ range?: string; from?: string; to?: string }>;
+}) {
+  const range = resolveVisitRange(await searchParams);
+
   const [
     [{ total }],
     dailyRows,
@@ -80,36 +89,43 @@ export default async function AdminVisitorsPage() {
         count: sql<number>`count(*)`,
       })
       .from(visits)
-      .where(sql`${visits.createdAt} >= now() - interval '14 days'`)
+      .where(and(gte(visits.createdAt, range.from), lte(visits.createdAt, range.to)))
       .groupBy(sql`date_trunc('day', ${visits.createdAt})`)
       .orderBy(sql`date_trunc('day', ${visits.createdAt})`),
-    topBy(visits.path, "(unknown)"),
-    topBy(visits.referrer, "Direct"),
-    topBy(visits.country, "Unknown"),
-    topBy(visits.browser, "Unknown"),
-    topBy(visits.os, "Unknown"),
-    topBy(visits.device, "Unknown"),
-    topBy(visits.language, "Unknown"),
-    topBy(visits.utmSource, "None"),
+    topBy(visits.path, "(unknown)", range),
+    topBy(visits.referrer, "Direct", range),
+    topBy(visits.country, "Unknown", range),
+    topBy(visits.browser, "Unknown", range),
+    topBy(visits.os, "Unknown", range),
+    topBy(visits.device, "Unknown", range),
+    topBy(visits.language, "Unknown", range),
+    topBy(visits.utmSource, "None", range),
   ]);
 
   const dailyMap = new Map(dailyRows.map((row) => [row.day, Number(row.count)]));
-  const last14Days = Array.from({ length: 14 }, (_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (13 - index));
-    const key = date.toISOString().slice(0, 10);
+  const rangeDays = Array.from({ length: range.days }, (_, index) => {
+    const date = new Date(range.from);
+    date.setDate(date.getDate() + index);
+    const key = isoDate(date);
     return { day: key, count: dailyMap.get(key) ?? 0 };
   });
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Visitors</h1>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Visitors</h1>
+        <VisitRangeFilter />
+      </div>
+      <p className="text-xs text-muted-foreground">
+        All panels below are scoped to <span className="font-medium text-foreground">{range.label}</span>, except
+        the all-time total.
+      </p>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <Card className="p-4 sm:p-5">
           <CardHeader className="p-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total visits recorded
+              Total visits recorded (all time)
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -118,10 +134,10 @@ export default async function AdminVisitorsPage() {
         </Card>
         <Card className="p-4 sm:col-span-2 sm:p-5">
           <CardHeader className="p-0 pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Last 14 days</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">{range.label}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <VisitTrendChart data={last14Days} />
+            <VisitTrendChart data={rangeDays} />
           </CardContent>
         </Card>
       </div>

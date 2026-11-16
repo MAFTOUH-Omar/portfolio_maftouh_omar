@@ -15,7 +15,17 @@ const secondaryCta =
  * page. Shared by the home page and every blog view (index, post, tag) so
  * the invite to reach out is never a dead end on the content pages.
  */
-export async function ContactCta({ locale, index = "06" }: { locale: Locale; index?: string }) {
+export async function ContactCta({
+  locale,
+  index = "06",
+  showHeading = true,
+}: {
+  locale: Locale;
+  index?: string;
+  /** The home page numbers this among its sections; the blog views just
+   *  want the card on its own, with no "0X Contact" heading above it. */
+  showHeading?: boolean;
+}) {
   const t = getDictionary(locale);
   const data = await getSiteData();
 
@@ -24,7 +34,7 @@ export async function ContactCta({ locale, index = "06" }: { locale: Locale; ind
       id="contact"
       className="-mx-6 flex flex-col gap-y-6 px-6 pt-4 pb-16 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
     >
-      <SectionHeading index={index} title={t.contact.title} />
+      {showHeading && <SectionHeading index={index} title={t.contact.title} />}
       <BlurFade delay={0.04}>
         {/* Bookends the page: same card art as the hero, mirrored. */}
         <div className="relative isolate overflow-hidden rounded-lg bg-hero-ink px-6 py-12 text-center text-white sm:px-12 sm:py-16 dark:ring-1 dark:ring-white/10">

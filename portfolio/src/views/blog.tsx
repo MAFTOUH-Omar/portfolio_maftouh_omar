@@ -87,7 +87,7 @@ export async function BlogIndex({ locale }: { locale: Locale }) {
           labels={{ loadMore: t.blog.loadMore, loading: t.blog.loading, endOfList: t.blog.endOfList }}
         />
       )}
-      <ContactCta locale={locale} index="02" />
+      <ContactCta locale={locale} showHeading={false} />
     </main>
   );
 }
@@ -238,7 +238,7 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
           </BlurFade>
         </div>
       </section>
-      <ContactCta locale={locale} index="02" />
+      <ContactCta locale={locale} showHeading={false} />
     </main>
   );
 }
@@ -308,7 +308,7 @@ export async function TagPage({ locale, tag }: { locale: Locale; tag: string }) 
           />
         ))}
       </div>
-      <ContactCta locale={locale} index="02" />
+      <ContactCta locale={locale} showHeading={false} />
     </main>
   );
 }

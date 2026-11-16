@@ -110,7 +110,7 @@ export function AdminUserMenu({ email }: { email: string }) {
                   className={cn(active && "bg-accent text-accent-foreground font-medium")}
                 >
                   <Link href={item.href}>
-                    <item.icon className="size-4" />
+                    <item.icon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
                     {item.label}
                   </Link>
                 </DropdownMenuItem>
@@ -121,7 +121,7 @@ export function AdminUserMenu({ email }: { email: string }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/" target="_blank" rel="noopener noreferrer">
-            <SquareArrowOutUpRight className="size-4" />
+            <SquareArrowOutUpRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
             View public site
           </Link>
         </DropdownMenuItem>
@@ -131,12 +131,16 @@ export function AdminUserMenu({ email }: { email: string }) {
             setTheme(isDark ? "light" : "dark");
           }}
         >
-          {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+          {isDark ? (
+            <Sun aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+          ) : (
+            <Moon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+          )}
           {isDark ? "Light theme" : "Dark theme"}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={handleLogout}>
-          <LogOut className="size-4" />
+          <LogOut aria-hidden className="size-4 shrink-0 text-destructive" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>

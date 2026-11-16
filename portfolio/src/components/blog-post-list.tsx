@@ -47,7 +47,6 @@ export function BlogPostList({
       loadingRef.current = false;
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, locale, posts.length]);
 
   useEffect(() => {
