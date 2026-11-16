@@ -7,8 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EntityDialog } from "@/components/admin/entity-dialog";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { ListSearch } from "@/components/admin/list-search";
+import { ListPagination } from "@/components/admin/list-pagination";
+import { paginate } from "@/lib/paginate";
 import { createPost, deletePost, updatePost } from "./actions";
 
 type PostRow = typeof postsTable.$inferSelect;
@@ -35,16 +45,15 @@ function PostFields({
       </div>
       <div className="space-y-2">
         <Label htmlFor="locale">Locale</Label>
-        <select
-          id="locale"
-          name="locale"
-          required
-          defaultValue={post?.locale ?? "fr"}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          <option value="fr">French (/blog)</option>
-          <option value="en">English (/en/blog)</option>
-        </select>
+        <Select name="locale" required defaultValue={post?.locale ?? "fr"}>
+          <SelectTrigger id="locale" className="w-full">
+            <SelectValue placeholder="Choose a locale…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="fr">French (/blog)</SelectItem>
+            <SelectItem value="en">English (/en/blog)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="col-span-2 space-y-2">
         <Label htmlFor="title">Title</Label>
@@ -64,16 +73,15 @@ function PostFields({
       </div>
       <div className="space-y-2">
         <Label htmlFor="status">Status</Label>
-        <select
-          id="status"
-          name="status"
-          required
-          defaultValue={post?.status ?? "draft"}
-          className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-        </select>
+        <Select name="status" required defaultValue={post?.status ?? "draft"}>
+          <SelectTrigger id="status" className="w-full">
+            <SelectValue placeholder="Choose a status…" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-2">
         <Label htmlFor="publishedAt">Published date</Label>
@@ -112,8 +120,13 @@ function PostFields({
   );
 }
 
-export default async function AdminPostsPage() {
-  const [postRows, allTags, tagLinks] = await Promise.all([
+export default async function AdminPostsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q = "", page: pageParam } = await searchParams;
+  const [allPostRows, allTags, tagLinks] = await Promise.all([
     db.select().from(postsTable).orderBy(desc(postsTable.updatedAt)),
     db.select().from(tagsTable),
     db.select().from(postTags),
@@ -126,18 +139,32 @@ export default async function AdminPostsPage() {
     tagsByPost.set(link.postId, set);
   }
 
+  const needle = q.trim().toLowerCase();
+  const filteredRows = needle
+    ? allPostRows.filter(
+        (post) =>
+          post.title.toLowerCase().includes(needle) ||
+          post.slug.toLowerCase().includes(needle) ||
+          post.status.toLowerCase().includes(needle)
+      )
+    : allPostRows;
+  const { items: postRows, page, totalPages } = paginate(filteredRows, Number(pageParam) || 1);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Blog posts</h1>
-        <EntityDialog
-          trigger="New post"
-          title="New post"
-          action={createPost}
-          contentClassName="max-w-3xl max-h-[85vh] overflow-y-auto"
-        >
-          <PostFields allTags={allTags} selectedTagIds={new Set()} />
-        </EntityDialog>
+        <div className="flex flex-wrap items-center gap-3 sm:flex-row-reverse">
+          <EntityDialog
+            trigger="New post"
+            title="New post"
+            action={createPost}
+            contentClassName="sm:max-w-3xl max-h-[85vh] overflow-y-auto"
+          >
+            <PostFields allTags={allTags} selectedTagIds={new Set()} />
+          </EntityDialog>
+          <ListSearch placeholder="Search posts…" />
+        </div>
       </div>
       <Card className="overflow-hidden">
       <Table>
@@ -151,6 +178,13 @@ export default async function AdminPostsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {postRows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                No posts match your search.
+              </TableCell>
+            </TableRow>
+          )}
           {postRows.map((post) => (
             <TableRow key={post.id}>
               <TableCell>{post.title}</TableCell>
@@ -167,7 +201,7 @@ export default async function AdminPostsPage() {
                   triggerVariant="outline"
                   title="Edit post"
                   action={updatePost.bind(null, post.id)}
-                  contentClassName="max-w-3xl max-h-[85vh] overflow-y-auto"
+                  contentClassName="sm:max-w-3xl max-h-[85vh] overflow-y-auto"
                 >
                   <PostFields post={post} allTags={allTags} selectedTagIds={tagsByPost.get(post.id) ?? new Set()} />
                 </EntityDialog>
@@ -177,6 +211,7 @@ export default async function AdminPostsPage() {
           ))}
         </TableBody>
       </Table>
+      <ListPagination basePath="/admin/posts" page={page} totalPages={totalPages} query={{ q }} />
       </Card>
     </div>
   );

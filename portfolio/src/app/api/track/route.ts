@@ -13,6 +13,10 @@ const SESSION_MAX_AGE = 60 * 30; // 30 minutes of inactivity = a new "session".
 const bodySchema = z.object({
   path: z.string().max(500),
   referrer: z.string().max(500).optional(),
+  language: z.string().max(35).optional(),
+  utmSource: z.string().max(200).optional(),
+  utmMedium: z.string().max(200).optional(),
+  utmCampaign: z.string().max(200).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -20,7 +24,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
-  const { path, referrer } = parsed.data;
+  const { path, referrer, language, utmSource, utmMedium, utmCampaign } = parsed.data;
   const locale = path === "/en" || path.startsWith("/en/") ? "en" : "fr";
 
   // Geo headers are populated by Vercel's edge network; absent locally. No
@@ -42,6 +46,10 @@ export async function POST(request: NextRequest) {
     browser,
     os,
     device,
+    language: language || null,
+    utmSource: utmSource || null,
+    utmMedium: utmMedium || null,
+    utmCampaign: utmCampaign || null,
     sessionHash,
   });
 

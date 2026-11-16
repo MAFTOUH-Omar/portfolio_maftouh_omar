@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { EntityDialog } from "@/components/admin/entity-dialog";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { ListSearch } from "@/components/admin/list-search";
+import { ListPagination } from "@/components/admin/list-pagination";
+import { paginate } from "@/lib/paginate";
 import { createWorkExperience, deleteWorkExperience, updateWorkExperience } from "./actions";
 
 type WorkRow = typeof workTable.$inferSelect;
@@ -75,21 +78,37 @@ function WorkFields({ work }: { work?: WorkRow }) {
   );
 }
 
-export default async function AdminWorkPage() {
-  const workRows = await db.select().from(workTable).orderBy(asc(workTable.sortOrder));
+export default async function AdminWorkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q = "", page: pageParam } = await searchParams;
+  const allWorkRows = await db.select().from(workTable).orderBy(asc(workTable.sortOrder));
+
+  const needle = q.trim().toLowerCase();
+  const filteredRows = needle
+    ? allWorkRows.filter(
+        (work) => work.company.toLowerCase().includes(needle) || work.titleFr.toLowerCase().includes(needle)
+      )
+    : allWorkRows;
+  const { items: workRows, page, totalPages } = paginate(filteredRows, Number(pageParam) || 1);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Work experience</h1>
-        <EntityDialog
-          trigger="New experience"
-          title="New work experience"
-          action={createWorkExperience}
-          contentClassName="max-w-2xl max-h-[85vh] overflow-y-auto"
-        >
-          <WorkFields />
-        </EntityDialog>
+        <div className="flex flex-wrap items-center gap-3 sm:flex-row-reverse">
+          <EntityDialog
+            trigger="New experience"
+            title="New work experience"
+            action={createWorkExperience}
+            contentClassName="sm:max-w-2xl max-h-[85vh] overflow-y-auto"
+          >
+            <WorkFields />
+          </EntityDialog>
+          <ListSearch placeholder="Search work experience…" />
+        </div>
       </div>
       <Card className="overflow-hidden">
       <Table>
@@ -102,6 +121,13 @@ export default async function AdminWorkPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {workRows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                No entries match your search.
+              </TableCell>
+            </TableRow>
+          )}
           {workRows.map((work) => (
             <TableRow key={work.id}>
               <TableCell>{work.company}</TableCell>
@@ -115,7 +141,7 @@ export default async function AdminWorkPage() {
                   triggerVariant="outline"
                   title="Edit work experience"
                   action={updateWorkExperience.bind(null, work.id)}
-                  contentClassName="max-w-2xl max-h-[85vh] overflow-y-auto"
+                  contentClassName="sm:max-w-2xl max-h-[85vh] overflow-y-auto"
                 >
                   <WorkFields work={work} />
                 </EntityDialog>
@@ -125,6 +151,7 @@ export default async function AdminWorkPage() {
           ))}
         </TableBody>
       </Table>
+      <ListPagination basePath="/admin/work" page={page} totalPages={totalPages} query={{ q }} />
       </Card>
     </div>
   );

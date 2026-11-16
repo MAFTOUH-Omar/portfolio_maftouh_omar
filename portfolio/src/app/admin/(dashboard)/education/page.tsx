@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EntityDialog } from "@/components/admin/entity-dialog";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { ListSearch } from "@/components/admin/list-search";
+import { ListPagination } from "@/components/admin/list-pagination";
+import { paginate } from "@/lib/paginate";
 import { createEducation, deleteEducation, updateEducation } from "./actions";
 
 type EducationRow = typeof educationTable.$inferSelect;
@@ -50,21 +53,37 @@ function EducationFields({ entry }: { entry?: EducationRow }) {
   );
 }
 
-export default async function AdminEducationPage() {
-  const rows = await db.select().from(educationTable).orderBy(asc(educationTable.sortOrder));
+export default async function AdminEducationPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q = "", page: pageParam } = await searchParams;
+  const allRows = await db.select().from(educationTable).orderBy(asc(educationTable.sortOrder));
+
+  const needle = q.trim().toLowerCase();
+  const filteredRows = needle
+    ? allRows.filter(
+        (entry) => entry.school.toLowerCase().includes(needle) || entry.degreeFr.toLowerCase().includes(needle)
+      )
+    : allRows;
+  const { items: rows, page, totalPages } = paginate(filteredRows, Number(pageParam) || 1);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Education</h1>
-        <EntityDialog
-          trigger="New entry"
-          title="New education entry"
-          action={createEducation}
-          contentClassName="max-w-xl"
-        >
-          <EducationFields />
-        </EntityDialog>
+        <div className="flex flex-wrap items-center gap-3 sm:flex-row-reverse">
+          <EntityDialog
+            trigger="New entry"
+            title="New education entry"
+            action={createEducation}
+            contentClassName="sm:max-w-xl"
+          >
+            <EducationFields />
+          </EntityDialog>
+          <ListSearch placeholder="Search education…" />
+        </div>
       </div>
       <Card className="overflow-hidden">
       <Table>
@@ -77,6 +96,13 @@ export default async function AdminEducationPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {rows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                No entries match your search.
+              </TableCell>
+            </TableRow>
+          )}
           {rows.map((entry) => (
             <TableRow key={entry.id}>
               <TableCell>{entry.school}</TableCell>
@@ -90,7 +116,7 @@ export default async function AdminEducationPage() {
                   triggerVariant="outline"
                   title="Edit education entry"
                   action={updateEducation.bind(null, entry.id)}
-                  contentClassName="max-w-xl"
+                  contentClassName="sm:max-w-xl"
                 >
                   <EducationFields entry={entry} />
                 </EntityDialog>
@@ -100,6 +126,7 @@ export default async function AdminEducationPage() {
           ))}
         </TableBody>
       </Table>
+      <ListPagination basePath="/admin/education" page={page} totalPages={totalPages} query={{ q }} />
       </Card>
     </div>
   );

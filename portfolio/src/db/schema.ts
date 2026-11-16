@@ -151,6 +151,10 @@ export const visits = pgTable("visits", {
   browser: text("browser"),
   os: text("os"),
   device: text("device"),
+  language: text("language"),
+  utmSource: text("utm_source"),
+  utmMedium: text("utm_medium"),
+  utmCampaign: text("utm_campaign"),
   sessionHash: text("session_hash").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 }, (table) => [

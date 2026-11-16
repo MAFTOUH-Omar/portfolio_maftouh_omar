@@ -89,14 +89,14 @@ export function AdminUserMenu({ email }: { email: string }) {
         </span>
         <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-72">
+      <DropdownMenuContent align="end" className="w-72 max-w-[calc(100vw-2rem)]">
         <DropdownMenuLabel className="truncate font-normal text-muted-foreground">
           {email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {NAV_GROUPS.map((group) => (
-          <DropdownMenuGroup key={group.label}>
-            <DropdownMenuLabel className="pb-0 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+        {NAV_GROUPS.map((group, groupIndex) => (
+          <DropdownMenuGroup key={group.label} className={cn(groupIndex > 0 && "mt-1")}>
+            <DropdownMenuLabel className="pb-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70">
               {group.label}
             </DropdownMenuLabel>
             {group.items.map((item) => {
@@ -107,7 +107,7 @@ export function AdminUserMenu({ email }: { email: string }) {
                 <DropdownMenuItem
                   key={item.href}
                   asChild
-                  className={cn(active && "bg-accent/10 text-accent font-medium")}
+                  className={cn(active && "bg-accent text-accent-foreground font-medium")}
                 >
                   <Link href={item.href}>
                     <item.icon className="size-4" />

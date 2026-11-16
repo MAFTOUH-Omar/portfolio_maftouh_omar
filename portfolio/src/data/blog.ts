@@ -26,6 +26,10 @@ export type Post = {
   tags: PostTag[];
 };
 
+/** Everything a post list item renders — skips the markdown->HTML pass,
+ *  which only the single-post page actually needs. */
+export type PostSummary = Omit<Post, "source">;
+
 type PostRow = typeof postsTable.$inferSelect;
 
 export async function markdownToHTML(markdown: string) {
@@ -46,7 +50,7 @@ export async function markdownToHTML(markdown: string) {
   return p.toString();
 }
 
-async function toPost(row: PostRow): Promise<Post> {
+async function toPostSummary(row: PostRow): Promise<PostSummary> {
   const tagRows = await db
     .select({ slug: tagsTable.slug, nameFr: tagsTable.nameFr, nameEn: tagsTable.nameEn })
     .from(postTags)
@@ -56,7 +60,6 @@ async function toPost(row: PostRow): Promise<Post> {
   const publishedAt = (row.publishedAt ?? row.updatedAt).toISOString();
 
   return {
-    source: await markdownToHTML(row.contentMd),
     metadata: {
       title: row.title,
       summary: row.summary,
@@ -71,6 +74,11 @@ async function toPost(row: PostRow): Promise<Post> {
       name: row.locale === "fr" ? tag.nameFr : tag.nameEn,
     })),
   };
+}
+
+async function toPost(row: PostRow): Promise<Post> {
+  const summary = await toPostSummary(row);
+  return { ...summary, source: await markdownToHTML(row.contentMd) };
 }
 
 export async function postExists(locale: Locale, slug: string): Promise<boolean> {
@@ -105,15 +113,45 @@ export async function getBlogPosts(locale: Locale): Promise<Post[]> {
   return Promise.all(rows.map(toPost));
 }
 
+/** Published posts of a locale, newest first — metadata only, no markdown
+ *  render. Used by list views (index, tag archive, infinite scroll). */
+export async function getBlogPostSummaries(locale: Locale): Promise<PostSummary[]> {
+  const rows = await db
+    .select()
+    .from(postsTable)
+    .where(and(eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .orderBy(desc(postsTable.publishedAt));
+  return Promise.all(rows.map(toPostSummary));
+}
+
+/** One page of `limit` published posts starting at `offset`, newest first,
+ *  plus whether more remain — backs the blog index's infinite scroll. */
+export async function getBlogPostsPage(
+  locale: Locale,
+  offset: number,
+  limit: number
+): Promise<{ posts: PostSummary[]; hasMore: boolean }> {
+  const rows = await db
+    .select()
+    .from(postsTable)
+    .where(and(eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .orderBy(desc(postsTable.publishedAt))
+    .limit(limit + 1)
+    .offset(offset);
+  const hasMore = rows.length > limit;
+  const posts = await Promise.all(rows.slice(0, limit).map(toPostSummary));
+  return { posts, hasMore };
+}
+
 /** Published posts of a locale carrying the given tag, newest first. */
-export async function getBlogPostsByTag(locale: Locale, tagSlug: string): Promise<Post[]> {
-  const posts = await getBlogPosts(locale);
+export async function getBlogPostsByTag(locale: Locale, tagSlug: string): Promise<PostSummary[]> {
+  const posts = await getBlogPostSummaries(locale);
   return posts.filter((post) => post.tags.some((tag) => tag.slug === tagSlug));
 }
 
 /** All distinct tag slugs used by at least one published post in that locale. */
 export async function getUsedTagSlugs(locale: Locale): Promise<string[]> {
-  const posts = await getBlogPosts(locale);
+  const posts = await getBlogPostSummaries(locale);
   const slugs = new Set(posts.flatMap((post) => post.tags.map((tag) => tag.slug)));
   return [...slugs];
 }

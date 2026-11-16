@@ -1,14 +1,17 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { JsonLd } from "@/components/json-ld";
-import { SectionHeading } from "@/components/section-heading";
-import { Card } from "@/components/ui/card";
+import { BlogHero } from "@/components/blog-hero";
+import { BlogPostList } from "@/components/blog-post-list";
+import { PostListItem } from "@/components/blog-post-item";
+import { ContactCta } from "@/components/contact-cta";
 import {
   getBlogPosts,
+  getBlogPostSummaries,
   getBlogPostsByTag,
+  getBlogPostsPage,
   getPost,
   getPostLocales,
   getUsedTagSlugs,
-  type Post,
 } from "@/data/blog";
 import { getDictionary } from "@/data/dictionaries";
 import { getSiteData } from "@/data/resume";
@@ -17,56 +20,13 @@ import { ogImageUrl, openGraphFor, PERSON_ID } from "@/lib/seo";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 const BLUR_FADE_DELAY = 0.04;
-
-/* ------------------------------------------------------------------ shared */
-
-/** One row in the post list — shared by the index and the tag archive, so
- *  both read with the same rhythm as the rest of the site. */
-function PostListItem({ post, locale, delay }: { post: Post; locale: Locale; delay: number }) {
-  return (
-    <BlurFade delay={delay}>
-      <Link href={localizePath(locale, `/blog/${post.slug}`)} className="group block">
-        <Card className="group flex flex-col gap-2 p-4 transition-colors hover:border-primary/60 sm:p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 space-y-1">
-              <h3 className="text-balance text-base font-semibold tracking-tight text-card-foreground sm:text-lg">
-                {post.metadata.title}
-              </h3>
-              <time
-                dateTime={post.metadata.publishedAt}
-                className="font-mono text-[11px] text-muted-foreground"
-              >
-                {formatDate(post.metadata.publishedAt, localeConfig[locale].dateLocale)}
-              </time>
-            </div>
-            <ArrowUpRight className="size-4 shrink-0 translate-x-0 text-muted-foreground opacity-0 transition-all duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary group-hover:opacity-100" />
-          </div>
-          <p className="line-clamp-2 text-pretty text-sm text-muted-foreground">
-            {post.metadata.summary}
-          </p>
-          {post.tags.length > 0 && (
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              {post.tags.map((tag) => (
-                <span
-                  key={tag.slug}
-                  className="rounded-full border px-2.5 py-0.5 text-[11px] text-muted-foreground"
-                >
-                  {tag.name}
-                </span>
-              ))}
-            </div>
-          )}
-        </Card>
-      </Link>
-    </BlurFade>
-  );
-}
+const PAGE_SIZE = 10;
 
 /* ------------------------------------------------------------------ index */
 
@@ -77,7 +37,7 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
   // Only locales that actually have posts get an indexable blog page.
   const withPosts: Locale[] = [];
   for (const l of locales) {
-    if ((await getBlogPosts(l)).length > 0) withPosts.push(l);
+    if ((await getBlogPostSummaries(l)).length > 0) withPosts.push(l);
   }
   const indexable = withPosts.includes(locale);
   const data = await getSiteData();
@@ -103,31 +63,31 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
 
 export async function BlogIndex({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
-  const posts = await getBlogPosts(locale);
+  const [{ posts, hasMore }, totalCount] = await Promise.all([
+    getBlogPostsPage(locale, 0, PAGE_SIZE),
+    getBlogPostSummaries(locale).then((all) => all.length),
+  ]);
 
   return (
     <main className="flex flex-col gap-y-6">
-      <SectionHeading
-        index="01"
+      <BlogHero
         title={t.blog.title}
-        intro={t.blog.description}
-        delay={BLUR_FADE_DELAY}
+        description={t.blog.description}
+        postCount={t.blog.postCount.replace("{n}", String(totalCount))}
       />
-      {posts.length === 0 && (
-        <BlurFade delay={BLUR_FADE_DELAY * 2}>
+      {posts.length === 0 ? (
+        <BlurFade delay={BLUR_FADE_DELAY}>
           <p className="text-sm text-muted-foreground">{t.blog.empty}</p>
         </BlurFade>
+      ) : (
+        <BlogPostList
+          locale={locale}
+          initialPosts={posts}
+          initialHasMore={hasMore}
+          labels={{ loadMore: t.blog.loadMore, loading: t.blog.loading, endOfList: t.blog.endOfList }}
+        />
       )}
-      <div className="flex flex-col gap-3">
-        {posts.map((post, id) => (
-          <PostListItem
-            key={post.slug}
-            post={post}
-            locale={locale}
-            delay={BLUR_FADE_DELAY * 2 + id * 0.05}
-          />
-        ))}
-      </div>
+      <ContactCta locale={locale} index="02" />
     </main>
   );
 }
@@ -278,6 +238,7 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
           </BlurFade>
         </div>
       </section>
+      <ContactCta locale={locale} index="02" />
     </main>
   );
 }
@@ -347,6 +308,7 @@ export async function TagPage({ locale, tag }: { locale: Locale; tag: string }) 
           />
         ))}
       </div>
+      <ContactCta locale={locale} index="02" />
     </main>
   );
 }

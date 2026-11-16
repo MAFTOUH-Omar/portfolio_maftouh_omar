@@ -11,7 +11,9 @@ type TextColumn =
   | typeof visits.country
   | typeof visits.browser
   | typeof visits.os
-  | typeof visits.device;
+  | typeof visits.device
+  | typeof visits.language
+  | typeof visits.utmSource;
 
 async function topBy(column: TextColumn, fallback: string) {
   const rows = await db
@@ -25,6 +27,7 @@ async function topBy(column: TextColumn, fallback: string) {
 
 function BarList({ title, rows }: { title: string; rows: Row[] }) {
   const max = Math.max(1, ...rows.map((row) => row.count));
+  const total = Math.max(1, rows.reduce((sum, row) => sum + row.count, 0));
   return (
     <Card className="p-4 sm:p-5">
       <CardHeader className="p-0 pb-3">
@@ -36,7 +39,7 @@ function BarList({ title, rows }: { title: string; rows: Row[] }) {
         ) : (
           rows.map((row) => (
             <div key={row.label} className="flex items-center gap-3 text-sm">
-              <span className="w-24 flex-shrink-0 truncate text-foreground sm:w-28" title={row.label}>
+              <span className="w-20 flex-shrink-0 truncate text-foreground sm:w-24" title={row.label}>
                 {row.label}
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
@@ -45,7 +48,10 @@ function BarList({ title, rows }: { title: string; rows: Row[] }) {
                   style={{ width: `${(row.count / max) * 100}%` }}
                 />
               </div>
-              <span className="w-8 flex-shrink-0 text-right text-muted-foreground">{row.count}</span>
+              <span className="w-8 flex-shrink-0 text-right tabular-nums text-foreground">{row.count}</span>
+              <span className="w-10 flex-shrink-0 text-right tabular-nums text-muted-foreground">
+                {Math.round((row.count / total) * 100)}%
+              </span>
             </div>
           ))
         )}
@@ -55,25 +61,37 @@ function BarList({ title, rows }: { title: string; rows: Row[] }) {
 }
 
 export default async function AdminVisitorsPage() {
-  const [[{ total }], dailyRows, topPages, topReferrers, topCountries, topBrowsers, topOs, topDevices] =
-    await Promise.all([
-      db.select({ total: sql<number>`count(*)` }).from(visits),
-      db
-        .select({
-          day: sql<string>`to_char(date_trunc('day', ${visits.createdAt}), 'YYYY-MM-DD')`,
-          count: sql<number>`count(*)`,
-        })
-        .from(visits)
-        .where(sql`${visits.createdAt} >= now() - interval '14 days'`)
-        .groupBy(sql`date_trunc('day', ${visits.createdAt})`)
-        .orderBy(sql`date_trunc('day', ${visits.createdAt})`),
-      topBy(visits.path, "(unknown)"),
-      topBy(visits.referrer, "Direct"),
-      topBy(visits.country, "Unknown"),
-      topBy(visits.browser, "Unknown"),
-      topBy(visits.os, "Unknown"),
-      topBy(visits.device, "Unknown"),
-    ]);
+  const [
+    [{ total }],
+    dailyRows,
+    topPages,
+    topReferrers,
+    topCountries,
+    topBrowsers,
+    topOs,
+    topDevices,
+    topLanguages,
+    topCampaigns,
+  ] = await Promise.all([
+    db.select({ total: sql<number>`count(*)` }).from(visits),
+    db
+      .select({
+        day: sql<string>`to_char(date_trunc('day', ${visits.createdAt}), 'YYYY-MM-DD')`,
+        count: sql<number>`count(*)`,
+      })
+      .from(visits)
+      .where(sql`${visits.createdAt} >= now() - interval '14 days'`)
+      .groupBy(sql`date_trunc('day', ${visits.createdAt})`)
+      .orderBy(sql`date_trunc('day', ${visits.createdAt})`),
+    topBy(visits.path, "(unknown)"),
+    topBy(visits.referrer, "Direct"),
+    topBy(visits.country, "Unknown"),
+    topBy(visits.browser, "Unknown"),
+    topBy(visits.os, "Unknown"),
+    topBy(visits.device, "Unknown"),
+    topBy(visits.language, "Unknown"),
+    topBy(visits.utmSource, "None"),
+  ]);
 
   const dailyMap = new Map(dailyRows.map((row) => [row.day, Number(row.count)]));
   const last14Days = Array.from({ length: 14 }, (_, index) => {
@@ -115,6 +133,8 @@ export default async function AdminVisitorsPage() {
         <BarList title="Browsers" rows={topBrowsers} />
         <BarList title="Operating systems" rows={topOs} />
         <BarList title="Devices" rows={topDevices} />
+        <BarList title="Languages" rows={topLanguages} />
+        <BarList title="Campaign sources (UTM)" rows={topCampaigns} />
       </div>
     </div>
   );

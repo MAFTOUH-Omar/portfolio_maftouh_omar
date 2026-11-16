@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { EntityDialog } from "@/components/admin/entity-dialog";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { ListSearch } from "@/components/admin/list-search";
+import { ListPagination } from "@/components/admin/list-pagination";
+import { paginate } from "@/lib/paginate";
 import { createTag, deleteTag, updateTag } from "./actions";
 
 type TagRow = typeof tagsTable.$inferSelect;
@@ -30,16 +33,35 @@ function TagFields({ tag }: { tag?: TagRow }) {
   );
 }
 
-export default async function AdminTagsPage() {
-  const rows = await db.select().from(tagsTable).orderBy(asc(tagsTable.nameEn));
+export default async function AdminTagsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q = "", page: pageParam } = await searchParams;
+  const allRows = await db.select().from(tagsTable).orderBy(asc(tagsTable.nameEn));
+
+  const needle = q.trim().toLowerCase();
+  const filteredRows = needle
+    ? allRows.filter(
+        (tag) =>
+          tag.slug.toLowerCase().includes(needle) ||
+          tag.nameFr.toLowerCase().includes(needle) ||
+          tag.nameEn.toLowerCase().includes(needle)
+      )
+    : allRows;
+  const { items: rows, page, totalPages } = paginate(filteredRows, Number(pageParam) || 1);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Tags</h1>
-        <EntityDialog trigger="New tag" title="New tag" action={createTag}>
-          <TagFields />
-        </EntityDialog>
+        <div className="flex flex-wrap items-center gap-3 sm:flex-row-reverse">
+          <EntityDialog trigger="New tag" title="New tag" action={createTag}>
+            <TagFields />
+          </EntityDialog>
+          <ListSearch placeholder="Search tags…" />
+        </div>
       </div>
       <Card className="overflow-hidden">
       <Table>
@@ -52,6 +74,13 @@ export default async function AdminTagsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {rows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={4} className="py-8 text-center text-sm text-muted-foreground">
+                No tags match your search.
+              </TableCell>
+            </TableRow>
+          )}
           {rows.map((tag) => (
             <TableRow key={tag.id}>
               <TableCell>{tag.slug}</TableCell>
@@ -72,6 +101,7 @@ export default async function AdminTagsPage() {
           ))}
         </TableBody>
       </Table>
+      <ListPagination basePath="/admin/tags" page={page} totalPages={totalPages} query={{ q }} />
       </Card>
     </div>
   );

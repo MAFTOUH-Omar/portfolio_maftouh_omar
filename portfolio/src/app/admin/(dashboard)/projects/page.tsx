@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { EntityDialog } from "@/components/admin/entity-dialog";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { ListSearch } from "@/components/admin/list-search";
+import { ListPagination } from "@/components/admin/list-pagination";
+import { paginate } from "@/lib/paginate";
 import { createProject, deleteProject, updateProject } from "./actions";
 
 type ProjectRow = typeof projectsTable.$inferSelect;
@@ -105,21 +108,37 @@ function ProjectFields({ project }: { project?: ProjectRow }) {
   );
 }
 
-export default async function AdminProjectsPage() {
-  const projectRows = await db.select().from(projectsTable).orderBy(asc(projectsTable.sortOrder));
+export default async function AdminProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; page?: string }>;
+}) {
+  const { q = "", page: pageParam } = await searchParams;
+  const allProjectRows = await db.select().from(projectsTable).orderBy(asc(projectsTable.sortOrder));
+
+  const needle = q.trim().toLowerCase();
+  const filteredRows = needle
+    ? allProjectRows.filter(
+        (project) => project.title.toLowerCase().includes(needle) || project.datesFr.toLowerCase().includes(needle)
+      )
+    : allProjectRows;
+  const { items: projectRows, page, totalPages } = paginate(filteredRows, Number(pageParam) || 1);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-        <EntityDialog
-          trigger="New project"
-          title="New project"
-          action={createProject}
-          contentClassName="max-w-2xl max-h-[85vh] overflow-y-auto"
-        >
-          <ProjectFields />
-        </EntityDialog>
+        <div className="flex flex-wrap items-center gap-3 sm:flex-row-reverse">
+          <EntityDialog
+            trigger="New project"
+            title="New project"
+            action={createProject}
+            contentClassName="sm:max-w-2xl max-h-[85vh] overflow-y-auto"
+          >
+            <ProjectFields />
+          </EntityDialog>
+          <ListSearch placeholder="Search projects…" />
+        </div>
       </div>
       <Card className="overflow-hidden">
       <Table>
@@ -133,6 +152,13 @@ export default async function AdminProjectsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          {projectRows.length === 0 && (
+            <TableRow>
+              <TableCell colSpan={5} className="py-8 text-center text-sm text-muted-foreground">
+                No projects match your search.
+              </TableCell>
+            </TableRow>
+          )}
           {projectRows.map((project) => (
             <TableRow key={project.id}>
               <TableCell>{project.title}</TableCell>
@@ -145,7 +171,7 @@ export default async function AdminProjectsPage() {
                   triggerVariant="outline"
                   title="Edit project"
                   action={updateProject.bind(null, project.id)}
-                  contentClassName="max-w-2xl max-h-[85vh] overflow-y-auto"
+                  contentClassName="sm:max-w-2xl max-h-[85vh] overflow-y-auto"
                 >
                   <ProjectFields project={project} />
                 </EntityDialog>
@@ -155,6 +181,7 @@ export default async function AdminProjectsPage() {
           ))}
         </TableBody>
       </Table>
+      <ListPagination basePath="/admin/projects" page={page} totalPages={totalPages} query={{ q }} />
       </Card>
     </div>
   );
