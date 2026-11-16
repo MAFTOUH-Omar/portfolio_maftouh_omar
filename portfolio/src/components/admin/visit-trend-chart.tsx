@@ -1,6 +1,8 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Point = { day: string; count: number };
 
@@ -141,7 +143,7 @@ export function VisitTrendChart({ data }: { data: Point[] }) {
         <span>{formatShortDate(data[0]?.day)}</span>
         <span>{formatShortDate(data[data.length - 1]?.day)}</span>
       </div>
-      <dl className="mt-4 grid grid-cols-3 gap-3 border-t pt-3 text-center sm:text-left">
+      <dl className="mt-4 grid grid-cols-2 gap-3 border-t pt-3 text-center sm:grid-cols-4 sm:text-left">
         <div>
           <dt className="text-[11px] text-muted-foreground">Total</dt>
           <dd className="text-lg font-semibold tabular-nums text-foreground">{stats.total}</dd>
@@ -157,6 +159,24 @@ export function VisitTrendChart({ data }: { data: Point[] }) {
             <span className="ml-1 text-xs font-normal text-muted-foreground">
               {formatShortDate(stats.peak.day)}
             </span>
+          </dd>
+        </div>
+        <div>
+          <dt className="text-[11px] text-muted-foreground">Trend</dt>
+          <dd
+            className={cn(
+              "flex items-center justify-center gap-1 text-lg font-semibold tabular-nums sm:justify-start",
+              stats.trendPct > 0 && "text-emerald-600 dark:text-emerald-400",
+              stats.trendPct < 0 && "text-destructive"
+            )}
+          >
+            {stats.trendPct > 0 ? (
+              <TrendingUp className="size-4" />
+            ) : stats.trendPct < 0 ? (
+              <TrendingDown className="size-4" />
+            ) : null}
+            {stats.trendPct > 0 ? "+" : ""}
+            {stats.trendPct.toFixed(0)}%
           </dd>
         </div>
       </dl>
