@@ -26,7 +26,7 @@ export function BlogHero({
             <circle cx="260" cy="-10" r="190" className="fill-hero-panel/30" />
           </svg>
         </div>
-        <div className="relative z-10 flex max-w-2xl flex-col gap-3">
+        <div className="relative z-10 mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-white/90">
             {postCount}
           </span>
