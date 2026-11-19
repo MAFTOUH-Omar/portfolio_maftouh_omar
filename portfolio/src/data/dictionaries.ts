@@ -64,6 +64,9 @@ export const dictionaries = {
       loadMore: "Charger plus d'articles",
       loading: "Chargement…",
       endOfList: "Vous avez tout lu !",
+      searchPlaceholder: "Rechercher un article…",
+      noResults: "Aucun article ne correspond à votre recherche.",
+      tagsHeading: "Explorer par thème",
     },
     nav: {
       home: "Accueil",
@@ -157,6 +160,9 @@ export const dictionaries = {
       loadMore: "Load more posts",
       loading: "Loading…",
       endOfList: "You're all caught up!",
+      searchPlaceholder: "Search posts…",
+      noResults: "No posts match your search.",
+      tagsHeading: "Browse by topic",
     },
     nav: {
       home: "Home",

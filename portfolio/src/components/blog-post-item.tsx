@@ -22,7 +22,7 @@ export function PostListItem({
     <BlurFade delay={delay}>
       <Link href={localizePath(locale, `/blog/${post.slug}`)} className="group block">
         <Card className="group flex flex-col gap-2 p-4 transition-colors hover:border-primary/60 sm:p-5">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center justify-between gap-4">
             <div className="min-w-0 space-y-1">
               <h3 className="text-balance text-base font-semibold tracking-tight text-card-foreground sm:text-lg">
                 {post.metadata.title}

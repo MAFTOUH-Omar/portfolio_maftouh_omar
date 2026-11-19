@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, ilike, or } from "drizzle-orm";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 import remarkParse from "remark-parse";
@@ -125,16 +125,26 @@ export async function getBlogPostSummaries(locale: Locale): Promise<PostSummary[
 }
 
 /** One page of `limit` published posts starting at `offset`, newest first,
- *  plus whether more remain — backs the blog index's infinite scroll. */
+ *  plus whether more remain — backs the blog index's infinite scroll.
+ *  `query` matches against the title and summary (case-insensitive). */
 export async function getBlogPostsPage(
   locale: Locale,
   offset: number,
-  limit: number
+  limit: number,
+  query?: string
 ): Promise<{ posts: PostSummary[]; hasMore: boolean }> {
+  const needle = query?.trim();
+  const conditions = [eq(postsTable.locale, locale), eq(postsTable.status, "published")];
+  if (needle) {
+    conditions.push(
+      or(ilike(postsTable.title, `%${needle}%`), ilike(postsTable.summary, `%${needle}%`))!
+    );
+  }
+
   const rows = await db
     .select()
     .from(postsTable)
-    .where(and(eq(postsTable.locale, locale), eq(postsTable.status, "published")))
+    .where(and(...conditions))
     .orderBy(desc(postsTable.publishedAt))
     .limit(limit + 1)
     .offset(offset);
@@ -154,6 +164,19 @@ export async function getUsedTagSlugs(locale: Locale): Promise<string[]> {
   const posts = await getBlogPostSummaries(locale);
   const slugs = new Set(posts.flatMap((post) => post.tags.map((tag) => tag.slug)));
   return [...slugs];
+}
+
+/** Distinct tags (slug + localized name) used by at least one published post
+ *  in that locale — backs the tag chips on the blog index. */
+export async function getUsedTags(locale: Locale): Promise<PostTag[]> {
+  const posts = await getBlogPostSummaries(locale);
+  const byTagSlug = new Map<string, PostTag>();
+  for (const post of posts) {
+    for (const tag of post.tags) {
+      if (!byTagSlug.has(tag.slug)) byTagSlug.set(tag.slug, tag);
+    }
+  }
+  return [...byTagSlug.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /** Locales in which a given slug is published (used for hreflang). */

@@ -15,11 +15,12 @@ export async function GET(request: NextRequest) {
   const locale = searchParams.get("locale");
   const offset = Number(searchParams.get("offset") ?? "0");
   const limit = Math.min(MAX_PAGE_SIZE, Number(searchParams.get("limit") ?? String(MAX_PAGE_SIZE)));
+  const q = searchParams.get("q") ?? undefined;
 
   if (!isLocale(locale) || !Number.isFinite(offset) || offset < 0 || !Number.isFinite(limit) || limit <= 0) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const { posts, hasMore } = await getBlogPostsPage(locale, offset, limit);
+  const { posts, hasMore } = await getBlogPostsPage(locale, offset, limit, q);
   return NextResponse.json({ posts, hasMore });
 }

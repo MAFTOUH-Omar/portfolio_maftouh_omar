@@ -15,11 +15,15 @@ export function BlogPostList({
   locale,
   initialPosts,
   initialHasMore,
+  query,
   labels,
 }: {
   locale: Locale;
   initialPosts: PostSummary[];
   initialHasMore: boolean;
+  /** Current search query, if any — threaded into the "load more" requests
+   *  so pagination keeps matching the filtered set. */
+  query?: string;
   labels: { loadMore: string; loading: string; endOfList: string };
 }) {
   const [posts, setPosts] = useState(initialPosts);
@@ -33,8 +37,9 @@ export function BlogPostList({
     loadingRef.current = true;
     setLoading(true);
     try {
+      const q = query ? `&q=${encodeURIComponent(query)}` : "";
       const response = await fetch(
-        `/api/blog/posts?locale=${locale}&offset=${posts.length}&limit=${PAGE_SIZE}`
+        `/api/blog/posts?locale=${locale}&offset=${posts.length}&limit=${PAGE_SIZE}${q}`
       );
       if (!response.ok) return;
       const data: { posts: PostSummary[]; hasMore: boolean } = await response.json();
@@ -47,7 +52,7 @@ export function BlogPostList({
       loadingRef.current = false;
       setLoading(false);
     }
-  }, [hasMore, locale, posts.length]);
+  }, [hasMore, locale, posts.length, query]);
 
   useEffect(() => {
     const sentinel = sentinelRef.current;

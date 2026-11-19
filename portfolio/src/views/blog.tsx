@@ -1,9 +1,11 @@
 import BlurFade from "@/components/magicui/blur-fade";
 import { JsonLd } from "@/components/json-ld";
 import { BlogHero } from "@/components/blog-hero";
+import { BlogSearch } from "@/components/blog-search";
 import { BlogPostList } from "@/components/blog-post-list";
 import { PostListItem } from "@/components/blog-post-item";
 import { ContactCta } from "@/components/contact-cta";
+import { Input } from "@/components/ui/input";
 import {
   getBlogPosts,
   getBlogPostSummaries,
@@ -11,16 +13,17 @@ import {
   getBlogPostsPage,
   getPost,
   getPostLocales,
+  getUsedTags,
   getUsedTagSlugs,
 } from "@/data/blog";
 import { getDictionary } from "@/data/dictionaries";
 import { getSiteData } from "@/data/resume";
 import { languageAlternates, localeConfig, localizePath, locales, type Locale } from "@/lib/i18n";
-import { ogImageUrl, openGraphFor, PERSON_ID } from "@/lib/seo";
+import { ogImageUrl, openGraphFor, PERSON_ID, WEBSITE_ID } from "@/lib/seo";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -61,29 +64,122 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
   };
 }
 
-export async function BlogIndex({ locale }: { locale: Locale }) {
+function blogIndexJsonLd(
+  locale: Locale,
+  t: ReturnType<typeof getDictionary>,
+  posts: Awaited<ReturnType<typeof getBlogPostsPage>>["posts"]
+) {
+  const pageUrl = absoluteUrl(localizePath(locale, "/blog"));
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Blog",
+        "@id": `${pageUrl}#blog`,
+        url: pageUrl,
+        name: t.blog.title,
+        description: t.blog.description,
+        inLanguage: localeConfig[locale].htmlLang,
+        isPartOf: { "@id": WEBSITE_ID },
+        author: { "@id": PERSON_ID },
+        publisher: { "@id": PERSON_ID },
+        ...(posts.length > 0
+          ? {
+              blogPost: posts.map((post) => {
+                const postUrl = absoluteUrl(localizePath(locale, `/blog/${post.slug}`));
+                return {
+                  "@type": "BlogPosting",
+                  "@id": `${postUrl}#article`,
+                  url: postUrl,
+                  headline: post.metadata.title,
+                  datePublished: post.metadata.publishedAt,
+                  dateModified: post.metadata.updatedAt ?? post.metadata.publishedAt,
+                };
+              }),
+            }
+          : {}),
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: t.nav.home,
+            item: absoluteUrl(localizePath(locale, "/")),
+          },
+          { "@type": "ListItem", position: 2, name: t.blog.title, item: pageUrl },
+        ],
+      },
+    ],
+  };
+}
+
+export async function BlogIndex({
+  locale,
+  searchParams,
+}: {
+  locale: Locale;
+  searchParams?: Promise<{ q?: string }>;
+}) {
   const t = getDictionary(locale);
-  const [{ posts, hasMore }, totalCount] = await Promise.all([
-    getBlogPostsPage(locale, 0, PAGE_SIZE),
+  const { q } = (await searchParams) ?? {};
+  const query = q?.trim() || undefined;
+
+  const [{ posts, hasMore }, totalCount, tags] = await Promise.all([
+    getBlogPostsPage(locale, 0, PAGE_SIZE, query),
     getBlogPostSummaries(locale).then((all) => all.length),
+    getUsedTags(locale),
   ]);
 
   return (
     <main className="flex flex-col gap-y-6">
+      <JsonLd data={blogIndexJsonLd(locale, t, posts)} />
       <BlogHero
         title={t.blog.title}
         description={t.blog.description}
         postCount={t.blog.postCount.replace("{n}", String(totalCount))}
       />
+      {totalCount > 0 && (
+        <div className="flex flex-col gap-4">
+          <Suspense
+            fallback={
+              <div className="relative w-full sm:max-w-xs">
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input disabled placeholder={t.blog.searchPlaceholder} className="pl-9" />
+              </div>
+            }
+          >
+            <BlogSearch placeholder={t.blog.searchPlaceholder} />
+          </Suspense>
+          {tags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-medium text-muted-foreground">{t.blog.tagsHeading}</span>
+              {tags.map((tag) => (
+                <Link
+                  key={tag.slug}
+                  href={localizePath(locale, `/blog/tag/${tag.slug}`)}
+                  className="rounded-full border px-2.5 py-0.5 text-xs text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
+                >
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       {posts.length === 0 ? (
         <BlurFade delay={BLUR_FADE_DELAY}>
-          <p className="text-sm text-muted-foreground">{t.blog.empty}</p>
+          <p className="text-sm text-muted-foreground">{query ? t.blog.noResults : t.blog.empty}</p>
         </BlurFade>
       ) : (
         <BlogPostList
+          key={query ?? ""}
           locale={locale}
           initialPosts={posts}
           initialHasMore={hasMore}
+          query={query}
           labels={{ loadMore: t.blog.loadMore, loading: t.blog.loading, endOfList: t.blog.endOfList }}
         />
       )}

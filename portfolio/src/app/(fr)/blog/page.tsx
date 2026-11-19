@@ -4,6 +4,6 @@ export function generateMetadata() {
   return blogIndexMetadata("fr");
 }
 
-export default function Page() {
-  return <BlogIndex locale="fr" />;
+export default function Page({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  return <BlogIndex locale="fr" searchParams={searchParams} />;
 }
