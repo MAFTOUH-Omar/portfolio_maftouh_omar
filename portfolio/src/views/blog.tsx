@@ -89,11 +89,12 @@ export async function blogIndexMetadata(locale: Locale): Promise<Metadata> {
   // Only locales that actually have posts get an indexable blog page.
   const [withPosts, data] = await Promise.all([getLocalesWithPosts(), getSiteData()]);
   const indexable = withPosts.includes(locale);
-  const title = `${t.blog.title} | ${data.fullName}`;
-  const ogImage = ogImageUrl(t.blog.title);
+  // "Blog" alone is a weak title; the SEO title says what the blog covers.
+  const title = `${t.blog.seoTitle} | ${data.fullName}`;
+  const ogImage = ogImageUrl(t.blog.seoTitle, { locale, label: t.blog.title });
 
   return {
-    title: t.blog.title,
+    title: t.blog.seoTitle,
     description: t.blog.description,
     alternates: {
       canonical: path,
@@ -133,7 +134,7 @@ function blogIndexJsonLd(
         "@type": "Blog",
         "@id": `${pageUrl}#blog`,
         url: pageUrl,
-        name: t.blog.title,
+        name: t.blog.seoTitle,
         description: t.blog.description,
         inLanguage: localeConfig[locale].htmlLang,
         isPartOf: { "@id": WEBSITE_ID },
@@ -262,7 +263,7 @@ export async function blogPostMetadata(locale: Locale, slug: string): Promise<Me
   const metaTitle = seoTitle ?? title;
   const description = seoDescription ?? summary;
   const path = localizePath(locale, `/blog/${slug}`);
-  const ogImage = image ?? ogImageUrl(title);
+  const ogImage = image ?? postOgImage(locale, title, post.wordCount);
   const translations = await getPostLocales(slug);
 
   return {
@@ -295,6 +296,17 @@ export async function blogPostMetadata(locale: Locale, slug: string): Promise<Me
   };
 }
 
+function readingMinutesOf(wordCount: number): number {
+  return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
+}
+
+/** Generated share card for a post without its own cover image. */
+function postOgImage(locale: Locale, title: string, wordCount: number): string {
+  const t = getDictionary(locale);
+  const label = `${t.blog.ogArticle} · ${fill(t.blog.readingTime, { n: readingMinutesOf(wordCount) })}`;
+  return ogImageUrl(title, { locale, label });
+}
+
 /** True when two ISO timestamps fall on different calendar days (UTC). */
 function differentDay(a: string, b: string) {
   return a.slice(0, 10) !== b.slice(0, 10);
@@ -313,10 +325,10 @@ export async function BlogPost({ locale, slug }: { locale: Locale; slug: string 
   const hubSlugs = new Set(hubTags.map((tag) => tag.slug));
   const url = absoluteUrl(localizePath(locale, `/blog/${post.slug}`));
   const blogUrl = absoluteUrl(localizePath(locale, "/blog"));
-  const image = absoluteUrl(post.metadata.image ?? ogImageUrl(post.metadata.title));
+  const image = absoluteUrl(post.metadata.image ?? postOgImage(locale, post.metadata.title, post.wordCount));
   const { publishedAt, updatedAt } = post.metadata;
   const modified = updatedAt && differentDay(updatedAt, publishedAt) ? updatedAt : undefined;
-  const readingMinutes = Math.max(1, Math.round(post.wordCount / WORDS_PER_MINUTE));
+  const readingMinutes = readingMinutesOf(post.wordCount);
   const dateLocale = localeConfig[locale].dateLocale;
   const relatedAccents = accentsFor(related.map((relatedPost) => relatedPost.slug));
 
@@ -488,10 +500,8 @@ export async function tagPageMetadata(locale: Locale, tagSlug: string): Promise<
   const isHub = posts.length >= TAG_HUB_MIN_POSTS;
   const hubLocales = isHub ? await tagHubLocales(tagSlug) : [];
   const title = fill(t.blog.tagTitle, { tag: tagName });
-  const description = isHub
-    ? fill(t.blog.tagDescription, { n: posts.length, tag: tagName, latest: posts[0].metadata.title })
-    : t.blog.description;
-  const ogImage = ogImageUrl(title);
+  const description = isHub ? fill(t.blog.tagDescription, { n: posts.length, tag: tagName }) : t.blog.description;
+  const ogImage = ogImageUrl(tagName, { locale, label: t.blog.ogTopic });
 
   return {
     title,

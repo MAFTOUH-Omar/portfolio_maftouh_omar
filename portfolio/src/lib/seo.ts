@@ -7,9 +7,16 @@ import { absoluteUrl, SITE_URL } from "@/lib/site";
 export const PERSON_ID = `${SITE_URL}/#person`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 
-/** 1200×630 social card rendered by app/og/route.tsx. */
-export function ogImageUrl(title: string): string {
-  return `/og?title=${encodeURIComponent(title)}`;
+/**
+ * 1200×630 social card rendered by app/og/route.tsx. `label` is the small
+ * kicker above the title ("Article · 5 min de lecture", "Blog", "Thème");
+ * the locale picks the role line printed on the card.
+ */
+export function ogImageUrl(title: string, options: { locale?: Locale; label?: string } = {}): string {
+  const params = new URLSearchParams({ title });
+  if (options.label) params.set("label", options.label);
+  if (options.locale) params.set("l", options.locale);
+  return `/og?${params.toString()}`;
 }
 
 /**
@@ -20,7 +27,7 @@ export async function rootMetadata(locale: Locale): Promise<Metadata> {
   const t = getDictionary(locale);
   const data = await getSiteData();
   const image = {
-    url: ogImageUrl(t.meta.ogTitle),
+    url: ogImageUrl(t.meta.ogTitle, { locale }),
     width: 1200,
     height: 630,
     alt: t.meta.title,

@@ -6,7 +6,7 @@ export const dictionaries = {
     meta: {
       title: "Omar Maftouh — Développeur Full Stack à Casablanca, Maroc",
       description:
-        "Omar Maftouh, développeur full stack à Casablanca (Maroc) : applications web sur mesure avec Next.js, React, Laravel, NestJS et Node.js, de l'API au déploiement.",
+        "Omar Maftouh, développeur full stack à Casablanca (Maroc) : applications web sur mesure en Next.js, React, Laravel et Node.js, de l'API au déploiement.",
       ogTitle: "Développeur Full Stack à Casablanca, Maroc",
       keywords: [
         "développeur full stack Maroc",
@@ -56,8 +56,11 @@ export const dictionaries = {
     blog: {
       heading: "blog",
       title: "Blog",
+      seoTitle: "Blog développement web : Next.js, Laravel, DevOps",
       description:
         "Articles d'Omar Maftouh, développeur full stack au Maroc : développement web, Next.js, Laravel, Node.js et retours d'expérience.",
+      ogArticle: "Article",
+      ogTopic: "Thème",
       empty: "Les premiers articles arrivent bientôt.",
       back: "Retour au blog",
       postCount: "{n} article(s) publié(s)",
@@ -71,7 +74,7 @@ export const dictionaries = {
       tagsHeading: "Explorer par thème",
       tagTitle: "{tag} : articles et guides",
       tagDescription:
-        "{n} articles d'Omar Maftouh, développeur full stack au Maroc, sur {tag}. Dernier en date : {latest}.",
+        "{n} articles sur {tag} par Omar Maftouh, développeur full stack au Maroc : guides pratiques, retours d'expérience et bonnes pratiques.",
       tagIntro: "{n} articles sur {tag}, du plus récent au plus ancien.",
       by: "Par",
       updated: "Mis à jour le {date}",
@@ -145,7 +148,7 @@ export const dictionaries = {
     meta: {
       title: "Omar Maftouh — Full Stack Developer in Casablanca, Morocco",
       description:
-        "Omar Maftouh, full stack developer in Casablanca, Morocco: custom web applications with Next.js, React, Laravel, NestJS and Node.js, from API to deployment.",
+        "Omar Maftouh, full stack developer in Casablanca, Morocco: custom web applications with Next.js, React, Laravel and Node.js, from API to deployment.",
       ogTitle: "Full Stack Developer in Casablanca, Morocco",
       keywords: [
         "full stack developer Morocco",
@@ -195,8 +198,11 @@ export const dictionaries = {
     blog: {
       heading: "blog",
       title: "Blog",
+      seoTitle: "Web development blog: Next.js, Laravel, DevOps",
       description:
         "Articles by Omar Maftouh, full stack developer in Morocco: web development, Next.js, Laravel, Node.js and lessons learned.",
+      ogArticle: "Article",
+      ogTopic: "Topic",
       empty: "First articles coming soon.",
       back: "Back to blog",
       postCount: "{n} post(s) published",
@@ -210,7 +216,7 @@ export const dictionaries = {
       tagsHeading: "Browse by topic",
       tagTitle: "{tag}: articles and guides",
       tagDescription:
-        "{n} posts about {tag} by Omar Maftouh, full stack developer in Morocco. Latest: {latest}.",
+        "{n} posts about {tag} by Omar Maftouh, full stack developer in Morocco: hands-on guides, lessons learned and best practices.",
       tagIntro: "{n} posts about {tag}, newest first.",
       by: "By",
       updated: "Updated {date}",
