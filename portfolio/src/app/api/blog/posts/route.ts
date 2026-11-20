@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBlogPostsPage } from "@/data/blog";
+import { describeDbError } from "@/lib/db-errors";
 import { locales, type Locale } from "@/lib/i18n";
 
 const MAX_PAGE_SIZE = 10;
@@ -21,6 +22,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const { posts, hasMore } = await getBlogPostsPage(locale, offset, limit, q);
-  return NextResponse.json({ posts, hasMore });
+  try {
+    const { posts, hasMore } = await getBlogPostsPage(locale, offset, limit, q);
+    return NextResponse.json({ posts, hasMore });
+  } catch (error) {
+    // Usually a dropped DB connection; the client retries. Log the driver's
+    // reason, not just Drizzle's "Failed query" line.
+    console.error(`[blog] posts page (offset ${offset}): ${describeDbError(error)}`);
+    return NextResponse.json({ error: "unavailable" }, { status: 503 });
+  }
 }

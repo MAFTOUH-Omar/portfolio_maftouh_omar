@@ -7,6 +7,7 @@ import { db } from "@/db/client";
 import { projects } from "@/db/schema";
 import type { LinkKind } from "@/data/resume";
 import { newId } from "@/lib/id";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { getSession } from "@/lib/session";
 
 const LINK_KINDS: { field: string; kind: LinkKind }[] = [
@@ -90,8 +91,8 @@ async function requireSession() {
 
 function revalidateProjects() {
   revalidatePath("/admin/projects");
-  revalidatePath("/");
-  revalidatePath("/en");
+  // Project images are also listed in the sitemap.
+  revalidatePublicSite();
 }
 
 export async function createProject(formData: FormData) {

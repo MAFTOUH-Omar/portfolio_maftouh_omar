@@ -16,6 +16,9 @@ interface Props extends Omit<React.ComponentPropsWithRef<"a">, "href"> {
   label: string;
   /** Blog slugs that exist in every locale; other posts fall back to the blog index. */
   translatedSlugs: readonly string[];
+  /** Hub tag slugs of the *target* locale; other tags fall back to the blog
+   *  index instead of linking to a 404 or a noindex page. */
+  targetTagSlugs: readonly string[];
 }
 
 /**
@@ -27,6 +30,7 @@ export function LanguageSwitcher({
   locale,
   label,
   translatedSlugs,
+  targetTagSlugs,
   className,
   ...props
 }: Props) {
@@ -36,6 +40,8 @@ export function LanguageSwitcher({
   let path = neutralPath(pathname);
   const post = path.match(/^\/blog\/([^/]+)$/);
   if (post && !translatedSlugs.includes(post[1])) path = "/blog";
+  const tag = path.match(/^\/blog\/tag\/([^/]+)$/);
+  if (tag && !targetTagSlugs.includes(tag[1])) path = "/blog";
 
   return (
     <a

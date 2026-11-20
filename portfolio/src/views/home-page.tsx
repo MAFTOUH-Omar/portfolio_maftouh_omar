@@ -16,8 +16,14 @@ import { CodeFrame } from "@/components/code-frame";
 import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "@/components/section-heading";
 import { ContactCta } from "@/components/contact-cta";
+import { PostListItem } from "@/components/blog-post-item";
+import { getBlogPostsPage } from "@/data/blog";
+import { accentsFor } from "@/lib/tag-colors";
 
 const BLUR_FADE_DELAY = 0.04;
+/** Newest posts linked from the home page — the site's strongest page passes
+ *  link equity to fresh articles and gets crawled into them first. */
+const LATEST_POSTS = 3;
 
 export async function homeMetadata(locale: Locale): Promise<Metadata> {
   return {
@@ -62,8 +68,15 @@ async function homeJsonLd(locale: Locale, data: Awaited<ReturnType<typeof getSit
 
 export async function HomePage({ locale }: { locale: Locale }) {
   const t = getDictionary(locale);
-  const data = await getSiteData();
+  const [data, { posts: latestPosts }] = await Promise.all([
+    getSiteData(),
+    getBlogPostsPage(locale, 0, LATEST_POSTS),
+  ]);
   const jsonLd = await homeJsonLd(locale, data);
+  // Card colors and shapes, worked out per list so neighbours never match.
+  const workAccents = accentsFor(data.work.map((work) => work.company));
+  const educationAccents = accentsFor(data.education.map((education) => education.school));
+  const postAccents = accentsFor(latestPosts.map((post) => post.slug));
   const githubUsername = new URL(data.contact.social.GitHub.url).pathname.slice(1);
 
   return (
@@ -147,7 +160,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
       <section id="about" className="flex flex-col gap-y-3">
         <SectionHeading index="01" title={t.sections.about} delay={BLUR_FADE_DELAY * 3} />
         <BlurFade delay={BLUR_FADE_DELAY * 4}>
-          <div className="prose max-w-full text-pretty font-sans text-sm text-muted-foreground dark:prose-invert">
+          <div className="prose max-w-full text-justify text-pretty font-sans text-sm text-muted-foreground hyphens-auto dark:prose-invert">
             <p>{data.summary[locale]}</p>
           </div>
         </BlurFade>
@@ -169,6 +182,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 href={work.href}
                 period={`${work.start[locale]} - ${work.end[locale]}`}
                 description={work.description[locale]}
+                accent={workAccents[id]}
               />
             </BlurFade>
           ))}
@@ -190,6 +204,7 @@ export async function HomePage({ locale }: { locale: Locale }) {
                 title={education.school}
                 subtitle={education.degree[locale]}
                 period={`${education.start} - ${education.end}`}
+                accent={educationAccents[id]}
               />
             </BlurFade>
           ))}
@@ -232,7 +247,31 @@ export async function HomePage({ locale }: { locale: Locale }) {
           </HoverHighlight>
         </div>
       </section>
-      <ContactCta locale={locale} index="06" />
+      {latestPosts.length > 0 && (
+        // No content-visibility here: its paint containment clipped the top
+        // of the section heading (badge corners and ascenders).
+        <section id="blog" className="flex min-h-0 flex-col gap-y-3">
+          <SectionHeading index="06" title={t.blog.latest} intro={t.blog.latestIntro} />
+          {latestPosts.map((post, id) => (
+            <PostListItem
+              key={post.slug}
+              post={post}
+              locale={locale}
+              delay={0}
+              accent={postAccents[id]}
+              headingLevel={3}
+            />
+          ))}
+          <Link
+            href={localizePath(locale, "/blog")}
+            className="group inline-flex w-fit items-center gap-1.5 self-end text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {t.blog.allPosts}
+            <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:rotate-45" />
+          </Link>
+        </section>
+      )}
+      <ContactCta locale={locale} index={latestPosts.length > 0 ? "07" : "06"} />
     </main>
   );
 }

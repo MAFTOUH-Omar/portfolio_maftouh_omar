@@ -6,6 +6,9 @@ import type { MetadataRoute } from "next";
  * LinkedInBot honour robots.txt, so blocking it would break link previews.
  * AI search crawlers are allowed too: being cited by ChatGPT / Perplexity /
  * Claude when someone asks for "a full stack developer in Morocco" is a plus.
+ *
+ * /api/ only serves JSON (infinite scroll), the visit beacon and the MCP
+ * endpoint — nothing a page needs to render, nothing worth indexing.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -13,7 +16,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: "/admin",
+        disallow: ["/admin", "/api/"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/db/client";
 import { postTags, posts } from "@/db/schema";
 import { newId } from "@/lib/id";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { getSession } from "@/lib/session";
 
 const postSchema = z.object({
@@ -43,14 +44,9 @@ async function requireSession() {
   if (!session) throw new Error("Unauthorized.");
 }
 
-function revalidatePosts(slug?: string, locale?: string) {
+function revalidatePosts() {
   revalidatePath("/admin/posts");
-  revalidatePath("/blog");
-  revalidatePath("/en/blog");
-  revalidatePath("/sitemap.xml");
-  if (slug && locale) {
-    revalidatePath(`/${locale === "fr" ? "" : "en/"}blog/${slug}`);
-  }
+  revalidatePublicSite();
 }
 
 function parsePostForm(formData: FormData) {
@@ -88,7 +84,7 @@ export async function createPost(formData: FormData) {
   const id = newId();
   await db.insert(posts).values({ id, ...data });
   await syncTags(id, parseTagIds(formData));
-  revalidatePosts(data.slug, data.locale);
+  revalidatePosts();
 }
 
 export async function updatePost(id: string, formData: FormData) {
@@ -96,7 +92,7 @@ export async function updatePost(id: string, formData: FormData) {
   const data = parsePostForm(formData);
   await db.update(posts).set(data).where(eq(posts.id, id));
   await syncTags(id, parseTagIds(formData));
-  revalidatePosts(data.slug, data.locale);
+  revalidatePosts();
 }
 
 export async function deletePost(id: string) {

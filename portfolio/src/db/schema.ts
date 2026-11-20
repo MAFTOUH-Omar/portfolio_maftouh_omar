@@ -1,16 +1,21 @@
+import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
   jsonb,
   pgEnum,
   pgTable,
+  smallint,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export const postStatus = pgEnum("post_status", ["draft", "published"]);
+export const commentStatus = pgEnum("comment_status", ["pending", "approved", "hidden"]);
+export const commentAuthor = pgEnum("comment_author", ["visitor", "admin"]);
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -139,6 +144,63 @@ export const postTags = pgTable("post_tags", {
   postId: text("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
   tagId: text("tag_id").notNull().references(() => tags.id, { onDelete: "cascade" }),
 }, (table) => [uniqueIndex("post_tags_pk").on(table.postId, table.tagId)]);
+
+/**
+ * Anonymous like (+1) / dislike (-1) on a post. `visitorHash` is the visitor
+ * signature from lib/visitor.ts (HMAC of IP + user agent, pinned by a signed
+ * cookie) — never the raw IP. One vote per post and visitor, enforced here.
+ */
+export const postVotes = pgTable("post_votes", {
+  id: text("id").primaryKey(),
+  postId: text("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  visitorHash: text("visitor_hash").notNull(),
+  value: smallint("value").notNull(),
+  country: text("country"),
+  city: text("city"),
+  browser: text("browser"),
+  os: text("os"),
+  device: text("device"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("post_votes_post_visitor_idx").on(table.postId, table.visitorHash),
+  index("post_votes_created_at_idx").on(table.createdAt),
+]);
+
+/**
+ * Comment threads: a visitor's root comment (`parentId` null) and its
+ * replies — the author's (any number) and at most one follow-up from the
+ * same visitor. Both "one per" rules are partial unique indexes, so they
+ * hold even under concurrent requests.
+ */
+export const postComments = pgTable("post_comments", {
+  id: text("id").primaryKey(),
+  postId: text("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  parentId: text("parent_id").references((): AnyPgColumn => postComments.id, { onDelete: "cascade" }),
+  authorType: commentAuthor("author_type").notNull(),
+  /** Display name typed by the visitor (null = anonymous; admin uses the profile name). */
+  authorName: text("author_name"),
+  visitorHash: text("visitor_hash"),
+  body: text("body").notNull(),
+  status: commentStatus("status").notNull().default("pending"),
+  country: text("country"),
+  city: text("city"),
+  browser: text("browser"),
+  os: text("os"),
+  device: text("device"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  index("post_comments_post_idx").on(table.postId, table.createdAt),
+  index("post_comments_parent_idx").on(table.parentId),
+  // One root comment per visitor and post.
+  uniqueIndex("post_comments_one_root_idx")
+    .on(table.postId, table.visitorHash)
+    .where(sql`${table.parentId} is null and ${table.authorType} = 'visitor'`),
+  // One visitor follow-up per thread.
+  uniqueIndex("post_comments_one_followup_idx")
+    .on(table.parentId)
+    .where(sql`${table.parentId} is not null and ${table.authorType} = 'visitor'`),
+]);
 
 /** No IP column on purpose — country/city come from Vercel's geo headers. */
 export const visits = pgTable("visits", {

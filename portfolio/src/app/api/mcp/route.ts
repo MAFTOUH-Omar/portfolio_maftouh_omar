@@ -5,17 +5,16 @@ import { z } from "zod";
 import { db } from "@/db/client";
 import { postTags, posts, tags } from "@/db/schema";
 import { newId } from "@/lib/id";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { slugify } from "@/lib/slug";
 
 /** Mirrors the admin posts actions' invalidation so a post published here
- *  (e.g. by the weekly trending-topic routine) shows up immediately instead
- *  of waiting for the next deploy or a cache expiry. */
-function revalidatePost(locale: "fr" | "en", slug: string) {
+ *  (e.g. by the weekly trending-topic routine) shows up immediately — on its
+ *  own URL, tag hubs, related posts, home page, sitemap and RSS — instead of
+ *  waiting for the next deploy or a cache expiry. */
+function revalidatePost() {
   revalidatePath("/admin/posts");
-  revalidatePath("/blog");
-  revalidatePath("/en/blog");
-  revalidatePath("/sitemap.xml");
-  revalidatePath(`/${locale === "fr" ? "" : "en/"}blog/${slug}`);
+  revalidatePublicSite();
 }
 
 export const runtime = "nodejs";
@@ -140,8 +139,16 @@ const handler = createMcpHandler(
           contentMd: z.string().min(1).describe("Full post body, as Markdown."),
           status: statusSchema.default("draft"),
           coverImage: z.string().max(500).optional(),
-          metaTitle: z.string().max(200).optional(),
-          metaDescription: z.string().max(300).optional(),
+          metaTitle: z
+            .string()
+            .max(200)
+            .optional()
+            .describe("SEO <title> for search results, ideally 50-60 characters, main keyword first. Defaults to the title."),
+          metaDescription: z
+            .string()
+            .max(300)
+            .optional()
+            .describe("SEO meta description, ideally 140-160 characters, written to earn the click. Defaults to the summary."),
           tags: z.array(z.string()).optional().describe("Tag names, e.g. [\"AI\", \"Next.js\"]."),
           publishedAt: z.string().optional().describe("ISO date (YYYY-MM-DD). Defaults to today."),
         }),
@@ -181,7 +188,7 @@ const handler = createMcpHandler(
           await syncPostTags(id, await resolveTagIds(input.tags));
         }
 
-        if (input.status === "published") revalidatePost(input.locale, slug);
+        if (input.status === "published") revalidatePost();
 
         return {
           content: [
@@ -207,8 +214,16 @@ const handler = createMcpHandler(
           contentMd: z.string().min(1).optional(),
           status: statusSchema.optional(),
           coverImage: z.string().max(500).optional(),
-          metaTitle: z.string().max(200).optional(),
-          metaDescription: z.string().max(300).optional(),
+          metaTitle: z
+            .string()
+            .max(200)
+            .optional()
+            .describe("SEO <title> for search results, ideally 50-60 characters, main keyword first. Defaults to the title."),
+          metaDescription: z
+            .string()
+            .max(300)
+            .optional()
+            .describe("SEO meta description, ideally 140-160 characters, written to earn the click. Defaults to the summary."),
           tags: z.array(z.string()).optional(),
         }),
       },
@@ -233,7 +248,7 @@ const handler = createMcpHandler(
           await syncPostTags(existing.id, await resolveTagIds(tagNames));
         }
 
-        revalidatePost(locale, slug);
+        revalidatePost();
 
         return { content: [{ type: "text", text: `Updated post "${slug}" (${locale}).` }] };
       }

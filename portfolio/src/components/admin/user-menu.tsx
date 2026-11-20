@@ -10,11 +10,13 @@ import {
   GraduationCap,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   Moon,
   Newspaper,
   SquareArrowOutUpRight,
   Sun,
   Tag,
+  ThumbsUp,
   UserRound,
   Users,
   Wrench,
@@ -48,6 +50,8 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/posts", label: "Posts", icon: Newspaper },
       { href: "/admin/tags", label: "Tags", icon: Tag },
+      { href: "/admin/comments", label: "Comments", icon: MessageSquare },
+      { href: "/admin/reactions", label: "Likes & dislikes", icon: ThumbsUp },
     ],
   },
   {
