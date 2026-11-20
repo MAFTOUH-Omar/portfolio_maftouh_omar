@@ -5,8 +5,9 @@ import { useTheme } from "next-themes";
 import { flushSync } from "react-dom";
 import { useCallback } from "react";
 import { useMounted } from "@/hooks/use-mounted";
+import { cn } from "@/lib/utils";
 
-export function ModeToggle({ label }: { label: string }) {
+export function ModeToggle({ label, className }: { label: string; className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
 
@@ -66,7 +67,7 @@ export function ModeToggle({ label }: { label: string }) {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" type="button" size="icon" className="px-2" aria-label={label}>
+      <Button variant="ghost" type="button" size="icon" className={cn("px-2", className)} aria-label={label}>
         <div className="size-5" />
       </Button>
     );
@@ -77,7 +78,7 @@ export function ModeToggle({ label }: { label: string }) {
       variant="ghost"
       type="button"
       size="icon"
-      className="px-2"
+      className={cn("px-2", className)}
       aria-label={label}
       onClick={toggleTheme}
     >

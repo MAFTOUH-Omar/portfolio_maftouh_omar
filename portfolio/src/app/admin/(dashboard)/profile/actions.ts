@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db/client";
 import { profile } from "@/db/schema";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { getSession } from "@/lib/session";
 
 const profileSchema = z.object({
@@ -97,6 +98,6 @@ export async function updateProfile(formData: FormData) {
     .where(eq(profile.id, "singleton"));
 
   revalidatePath("/admin/profile");
-  revalidatePath("/");
-  revalidatePath("/en");
+  // Name, socials and email appear on every page (navbar, contact CTA, JSON-LD).
+  revalidatePublicSite();
 }

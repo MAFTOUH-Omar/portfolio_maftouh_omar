@@ -42,22 +42,22 @@ export function BlogSearch({ placeholder }: { placeholder: string }) {
   }, [value]);
 
   return (
-    <div className="relative w-full sm:max-w-xs">
-      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="relative w-full">
+      <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="search"
         value={value}
         onChange={(event) => setValue(event.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="pl-9 pr-9"
+        className="h-11 rounded-lg bg-card pl-11 pr-10 shadow-xs transition-colors focus-visible:border-primary/60"
       />
       {value && (
         <button
           type="button"
           onClick={() => setValue("")}
           aria-label="Clear search"
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+          className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
         >
           <X className="size-4" />
         </button>

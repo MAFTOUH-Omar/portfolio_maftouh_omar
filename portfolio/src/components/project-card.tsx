@@ -156,7 +156,7 @@ export function ProjectCard({
           </div>
 
           <div
-            className="prose max-w-full line-clamp-3 text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground dark:prose-invert"
+            className="prose max-w-full line-clamp-3 text-justify text-pretty font-sans text-[11.5px] leading-relaxed text-muted-foreground hyphens-auto dark:prose-invert"
           >
             <p>{description}</p>
           </div>

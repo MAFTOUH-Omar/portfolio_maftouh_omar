@@ -5,6 +5,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** Fills each `{key}` placeholder of a dictionary string. */
+export function fill(template: string, values: Record<string, string | number>): string {
+  return template.replace(/\{(\w+)\}/g, (match, key: string) =>
+    key in values ? String(values[key]) : match
+  );
+}
+
+/** "18 juin 2024" / "June 18, 2024" — no relative part, stable across renders. */
+export function formatShortDate(date: string, dateLocale = "en-US") {
+  return new Date(date).toLocaleDateString(dateLocale, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 /** "18 juin 2024 (il y a 2 ans)" / "June 18, 2024 (2 years ago)". */
 export function formatDate(date: string, dateLocale = "en-US") {
   if (!date.includes("T")) {

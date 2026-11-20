@@ -2,6 +2,12 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Streaming metadata puts <title>, canonical, hreflang and robots at the end
+  // of <body> on dynamic pages (/blog reads ?q=) for every client not on
+  // Next's "HTML-limited bot" list — Googlebot, GPTBot, ClaudeBot,
+  // PerplexityBot and SEO crawlers included. Always block on metadata so it
+  // lands in <head>; static pages are unaffected (resolved at build time).
+  htmlLimitedBots: /.*/,
   experimental: {
     agentUpgrade: "security",
     // Required by app/global-not-found.tsx (two root layouts: fr and en).

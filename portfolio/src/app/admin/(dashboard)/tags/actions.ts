@@ -6,6 +6,7 @@ import { z } from "zod";
 import { db } from "@/db/client";
 import { tags } from "@/db/schema";
 import { newId } from "@/lib/id";
+import { revalidatePublicSite } from "@/lib/revalidate";
 import { getSession } from "@/lib/session";
 
 const tagSchema = z.object({
@@ -27,8 +28,8 @@ async function requireSession() {
 
 function revalidateTags() {
   revalidatePath("/admin/tags");
-  revalidatePath("/blog");
-  revalidatePath("/en/blog");
+  // Tag names show on every post, tag hub, sitemap entry and the switcher.
+  revalidatePublicSite();
 }
 
 export async function createTag(formData: FormData) {

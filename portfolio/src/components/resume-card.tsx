@@ -2,6 +2,8 @@
 
 import { Badge } from "./ui/badge";
 import { Card, CardHeader } from "./ui/card";
+import { CardDecor } from "./card-decor";
+import { accentFor, type Accent } from "@/lib/tag-colors";
 import { cn } from "@/lib/utils";
 import { ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
@@ -17,6 +19,8 @@ interface ResumeCardProps {
   badges?: readonly string[];
   period: string;
   description?: string;
+  /** Card color + shape; the home page passes accentsFor() so neighbours differ. */
+  accent?: Accent;
 }
 export const ResumeCard = ({
   logoUrl,
@@ -27,8 +31,11 @@ export const ResumeCard = ({
   badges,
   period,
   description,
+  accent,
 }: ResumeCardProps) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
+  // Each company / school keeps its own hue and shape (hashed from its name).
+  const look = accent ?? accentFor(title);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     if (description) {
@@ -43,9 +50,17 @@ export const ResumeCard = ({
       className="block cursor-pointer"
       onClick={handleClick}
     >
-      <Card className="flex p-3 sm:p-4">
+      <Card className="group/card relative isolate flex overflow-hidden p-3 transition-colors hover:border-primary/60 sm:p-4">
+        {/* Decorations sit behind the content (absolute, -z-10), so the text
+            and layout are exactly as before. */}
+        <CardDecor accent={look} size="sm" />
         <div className="flex-none">
-          <div className="relative m-auto size-12 overflow-hidden rounded-full border border-border bg-white">
+          <div
+            className={cn(
+              "relative m-auto size-12 overflow-hidden rounded-full border border-border bg-white ring-2 ring-offset-2 ring-offset-card",
+              look.tone.ring
+            )}
+          >
             <Image
               src={logoUrl}
               alt={altText}
@@ -80,7 +95,7 @@ export const ResumeCard = ({
                   )}
                 />
               </h3>
-              <div className="font-mono text-[11px] sm:text-xs tabular-nums text-muted-foreground text-right">
+              <div className="shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-right font-mono text-[11px] tabular-nums text-muted-foreground sm:text-xs">
                 {period}
               </div>
             </div>
@@ -95,7 +110,7 @@ export const ResumeCard = ({
               )}
             >
               <div className="overflow-hidden">
-                <div className="mt-2 text-xs sm:text-sm">{description}</div>
+                <div className="mt-2 text-justify text-xs hyphens-auto sm:text-sm">{description}</div>
               </div>
             </div>
           )}

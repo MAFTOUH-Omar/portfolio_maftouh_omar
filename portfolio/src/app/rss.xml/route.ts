@@ -1,4 +1,4 @@
-import { getBlogPosts } from "@/data/blog";
+import { getBlogPostSummaries } from "@/data/blog";
 import { getSiteData } from "@/data/resume";
 import { localizePath, locales } from "@/lib/i18n";
 import { absoluteUrl, SITE_URL } from "@/lib/site";
@@ -14,7 +14,7 @@ function escapeXml(value: string) {
 
 export async function GET() {
   const data = await getSiteData();
-  const postsByLocale = await Promise.all(locales.map((locale) => getBlogPosts(locale)));
+  const postsByLocale = await Promise.all(locales.map((locale) => getBlogPostSummaries(locale)));
   const items = postsByLocale
     .flatMap((posts, index) =>
       posts.map((post) => ({ post, locale: locales[index] }))

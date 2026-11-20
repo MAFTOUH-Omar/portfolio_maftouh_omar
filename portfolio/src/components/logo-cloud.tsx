@@ -29,13 +29,14 @@ interface Props {
   duration?: number;
 }
 
-/** Intensity scale in the brand color (same scale in light and dark). */
+/** Intensity scale in the brand color, deliberately deep in both themes:
+ *  empty days are a visible sand/slate cell, active days start at 45%. */
 const LEVEL_CLASS: Record<ContributionDay["level"], string> = {
-  0: "bg-muted",
-  1: "bg-primary/25",
-  2: "bg-primary/50",
-  3: "bg-primary/75",
-  4: "bg-primary",
+  0: "bg-[hsl(38_16%_86%)] dark:bg-[hsl(160_10%_17%)]",
+  1: "bg-primary/45 dark:bg-primary/40",
+  2: "bg-primary/65 dark:bg-primary/60",
+  3: "bg-primary/85 dark:bg-primary/80",
+  4: "bg-hero-ink dark:bg-primary",
 };
 
 /**
@@ -66,7 +67,7 @@ export async function LogoCloud({
   const rows = [withIcons.slice(0, half), withIcons.slice(half)];
 
   return (
-    <div className="flex flex-col gap-6 overflow-hidden rounded-xl border border-border bg-card p-5 text-card-foreground sm:p-6">
+    <div className="flex flex-col gap-6 overflow-hidden rounded-lg border border-border bg-card p-5 text-card-foreground sm:p-6">
       {calendar && (
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
